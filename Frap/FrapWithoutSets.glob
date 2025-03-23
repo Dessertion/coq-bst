@@ -1,0 +1,506 @@
+DIGEST 4b8d1d3e28f1882878755a040e12b71c
+FFrap.FrapWithoutSets
+R15:19 Coq.Logic.Eqdep <> <> lib
+R21:26 Coq.Strings.String <> <> lib
+R28:33 Coq.NArith.NArith <> <> lib
+R35:39 Coq.Arith.Arith <> <> lib
+R41:43 Coq.micromega.Lia <> <> lib
+R45:51 Coq.Program.Program <> <> lib
+R53:56 Frap.Sets <> <> lib
+R58:66 Frap.Relations <> <> lib
+R68:70 Frap.Map <> <> lib
+R72:74 Frap.Var <> <> lib
+R76:84 Frap.Invariant <> <> lib
+R86:89 Coq.Bool.Bool <> <> lib
+R91:100 Frap.ModelCheck <> <> lib
+R110:114 Coq.Strings.Ascii <> <> mod
+R116:121 Coq.Strings.String <> <> mod
+R123:127 Coq.Arith.Arith <> <> mod
+R129:132 Frap.Sets <> <> mod
+R134:142 Frap.Relations <> <> mod
+R144:146 Frap.Map <> <> mod
+R148:150 Frap.Var <> <> mod
+R152:160 Frap.Invariant <> <> mod
+R162:165 Coq.Bool.Bool <> <> mod
+R167:176 Frap.ModelCheck <> <> mod
+R194:197 Coq.Lists.List <> <> lib
+R207:210 Coq.Lists.List <> <> mod
+R212:224 Coq.Lists.List ListNotations <> mod
+binder 330:330 <> x:1
+binder 330:330 <> x:2
+R511:511 Coq.Init.Datatypes <> S constr
+R511:511 Coq.Init.Datatypes <> S constr
+R1915:1918 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R1906:1908 Coq.Init.Logic <> ::type_scope:x_'='_x not
+R1901:1904 Coq.Init.Datatypes <> ::list_scope:x_'++'_x not
+R1910:1913 Coq.Init.Datatypes <> ::list_scope:x_'++'_x not
+R1915:1918 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R1906:1908 Coq.Init.Logic <> ::type_scope:x_'='_x not
+R1901:1904 Coq.Init.Datatypes <> ::list_scope:x_'++'_x not
+R1910:1913 Coq.Init.Datatypes <> ::list_scope:x_'++'_x not
+R1942:1945 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R1937:1939 Coq.Init.Logic <> ::type_scope:x_'='_x not
+R1942:1945 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R1937:1939 Coq.Init.Logic <> ::type_scope:x_'='_x not
+R2052:2055 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R2037:2045 Coq.Logic.JMeq <> JMeq ind
+R2052:2055 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R2037:2045 Coq.Logic.JMeq <> JMeq ind
+binder 2161:2161 <> x:3
+binder 2161:2161 <> x:4
+R2134:2134 Coq.Init.Datatypes <> ::core_scope:'('_x_','_x_','_'..'_','_x_')' not
+R2136:2137 Coq.Init.Datatypes <> ::core_scope:'('_x_','_x_','_'..'_','_x_')' not
+R2139:2139 Coq.Init.Datatypes <> ::core_scope:'('_x_','_x_','_'..'_','_x_')' not
+R2100:2113 Coq.Logic.JMeq <> JMeq_refl constr
+R2017:2017 Coq.Init.Datatypes <> ::core_scope:'('_x_','_x_','_'..'_','_x_')' not
+R2019:2020 Coq.Init.Datatypes <> ::core_scope:'('_x_','_x_','_'..'_','_x_')' not
+R2022:2022 Coq.Init.Datatypes <> ::core_scope:'('_x_','_x_','_'..'_','_x_')' not
+R1990:1996 Coq.Init.Logic <> eq_refl constr
+R2465:2466 Coq.Init.Logic <> eq ind
+R2468:2473 Coq.Strings.String <> string ind
+R2465:2466 Coq.Init.Logic <> eq ind
+R2468:2473 Coq.Strings.String <> string ind
+R2928:2938 Coq.NArith.BinNat N recursion def
+binder 2947:2947 <> n:5
+binder 2949:2955 <> recurse:6
+not 2871:2871 <> ::N_recursion_scope:x_'by'_'cases'_'|'_'0'_'=>'_x_'|'_x_'+'_'1'_'=>'_x_'end'
+prf 3186:3189 <> indN
+R3204:3207 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R3203:3203 Coq.Numbers.BinNums <> N ind
+binder 3200:3200 <> P:7
+R3224:3288 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R3219:3219 Frap.FrapWithoutSets <> P:7 var
+R3289:3289 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R3321:3363 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R3300:3300 Coq.Numbers.BinNums <> N ind
+binder 3297:3297 <> n:8
+R3306:3309 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R3303:3303 Frap.FrapWithoutSets <> P:7 var
+R3305:3305 Frap.FrapWithoutSets <> n:8 var
+R3310:3310 Frap.FrapWithoutSets <> P:7 var
+R3314:3316 Coq.NArith.BinNat <> ::N_scope:x_'+'_x not
+R3313:3313 Frap.FrapWithoutSets <> n:8 var
+binder 3371:3371 <> n:9
+R3374:3374 Frap.FrapWithoutSets <> P:7 var
+R3376:3376 Frap.FrapWithoutSets <> n:9 var
+R3453:3461 Coq.NArith.BinNat N add_1_r thm
+R3453:3461 Coq.NArith.BinNat N add_1_r thm
+R3453:3461 Coq.NArith.BinNat N add_1_r thm
+R3453:3461 Coq.NArith.BinNat N add_1_r thm
+R3453:3461 Coq.NArith.BinNat N add_1_r thm
+R3453:3461 Coq.NArith.BinNat N add_1_r thm
+R3453:3461 Coq.NArith.BinNat N add_1_r thm
+R3453:3461 Coq.NArith.BinNat N add_1_r thm
+R3453:3461 Coq.NArith.BinNat N add_1_r thm
+R3453:3461 Coq.NArith.BinNat N add_1_r thm
+R3453:3461 Coq.NArith.BinNat N add_1_r thm
+R3453:3461 Coq.NArith.BinNat N add_1_r thm
+R3453:3461 Coq.NArith.BinNat N add_1_r thm
+R3453:3461 Coq.NArith.BinNat N add_1_r thm
+R3453:3461 Coq.NArith.BinNat N add_1_r thm
+R3453:3461 Coq.NArith.BinNat N add_1_r thm
+R3453:3461 Coq.NArith.BinNat N add_1_r thm
+R3453:3461 Coq.NArith.BinNat N add_1_r thm
+R3453:3461 Coq.NArith.BinNat N add_1_r thm
+R3453:3461 Coq.NArith.BinNat N add_1_r thm
+R3453:3461 Coq.NArith.BinNat N add_1_r thm
+R3453:3461 Coq.NArith.BinNat N add_1_r thm
+R3453:3461 Coq.NArith.BinNat N add_1_r thm
+R3453:3461 Coq.NArith.BinNat N add_1_r thm
+R3453:3461 Coq.NArith.BinNat N add_1_r thm
+R3453:3461 Coq.NArith.BinNat N add_1_r thm
+R3453:3461 Coq.NArith.BinNat N add_1_r thm
+R3453:3461 Coq.NArith.BinNat N add_1_r thm
+R3453:3461 Coq.NArith.BinNat N add_1_r thm
+R3453:3461 Coq.NArith.BinNat N add_1_r thm
+R3453:3461 Coq.NArith.BinNat N add_1_r thm
+R3453:3461 Coq.NArith.BinNat N add_1_r thm
+R3453:3461 Coq.NArith.BinNat N add_1_r thm
+R3453:3461 Coq.NArith.BinNat N add_1_r thm
+R3470:3480 Coq.NArith.BinNat N peano_ind def
+R3470:3480 Coq.NArith.BinNat N peano_ind def
+R3525:3528 Frap.FrapWithoutSets <> indN thm
+binder 3696:3696 <> x:10
+binder 3696:3696 <> x:11
+R3865:3865 Coq.Init.Datatypes <> S constr
+R3865:3865 Coq.Init.Datatypes <> S constr
+R4171:4173 Coq.Init.Logic <> ::type_scope:x_'='_x not
+R4171:4173 Coq.Init.Logic <> ::type_scope:x_'='_x not
+R4245:4249 Frap.Map S :::x_'$+'_'('_x_','_x_')' not
+R4252:4253 Frap.Map S :::x_'$+'_'('_x_','_x_')' not
+R4255:4255 Frap.Map S :::x_'$+'_'('_x_','_x_')' not
+R4245:4249 Frap.Map S :::x_'$+'_'('_x_','_x_')' not
+R4252:4253 Frap.Map S :::x_'$+'_'('_x_','_x_')' not
+R4255:4255 Frap.Map S :::x_'$+'_'('_x_','_x_')' not
+R4279:4285 Coq.Init.Logic <> f_equal thm
+binder 4292:4292 <> m:12
+R4298:4301 Frap.Map S :::x_'$?'_x not
+R4297:4297 Frap.FrapWithoutSets <> m:12 var
+R4530:4531 Coq.Init.Logic <> eq ind
+R4537:4540 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R4534:4536 Coq.Init.Datatypes <> nat ind
+R4530:4531 Coq.Init.Logic <> eq ind
+R4537:4540 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R4534:4536 Coq.Init.Datatypes <> nat ind
+R4612:4613 Coq.Init.Logic <> eq ind
+R4612:4613 Coq.Init.Logic <> eq ind
+R4685:4688 Frap.Map M fmap defax
+R4685:4688 Frap.Map M fmap defax
+R4565:4571 Coq.Init.Logic <> f_equal thm
+binder 4578:4578 <> f:13
+R4583:4583 Frap.FrapWithoutSets <> f:13 var
+R4898:4905 Frap.Sets <> constant def
+R4898:4905 Frap.Sets <> constant def
+R5120:5124 Frap.Sets <> RdDup constr
+R5026:5030 Frap.Sets <> RdNew constr
+R4993:4997 Frap.Sets <> RdNil constr
+R4950:4962 Frap.Sets <> removeDups_ok thm
+R5265:5269 Frap.Sets <> minus def
+R5276:5283 Frap.Sets <> constant def
+R5296:5303 Frap.Sets <> constant def
+R5265:5269 Frap.Sets <> minus def
+R5276:5283 Frap.Sets <> constant def
+R5296:5303 Frap.Sets <> constant def
+R5376:5383 Frap.Sets <> constant def
+R5376:5383 Frap.Sets <> constant def
+R5399:5406 Frap.Sets <> constant def
+R5478:5485 Frap.Sets <> constant def
+R5478:5485 Frap.Sets <> constant def
+R5502:5509 Frap.Sets <> constant def
+R5717:5722 Frap.Sets <> DsDrop constr
+R5622:5627 Frap.Sets <> DsKeep constr
+R5589:5593 Frap.Sets <> DsNil constr
+R5542:5554 Frap.Sets <> doSubtract_ok thm
+R5889:5892 Frap.Map S :::x_'$?'_x not
+R5876:5878 Frap.Map M add defax
+R5889:5892 Frap.Map S :::x_'$?'_x not
+R5876:5878 Frap.Map M add defax
+R6003:6015 Frap.Map M lookup_add_eq prfax
+R5925:5937 Frap.Map M lookup_add_ne prfax
+R6119:6119 Coq.Init.Logic <> I constr
+R6193:6196 Coq.Init.Logic <> True ind
+R6193:6196 Coq.Init.Logic <> True ind
+R6459:6470 Coq.Arith.PeanoNat Nat max_spec thm
+R6561:6563 Coq.Init.Peano <> max abbrev
+R6561:6563 Coq.Init.Peano <> max abbrev
+R6738:6740 Coq.Init.Peano <> max abbrev
+R6738:6740 Coq.Init.Peano <> max abbrev
+R6919:6921 Coq.Init.Peano <> min abbrev
+R6919:6921 Coq.Init.Peano <> min abbrev
+R7096:7098 Coq.Init.Peano <> min abbrev
+R7096:7098 Coq.Init.Peano <> min abbrev
+R7166:7177 Coq.Arith.PeanoNat Nat min_spec thm
+R6984:6995 Coq.Arith.PeanoNat Nat min_spec thm
+R6808:6819 Coq.Arith.PeanoNat Nat max_spec thm
+R6626:6637 Coq.Arith.PeanoNat Nat max_spec thm
+R7562:7562 Coq.Init.Specif <> ::type_scope:'{'_x_'}'_'+'_'{'_x_'}' not
+R7564:7568 Coq.Init.Specif <> ::type_scope:'{'_x_'}'_'+'_'{'_x_'}' not
+R7570:7570 Coq.Init.Specif <> ::type_scope:'{'_x_'}'_'+'_'{'_x_'}' not
+R7562:7562 Coq.Init.Specif <> ::type_scope:'{'_x_'}'_'+'_'{'_x_'}' not
+R7564:7568 Coq.Init.Specif <> ::type_scope:'{'_x_'}'_'+'_'{'_x_'}' not
+R7570:7570 Coq.Init.Specif <> ::type_scope:'{'_x_'}'_'+'_'{'_x_'}' not
+R7459:7459 Coq.Numbers.BinNums <> N ind
+R7459:7459 Coq.Numbers.BinNums <> N ind
+R7481:7484 Frap.FrapWithoutSets <> indN thm
+R7375:7378 Coq.Init.Logic <> ::type_scope:x_'\/'_x not
+R7375:7378 Coq.Init.Logic <> ::type_scope:x_'\/'_x not
+R7699:7701 Coq.Init.Logic <> ::type_scope:x_'='_x not
+R7702:7705 Coq.Init.Specif <> left constr
+R7699:7701 Coq.Init.Logic <> ::type_scope:x_'='_x not
+R7702:7705 Coq.Init.Specif <> left constr
+R7745:7747 Coq.Init.Logic <> ::type_scope:x_'='_x not
+R7748:7752 Coq.Init.Specif <> right constr
+R7745:7747 Coq.Init.Logic <> ::type_scope:x_'='_x not
+R7748:7752 Coq.Init.Specif <> right constr
+R7803:7805 Coq.Init.Nat <> max def
+R7807:7809 Coq.Init.Nat <> min def
+R7828:7837 Coq.Arith.Peano_dec <> eq_nat_dec abbrev
+not 7819:7819 <> :::x_'==n'_x
+R7887:7895 Coq.Arith.Compare_dec <> le_lt_dec def
+not 7878:7878 <> :::x_'<=?'_x
+R7906:7913 Frap.Map <> <> mod
+prf 8041:8046 <> eq_iff
+binder 8057:8057 <> P:14
+binder 8059:8059 <> Q:15
+R8071:8079 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R8087:8087 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R8067:8069 Coq.Init.Logic <> ::type_scope:x_'='_x not
+R8066:8066 Frap.FrapWithoutSets <> P:14 var
+R8070:8070 Frap.FrapWithoutSets <> Q:15 var
+R8081:8085 Coq.Init.Logic <> ::type_scope:x_'<->'_x not
+R8080:8080 Frap.FrapWithoutSets <> P:14 var
+R8086:8086 Frap.FrapWithoutSets <> Q:15 var
+R8285:8286 Coq.Init.Logic <> eq ind
+R8291:8294 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R8285:8286 Coq.Init.Logic <> eq ind
+R8291:8294 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R8327:8330 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R8327:8330 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R8343:8345 Frap.Sets <> set def
+R8397:8398 Coq.Init.Logic <> eq ind
+R8401:8403 Frap.Sets <> set def
+R8397:8398 Coq.Init.Logic <> eq ind
+R8401:8403 Frap.Sets <> set def
+R8461:8470 Frap.Sets <> sets_equal thm
+R8537:8538 Coq.Init.Logic <> eq ind
+R8541:8543 Frap.Sets <> set def
+R8537:8538 Coq.Init.Logic <> eq ind
+R8541:8543 Frap.Sets <> set def
+R8569:8575 Coq.Init.Logic <> f_equal thm
+binder 8582:8582 <> f:16
+R8587:8587 Frap.FrapWithoutSets <> f:16 var
+R8653:8658 Frap.FrapWithoutSets <> eq_iff thm
+R8739:8740 Coq.Init.Logic <> eq ind
+R8743:8745 Frap.Sets <> set def
+R8739:8740 Coq.Init.Logic <> eq ind
+R8743:8745 Frap.Sets <> set def
+R8828:8829 Coq.Init.Logic <> eq ind
+R8832:8834 Frap.Sets <> set def
+R8828:8829 Coq.Init.Logic <> eq ind
+R8832:8834 Frap.Sets <> set def
+R8860:8866 Coq.Init.Logic <> f_equal thm
+binder 8873:8873 <> f:17
+R8878:8878 Frap.FrapWithoutSets <> f:17 var
+R8945:8950 Frap.FrapWithoutSets <> eq_iff thm
+R9212:9214 Coq.Init.Logic <> ::type_scope:x_'='_x not
+R9199:9204 Coq.Init.Specif <> existT constr
+R9215:9220 Coq.Init.Specif <> existT constr
+R9212:9214 Coq.Init.Logic <> ::type_scope:x_'='_x not
+R9199:9204 Coq.Init.Specif <> existT constr
+R9215:9220 Coq.Init.Specif <> existT constr
+R9268:9276 Coq.Logic.ProofIrrelevance ProofIrrelevanceTheory.EqdepTheory inj_pair2 thm
+prf 9420:9439 <> oneStepClosure_solve
+binder 9450:9450 <> A:18
+R9459:9463 Frap.Invariant <> trsys rec
+R9465:9465 Frap.FrapWithoutSets <> A:18 var
+binder 9453:9455 <> sys:19
+binder 9468:9468 <> I:20
+binder 9470:9471 <> I':21
+R9499:9504 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R9476:9489 Frap.ModelCheck <> oneStepClosure def
+R9497:9498 Frap.FrapWithoutSets <> I':21 var
+R9495:9495 Frap.FrapWithoutSets <> I:20 var
+R9491:9493 Frap.FrapWithoutSets <> sys:19 var
+R9511:9516 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R9506:9508 Coq.Init.Logic <> ::type_scope:x_'='_x not
+R9505:9505 Frap.FrapWithoutSets <> I:20 var
+R9509:9510 Frap.FrapWithoutSets <> I':21 var
+R9517:9530 Frap.ModelCheck <> oneStepClosure def
+R9538:9538 Frap.FrapWithoutSets <> I:20 var
+R9536:9536 Frap.FrapWithoutSets <> I:20 var
+R9532:9534 Frap.FrapWithoutSets <> sys:19 var
+R9753:9753 Frap.Sets <> :::x_'\cup'_x not
+R9755:9760 Frap.Sets <> :::x_'\cup'_x not
+R9762:9764 Frap.Sets <> :::x_'\cup'_x not
+R9753:9753 Frap.Sets <> :::x_'\cup'_x not
+R9755:9760 Frap.Sets <> :::x_'\cup'_x not
+R9762:9764 Frap.Sets <> :::x_'\cup'_x not
+R9777:9794 Frap.ModelCheck <> singleton_in_other thm
+R9724:9735 Frap.ModelCheck <> singleton_in thm
+R9884:9903 Frap.ModelCheck <> oneStepClosure_split thm
+R9843:9862 Frap.ModelCheck <> oneStepClosure_empty thm
+R10003:10009 Frap.ModelCheck <> MscDone constr
+R10044:10050 Frap.ModelCheck <> MscStep constr
+R10338:10356 Frap.ModelCheck <> multiStepClosure_ok thm
+R10443:10458 Frap.Invariant <> invariant_weaken thm
+ind 10581:10588 <> ordering
+constr 10607:10608 <> Lt
+constr 10624:10625 <> Eq
+constr 10641:10642 <> Gt
+R10597:10599 Coq.Init.Datatypes <> nat ind
+binder 10591:10591 <> n:22
+binder 10593:10593 <> m:23
+R10616:10618 Coq.Init.Peano <> ::nat_scope:x_'<'_x not
+R10615:10615 Frap.FrapWithoutSets <> n:22 var
+R10619:10619 Frap.FrapWithoutSets <> m:23 var
+R10633:10635 Coq.Init.Logic <> ::type_scope:x_'='_x not
+R10632:10632 Frap.FrapWithoutSets <> n:22 var
+R10636:10636 Frap.FrapWithoutSets <> m:23 var
+R10650:10652 Coq.Init.Peano <> ::nat_scope:x_'>'_x not
+R10649:10649 Frap.FrapWithoutSets <> n:22 var
+R10653:10653 Frap.FrapWithoutSets <> m:23 var
+scheme 10581:10588 <> ordering_rect
+scheme 10581:10588 <> ordering_ind
+scheme 10581:10588 <> ordering_rec
+scheme 10581:10588 <> ordering_sind
+R10682:10689 Frap.FrapWithoutSets <> ordering ind
+R10721:10723 Coq.Init.Peano <> ::nat_scope:x_'<'_x not
+R10764:10766 Coq.Init.Peano <> ::nat_scope:x_'>'_x not
+prf 10794:10808 <> totally_ordered
+binder 10819:10819 <> n:26
+binder 10821:10821 <> m:27
+R10824:10831 Frap.FrapWithoutSets <> ordering ind
+R10833:10833 Frap.FrapWithoutSets <> n:26 var
+R10835:10835 Frap.FrapWithoutSets <> m:27 var
+R10956:10970 Frap.FrapWithoutSets <> totally_ordered thm
+R11019:11019 Coq.Init.Datatypes <> ::core_scope:'('_x_','_x_','_'..'_','_x_')' not
+R11021:11022 Coq.Init.Datatypes <> ::core_scope:'('_x_','_x_','_'..'_','_x_')' not
+R11024:11024 Coq.Init.Datatypes <> ::core_scope:'('_x_','_x_','_'..'_','_x_')' not
+R11019:11019 Coq.Init.Datatypes <> ::core_scope:'('_x_','_x_','_'..'_','_x_')' not
+R11021:11022 Coq.Init.Datatypes <> ::core_scope:'('_x_','_x_','_'..'_','_x_')' not
+R11024:11024 Coq.Init.Datatypes <> ::core_scope:'('_x_','_x_','_'..'_','_x_')' not
+R11038:11038 Coq.Init.Datatypes <> ::core_scope:'('_x_','_x_','_'..'_','_x_')' not
+R11040:11041 Coq.Init.Datatypes <> ::core_scope:'('_x_','_x_','_'..'_','_x_')' not
+R11046:11046 Coq.Init.Datatypes <> ::core_scope:'('_x_','_x_','_'..'_','_x_')' not
+R11038:11038 Coq.Init.Datatypes <> ::core_scope:'('_x_','_x_','_'..'_','_x_')' not
+R11040:11041 Coq.Init.Datatypes <> ::core_scope:'('_x_','_x_','_'..'_','_x_')' not
+R11046:11046 Coq.Init.Datatypes <> ::core_scope:'('_x_','_x_','_'..'_','_x_')' not
+R11147:11151 Frap.Map M empty defax
+R11147:11151 Frap.Map M empty defax
+R11187:11191 Frap.Map S :::x_'$+'_'('_x_','_x_')' not
+R11194:11195 Frap.Map S :::x_'$+'_'('_x_','_x_')' not
+R11198:11198 Frap.Map S :::x_'$+'_'('_x_','_x_')' not
+R11187:11191 Frap.Map S :::x_'$+'_'('_x_','_x_')' not
+R11194:11195 Frap.Map S :::x_'$+'_'('_x_','_x_')' not
+R11198:11198 Frap.Map S :::x_'$+'_'('_x_','_x_')' not
+R11259:11262 Coq.Init.Datatypes <> true constr
+R11259:11262 Coq.Init.Datatypes <> true constr
+R11306:11310 Coq.Init.Datatypes <> false constr
+R11306:11310 Coq.Init.Datatypes <> false constr
+R11343:11343 Coq.Init.Datatypes <> ::core_scope:'('_x_','_x_','_'..'_','_x_')' not
+R11345:11346 Coq.Init.Datatypes <> ::core_scope:'('_x_','_x_','_'..'_','_x_')' not
+R11352:11352 Coq.Init.Datatypes <> ::core_scope:'('_x_','_x_','_'..'_','_x_')' not
+R11378:11382 Frap.Map S :::x_'$+'_'('_x_','_x_')' not
+R11384:11385 Frap.Map S :::x_'$+'_'('_x_','_x_')' not
+R11387:11387 Frap.Map S :::x_'$+'_'('_x_','_x_')' not
+R11169:11173 Frap.Map M empty defax
+R11464:11468 Frap.Map S :::x_'$+'_'('_x_','_x_')' not
+R11471:11472 Frap.Map S :::x_'$+'_'('_x_','_x_')' not
+R11475:11475 Frap.Map S :::x_'$+'_'('_x_','_x_')' not
+R11464:11468 Frap.Map S :::x_'$+'_'('_x_','_x_')' not
+R11471:11472 Frap.Map S :::x_'$+'_'('_x_','_x_')' not
+R11475:11475 Frap.Map S :::x_'$+'_'('_x_','_x_')' not
+R11540:11543 Coq.Init.Datatypes <> true constr
+R11540:11543 Coq.Init.Datatypes <> true constr
+R11589:11593 Coq.Init.Datatypes <> false constr
+R11589:11593 Coq.Init.Datatypes <> false constr
+R11623:11623 Coq.Init.Datatypes <> ::core_scope:'('_x_','_x_','_'..'_','_x_')' not
+R11625:11626 Coq.Init.Datatypes <> ::core_scope:'('_x_','_x_','_'..'_','_x_')' not
+R11632:11632 Coq.Init.Datatypes <> ::core_scope:'('_x_','_x_','_'..'_','_x_')' not
+R11658:11662 Frap.Map S :::x_'$+'_'('_x_','_x_')' not
+R11664:11665 Frap.Map S :::x_'$+'_'('_x_','_x_')' not
+R11667:11667 Frap.Map S :::x_'$+'_'('_x_','_x_')' not
+R11746:11748 Frap.Map M add defax
+R11746:11748 Frap.Map M add defax
+R11791:11795 Frap.Map S :::x_'$+'_'('_x_','_x_')' not
+R11797:11798 Frap.Map S :::x_'$+'_'('_x_','_x_')' not
+R11800:11800 Frap.Map S :::x_'$+'_'('_x_','_x_')' not
+R11875:11877 Frap.Map M add defax
+R11936:11944 Coq.Logic.Classical <> <> lib
+R11983:11989 Coq.Logic.Classical_Prop <> classic prfax
+prf 12002:12016 <> join_idempotent
+binder 12027:12027 <> A:28
+binder 12029:12029 <> B:29
+R12044:12047 Frap.Map M fmap defax
+R12051:12051 Frap.FrapWithoutSets <> B:29 var
+R12049:12049 Frap.FrapWithoutSets <> A:28 var
+binder 12040:12040 <> m:30
+R12055:12055 Coq.Init.Logic <> ::type_scope:x_'='_x not
+R12063:12066 Coq.Init.Logic <> ::type_scope:x_'='_x not
+R12057:12061 Frap.Map S :::x_'$++'_x not
+R12056:12056 Frap.FrapWithoutSets <> m:30 var
+R12062:12062 Frap.FrapWithoutSets <> m:30 var
+R12067:12067 Frap.FrapWithoutSets <> m:30 var
+R12095:12102 Frap.Map M fmap_ext prfax
+R12095:12102 Frap.Map M fmap_ext prfax
+R12125:12128 Frap.Map S :::x_'$?'_x not
+R12125:12128 Frap.Map S :::x_'$?'_x not
+R12145:12156 Frap.Map M lookup_join1 prfax
+R12145:12156 Frap.Map M lookup_join1 prfax
+R12145:12156 Frap.Map M lookup_join1 prfax
+R12145:12156 Frap.Map M lookup_join1 prfax
+R12181:12195 Frap.Map M lookup_Some_dom prfax
+R12181:12195 Frap.Map M lookup_Some_dom prfax
+R12210:12221 Frap.Map M lookup_join2 prfax
+R12210:12221 Frap.Map M lookup_join2 prfax
+R12210:12221 Frap.Map M lookup_join2 prfax
+R12210:12221 Frap.Map M lookup_join2 prfax
+R12246:12260 Frap.Map M lookup_None_dom prfax
+R12246:12260 Frap.Map M lookup_None_dom prfax
+prf 12277:12289 <> includes_refl
+binder 12301:12301 <> A:31
+binder 12303:12303 <> B:32
+R12318:12321 Frap.Map M fmap defax
+R12325:12325 Frap.FrapWithoutSets <> B:32 var
+R12323:12323 Frap.FrapWithoutSets <> A:31 var
+binder 12314:12314 <> m:33
+R12330:12334 Frap.Map S :::x_'$<='_x not
+R12329:12329 Frap.FrapWithoutSets <> m:33 var
+R12335:12335 Frap.FrapWithoutSets <> m:33 var
+R12365:12378 Frap.Map M includes_intro prfax
+R12365:12378 Frap.Map M includes_intro prfax
+R12542:12544 Coq.Init.Logic <> ::type_scope:x_'='_x not
+R12542:12544 Coq.Init.Logic <> ::type_scope:x_'='_x not
+prf 12634:12647 <> recursion_step
+binder 12658:12658 <> A:34
+R12671:12671 Frap.FrapWithoutSets <> A:34 var
+binder 12668:12668 <> a:35
+R12679:12682 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R12678:12678 Coq.Numbers.BinNums <> N ind
+R12684:12687 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R12683:12683 Frap.FrapWithoutSets <> A:34 var
+R12688:12688 Frap.FrapWithoutSets <> A:34 var
+binder 12675:12675 <> f:36
+R12695:12695 Coq.Numbers.BinNums <> N ind
+binder 12692:12692 <> n:37
+R12728:12730 Coq.Init.Logic <> ::type_scope:x_'='_x not
+R12703:12713 Coq.NArith.BinNat N recursion def
+R12721:12723 Coq.NArith.BinNat <> ::N_scope:x_'+'_x not
+R12720:12720 Frap.FrapWithoutSets <> n:37 var
+R12717:12717 Frap.FrapWithoutSets <> f:36 var
+R12715:12715 Frap.FrapWithoutSets <> a:35 var
+R12731:12731 Frap.FrapWithoutSets <> f:36 var
+R12736:12746 Coq.NArith.BinNat N recursion def
+R12752:12752 Frap.FrapWithoutSets <> n:37 var
+R12750:12750 Frap.FrapWithoutSets <> f:36 var
+R12748:12748 Frap.FrapWithoutSets <> a:35 var
+R12733:12733 Frap.FrapWithoutSets <> n:37 var
+R12796:12804 Coq.NArith.BinNat N add_1_r thm
+R12796:12804 Coq.NArith.BinNat N add_1_r thm
+R12796:12804 Coq.NArith.BinNat N add_1_r thm
+R12796:12804 Coq.NArith.BinNat N add_1_r thm
+R12796:12804 Coq.NArith.BinNat N add_1_r thm
+R12796:12804 Coq.NArith.BinNat N add_1_r thm
+R12796:12804 Coq.NArith.BinNat N add_1_r thm
+R12796:12804 Coq.NArith.BinNat N add_1_r thm
+R12796:12804 Coq.NArith.BinNat N add_1_r thm
+R12796:12804 Coq.NArith.BinNat N add_1_r thm
+R12796:12804 Coq.NArith.BinNat N add_1_r thm
+R12796:12804 Coq.NArith.BinNat N add_1_r thm
+R12796:12804 Coq.NArith.BinNat N add_1_r thm
+R12796:12804 Coq.NArith.BinNat N add_1_r thm
+R12796:12804 Coq.NArith.BinNat N add_1_r thm
+R12796:12804 Coq.NArith.BinNat N add_1_r thm
+R12796:12804 Coq.NArith.BinNat N add_1_r thm
+R12796:12804 Coq.NArith.BinNat N add_1_r thm
+R12796:12804 Coq.NArith.BinNat N add_1_r thm
+R12796:12804 Coq.NArith.BinNat N add_1_r thm
+R12796:12804 Coq.NArith.BinNat N add_1_r thm
+R12796:12804 Coq.NArith.BinNat N add_1_r thm
+R12796:12804 Coq.NArith.BinNat N add_1_r thm
+R12816:12831 Coq.NArith.BinNat N recursion_succ thm
+R12816:12831 Coq.NArith.BinNat N recursion_succ thm
+R13338:13348 Coq.NArith.BinNat N recursion def
+R13338:13348 Coq.NArith.BinNat N recursion def
+R13515:13525 Coq.NArith.BinNat N recursion def
+R13466:13468 Coq.Init.Logic <> ::type_scope:x_'='_x not
+R13459:13461 Coq.NArith.BinNat <> ::N_scope:x_'+'_x not
+R13426:13439 Frap.FrapWithoutSets <> recursion_step thm
+R13778:13782 Coq.NArith.BinNat N mul def
+R13808:13812 Coq.NArith.BinNat N add def
+def 13840:13851 <> IF_then_else
+binder 13854:13854 <> p:38
+binder 13856:13857 <> q1:39
+binder 13859:13860 <> q2:40
+R13875:13875 Coq.Init.Logic <> ::type_scope:x_'\/'_x not
+R13883:13888 Coq.Init.Logic <> ::type_scope:x_'\/'_x not
+R13897:13897 Coq.Init.Logic <> ::type_scope:x_'\/'_x not
+R13877:13880 Coq.Init.Logic <> ::type_scope:x_'/\'_x not
+R13876:13876 Frap.FrapWithoutSets <> p:38 var
+R13881:13882 Frap.FrapWithoutSets <> q1:39 var
+R13891:13894 Coq.Init.Logic <> ::type_scope:x_'/\'_x not
+R13889:13889 Coq.Init.Logic <> ::type_scope:'~'_x not
+R13890:13890 Frap.FrapWithoutSets <> p:38 var
+R13895:13896 Frap.FrapWithoutSets <> q2:40 var
+R13946:13957 Frap.FrapWithoutSets <> IF_then_else def
+not 13912:13912 <> :::'IFF'_x_'then'_x_'else'_x

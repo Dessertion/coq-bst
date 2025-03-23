@@ -1,0 +1,534 @@
+DIGEST d1b26f4069d5616ef8413af57c75e9de
+FFrap.ModelCheck
+R15:23 Frap.Invariant <> <> lib
+R25:33 Frap.Relations <> <> lib
+R35:38 Frap.Sets <> <> lib
+R40:48 Coq.Logic.Classical <> <> lib
+def 89:110 <> oneStepClosure_current
+binder 113:117 <> state:1
+R127:131 Frap.Invariant <> trsys rec
+R133:137 Frap.ModelCheck <> state:1 var
+binder 121:123 <> sys:2
+R181:184 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R176:180 Frap.ModelCheck <> state:1 var
+binder 152:161 <> invariant1:3
+binder 163:172 <> invariant2:4
+binder 203:204 <> st:5
+R220:236 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R207:216 Frap.ModelCheck <> invariant1:3 var
+R218:219 Frap.ModelCheck <> st:5 var
+R237:246 Frap.ModelCheck <> invariant2:4 var
+R248:249 Frap.ModelCheck <> st:5 var
+def 264:281 <> oneStepClosure_new
+binder 284:288 <> state:6
+R298:302 Frap.Invariant <> trsys rec
+R304:308 Frap.ModelCheck <> state:6 var
+binder 292:294 <> sys:7
+R352:355 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R347:351 Frap.ModelCheck <> state:6 var
+binder 323:332 <> invariant1:8
+binder 334:343 <> invariant2:9
+binder 374:375 <> st:10
+binder 377:379 <> st':11
+R395:415 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R382:391 Frap.ModelCheck <> invariant1:8 var
+R393:394 Frap.ModelCheck <> st:10 var
+R433:453 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R421:424 Frap.Invariant <> Step proj
+R416:418 Frap.ModelCheck <> sys:7 var
+R430:432 Frap.ModelCheck <> st':11 var
+R427:428 Frap.ModelCheck <> st:10 var
+R454:463 Frap.ModelCheck <> invariant2:9 var
+R465:467 Frap.ModelCheck <> st':11 var
+def 482:495 <> oneStepClosure
+binder 498:502 <> state:12
+R512:516 Frap.Invariant <> trsys rec
+R518:522 Frap.ModelCheck <> state:12 var
+binder 506:508 <> sys:13
+R566:569 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R561:565 Frap.ModelCheck <> state:12 var
+binder 537:546 <> invariant1:14
+binder 548:557 <> invariant2:15
+R629:634 Coq.Init.Logic <> ::type_scope:x_'/\'_x not
+R581:602 Frap.ModelCheck <> oneStepClosure_current def
+R619:628 Frap.ModelCheck <> invariant2:15 var
+R608:617 Frap.ModelCheck <> invariant1:14 var
+R604:606 Frap.ModelCheck <> sys:13 var
+R635:652 Frap.ModelCheck <> oneStepClosure_new def
+R669:678 Frap.ModelCheck <> invariant2:15 var
+R658:667 Frap.ModelCheck <> invariant1:14 var
+R654:656 Frap.ModelCheck <> sys:13 var
+prf 690:709 <> prove_oneStepClosure
+binder 720:724 <> state:16
+R733:737 Frap.Invariant <> trsys rec
+R739:743 Frap.ModelCheck <> state:16 var
+binder 727:729 <> sys:17
+R764:767 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R759:763 Frap.ModelCheck <> state:16 var
+binder 747:750 <> inv1:18
+binder 752:755 <> inv2:19
+R777:777 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R807:813 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+binder 785:786 <> st:20
+R796:799 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R789:792 Frap.ModelCheck <> inv1:18 var
+R794:795 Frap.ModelCheck <> st:20 var
+R800:803 Frap.ModelCheck <> inv2:19 var
+R805:806 Frap.ModelCheck <> st:20 var
+R814:814 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R870:876 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+binder 822:823 <> st:21
+binder 825:827 <> st':22
+R837:840 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R830:833 Frap.ModelCheck <> inv1:18 var
+R835:836 Frap.ModelCheck <> st:21 var
+R858:861 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R846:849 Frap.Invariant <> Step proj
+R841:843 Frap.ModelCheck <> sys:17 var
+R855:857 Frap.ModelCheck <> st':22 var
+R852:853 Frap.ModelCheck <> st:21 var
+R862:865 Frap.ModelCheck <> inv2:19 var
+R867:869 Frap.ModelCheck <> st':22 var
+R877:890 Frap.ModelCheck <> oneStepClosure def
+R901:904 Frap.ModelCheck <> inv2:19 var
+R896:899 Frap.ModelCheck <> inv1:18 var
+R892:894 Frap.ModelCheck <> sys:17 var
+R923:936 Frap.ModelCheck <> oneStepClosure def
+ind 962:977 <> multiStepClosure
+constr 1078:1084 <> MscDone
+constr 1150:1156 <> MscStep
+binder 980:984 <> state:23
+R994:998 Frap.Invariant <> trsys rec
+R1000:1004 Frap.ModelCheck <> state:23 var
+binder 988:990 <> sys:24
+R1011:1011 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R1025:1029 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R1017:1020 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R1030:1030 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R1044:1048 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R1036:1039 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R1049:1049 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R1063:1067 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R1055:1058 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+binder 1095:1097 <> inv:27
+R1104:1119 Frap.ModelCheck <> multiStepClosure:25 ind
+R1144:1146 Frap.ModelCheck <> inv:27 var
+R1130:1137 Frap.Sets <> constant def
+R1139:1141 Coq.Init.Datatypes <> nil constr
+R1125:1127 Frap.ModelCheck <> inv:27 var
+R1121:1123 Frap.ModelCheck <> sys:24 var
+binder 1167:1169 <> inv:28
+binder 1171:1178 <> worklist:29
+binder 1180:1183 <> inv':30
+binder 1185:1189 <> inv'':31
+R1228:1235 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R1196:1209 Frap.ModelCheck <> oneStepClosure def
+R1224:1227 Frap.ModelCheck <> inv':30 var
+R1215:1222 Frap.ModelCheck <> worklist:29 var
+R1211:1213 Frap.ModelCheck <> sys:24 var
+R1299:1306 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R1236:1251 Frap.ModelCheck <> multiStepClosure:25 ind
+R1294:1298 Frap.ModelCheck <> inv'':31 var
+R1278:1288 Frap.Sets <> :::x_'\setminus'_x not
+R1274:1277 Frap.ModelCheck <> inv':30 var
+R1289:1291 Frap.ModelCheck <> inv:28 var
+R1261:1266 Frap.Sets <> :::x_'\cup'_x not
+R1258:1260 Frap.ModelCheck <> inv:28 var
+R1267:1270 Frap.ModelCheck <> inv':30 var
+R1253:1255 Frap.ModelCheck <> sys:24 var
+R1307:1322 Frap.ModelCheck <> multiStepClosure:25 ind
+R1341:1345 Frap.ModelCheck <> inv'':31 var
+R1332:1339 Frap.ModelCheck <> worklist:29 var
+R1328:1330 Frap.ModelCheck <> inv:28 var
+R1324:1326 Frap.ModelCheck <> sys:24 var
+scheme 962:977 <> multiStepClosure_ind
+scheme 962:977 <> multiStepClosure_sind
+prf 1355:1371 <> adding_irrelevant
+binder 1382:1382 <> A:32
+R1389:1389 Frap.ModelCheck <> A:32 var
+binder 1385:1385 <> s:33
+binder 1392:1394 <> inv:34
+binder 1396:1399 <> inv':35
+R1458:1464 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R1407:1411 Frap.Sets <> :::x_'\in'_x not
+R1406:1406 Frap.ModelCheck <> s:33 var
+R1412:1412 Frap.Sets <> :::x_'\setminus'_x not
+R1426:1438 Frap.Sets <> :::x_'\setminus'_x not
+R1457:1457 Frap.Sets <> :::x_'\setminus'_x not
+R1416:1421 Frap.Sets <> :::x_'\cup'_x not
+R1413:1415 Frap.ModelCheck <> inv:34 var
+R1422:1425 Frap.ModelCheck <> inv':35 var
+R1443:1453 Frap.Sets <> :::x_'\setminus'_x not
+R1439:1442 Frap.ModelCheck <> inv':35 var
+R1454:1456 Frap.ModelCheck <> inv:34 var
+R1466:1470 Frap.Sets <> :::x_'\in'_x not
+R1465:1465 Frap.ModelCheck <> s:33 var
+R1471:1473 Frap.ModelCheck <> inv:34 var
+R1509:1515 Coq.Logic.Classical_Prop <> classic prfax
+R1509:1515 Coq.Logic.Classical_Prop <> classic prfax
+prf 1546:1565 <> multiStepClosure_ok'
+binder 1576:1580 <> state:36
+R1589:1593 Frap.Invariant <> trsys rec
+R1595:1599 Frap.ModelCheck <> state:36 var
+binder 1583:1585 <> sys:37
+R1628:1631 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R1623:1627 Frap.ModelCheck <> state:36 var
+binder 1603:1605 <> inv:38
+binder 1607:1614 <> worklist:39
+binder 1616:1619 <> inv':40
+R1679:1684 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R1641:1656 Frap.ModelCheck <> multiStepClosure ind
+R1675:1678 Frap.ModelCheck <> inv':40 var
+R1666:1673 Frap.ModelCheck <> worklist:39 var
+R1662:1664 Frap.ModelCheck <> inv:38 var
+R1658:1660 Frap.ModelCheck <> sys:37 var
+R1685:1685 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R1723:1729 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+binder 1693:1694 <> st:41
+R1713:1716 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R1702:1708 Frap.Invariant <> Initial proj
+R1697:1699 Frap.ModelCheck <> sys:37 var
+R1711:1712 Frap.ModelCheck <> st:41 var
+R1717:1719 Frap.ModelCheck <> inv:38 var
+R1721:1722 Frap.ModelCheck <> st:41 var
+R1752:1757 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R1738:1748 Frap.Sets <> :::x_'\subseteq'_x not
+R1730:1737 Frap.ModelCheck <> worklist:39 var
+R1749:1751 Frap.ModelCheck <> inv:38 var
+R1758:1758 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R1899:1905 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+binder 1766:1766 <> s:42
+R1797:1822 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R1770:1774 Frap.Sets <> :::x_'\in'_x not
+R1769:1769 Frap.ModelCheck <> s:42 var
+R1778:1788 Frap.Sets <> :::x_'\setminus'_x not
+R1775:1777 Frap.ModelCheck <> inv:38 var
+R1789:1796 Frap.ModelCheck <> worklist:39 var
+binder 1830:1831 <> s':43
+R1849:1888 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R1839:1842 Frap.Invariant <> Step proj
+R1834:1836 Frap.ModelCheck <> sys:37 var
+R1847:1848 Frap.ModelCheck <> s':43 var
+R1845:1845 Frap.ModelCheck <> s:42 var
+R1891:1895 Frap.Sets <> :::x_'\in'_x not
+R1889:1890 Frap.ModelCheck <> s':43 var
+R1896:1898 Frap.ModelCheck <> inv:38 var
+R1906:1917 Frap.Invariant <> invariantFor def
+R1923:1926 Frap.ModelCheck <> inv':40 var
+R1919:1921 Frap.ModelCheck <> sys:37 var
+R1978:1996 Frap.Invariant <> invariant_induction thm
+R1978:1996 Frap.Invariant <> invariant_induction thm
+R2046:2050 Frap.Sets <> minus def
+R2220:2236 Frap.ModelCheck <> adding_irrelevant thm
+R2220:2236 Frap.ModelCheck <> adding_irrelevant thm
+R2257:2263 Coq.Logic.Classical_Prop <> classic prfax
+R2267:2271 Frap.Sets <> :::x_'\in'_x not
+R2257:2263 Coq.Logic.Classical_Prop <> classic prfax
+R2267:2271 Frap.Sets <> :::x_'\in'_x not
+prf 2433:2451 <> multiStepClosure_ok
+binder 2462:2466 <> state:44
+R2475:2479 Frap.Invariant <> trsys rec
+R2481:2485 Frap.ModelCheck <> state:44 var
+binder 2469:2471 <> sys:45
+R2500:2503 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R2495:2499 Frap.ModelCheck <> state:44 var
+binder 2489:2491 <> inv:46
+R2565:2570 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R2513:2528 Frap.ModelCheck <> multiStepClosure ind
+R2562:2564 Frap.ModelCheck <> inv:46 var
+R2553:2559 Frap.Invariant <> Initial proj
+R2548:2550 Frap.ModelCheck <> sys:45 var
+R2539:2545 Frap.Invariant <> Initial proj
+R2534:2536 Frap.ModelCheck <> sys:45 var
+R2530:2532 Frap.ModelCheck <> sys:45 var
+R2571:2582 Frap.Invariant <> invariantFor def
+R2588:2590 Frap.ModelCheck <> inv:46 var
+R2584:2586 Frap.ModelCheck <> sys:45 var
+R2617:2636 Frap.ModelCheck <> multiStepClosure_ok' thm
+R2617:2636 Frap.ModelCheck <> multiStepClosure_ok' thm
+prf 2672:2691 <> oneStepClosure_empty
+binder 2702:2706 <> state:47
+R2715:2719 Frap.Invariant <> trsys rec
+R2721:2725 Frap.ModelCheck <> state:47 var
+binder 2709:2711 <> sys:48
+R2731:2744 Frap.ModelCheck <> oneStepClosure def
+R2766:2773 Frap.Sets <> constant def
+R2775:2777 Coq.Init.Datatypes <> nil constr
+R2751:2758 Frap.Sets <> constant def
+R2760:2762 Coq.Init.Datatypes <> nil constr
+R2746:2748 Frap.ModelCheck <> sys:48 var
+R2797:2810 Frap.ModelCheck <> oneStepClosure def
+R2813:2834 Frap.ModelCheck <> oneStepClosure_current def
+R2837:2854 Frap.ModelCheck <> oneStepClosure_new def
+prf 2882:2901 <> oneStepClosure_split
+binder 2912:2916 <> state:49
+R2925:2929 Frap.Invariant <> trsys rec
+R2931:2935 Frap.ModelCheck <> state:49 var
+binder 2919:2921 <> sys:50
+binder 2938:2939 <> st:51
+binder 2941:2943 <> sts:52
+R2963:2966 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R2958:2962 Frap.ModelCheck <> state:49 var
+binder 2946:2949 <> inv1:53
+binder 2951:2954 <> inv2:54
+R2976:2976 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R3018:3024 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+binder 2984:2986 <> st':55
+R3006:3009 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R2994:2997 Frap.Invariant <> Step proj
+R2989:2991 Frap.ModelCheck <> sys:50 var
+R3003:3005 Frap.ModelCheck <> st':55 var
+R3000:3001 Frap.ModelCheck <> st:51 var
+R3010:3013 Frap.ModelCheck <> inv1:53 var
+R3015:3017 Frap.ModelCheck <> st':55 var
+R3063:3068 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R3025:3038 Frap.ModelCheck <> oneStepClosure def
+R3059:3062 Frap.ModelCheck <> inv2:54 var
+R3045:3052 Frap.Sets <> constant def
+R3054:3056 Frap.ModelCheck <> sts:52 var
+R3040:3042 Frap.ModelCheck <> sys:50 var
+R3069:3082 Frap.ModelCheck <> oneStepClosure def
+R3142:3147 Frap.Sets <> :::x_'\cup'_x not
+R3132:3137 Frap.Sets <> :::x_'\cup'_x not
+R3112:3119 Frap.Sets <> constant def
+R3124:3127 Coq.Init.Datatypes <> ::list_scope:x_'::'_x not
+R3122:3123 Frap.ModelCheck <> st:51 var
+R3128:3130 Coq.Init.Datatypes <> nil constr
+R3138:3141 Frap.ModelCheck <> inv1:53 var
+R3148:3151 Frap.ModelCheck <> inv2:54 var
+R3089:3096 Frap.Sets <> constant def
+R3101:3104 Coq.Init.Datatypes <> ::list_scope:x_'::'_x not
+R3099:3100 Frap.ModelCheck <> st:51 var
+R3105:3107 Frap.ModelCheck <> sts:52 var
+R3084:3086 Frap.ModelCheck <> sys:50 var
+R3171:3184 Frap.ModelCheck <> oneStepClosure def
+R3187:3208 Frap.ModelCheck <> oneStepClosure_current def
+R3211:3228 Frap.ModelCheck <> oneStepClosure_new def
+R3275:3279 Frap.Sets <> union def
+R3306:3310 Frap.Sets <> union def
+R3337:3341 Frap.Sets <> union def
+prf 3403:3414 <> singleton_in
+binder 3426:3426 <> A:56
+R3434:3434 Frap.ModelCheck <> A:56 var
+binder 3430:3430 <> x:57
+binder 3437:3440 <> rest:58
+R3445:3445 Frap.Sets <> :::x_'\cup'_x not
+R3465:3470 Frap.Sets <> :::x_'\cup'_x not
+R3475:3477 Frap.Sets <> :::x_'\cup'_x not
+R3446:3453 Frap.Sets <> constant def
+R3457:3460 Coq.Init.Datatypes <> ::list_scope:x_'::'_x not
+R3456:3456 Frap.ModelCheck <> x:57 var
+R3461:3463 Coq.Init.Datatypes <> nil constr
+R3471:3474 Frap.ModelCheck <> rest:58 var
+R3477:3477 Frap.ModelCheck <> x:57 var
+R3496:3500 Frap.Sets <> union def
+prf 3530:3547 <> singleton_in_other
+binder 3559:3559 <> A:59
+R3567:3567 Frap.ModelCheck <> A:59 var
+binder 3563:3563 <> x:60
+R3579:3581 Frap.Sets <> set def
+R3583:3583 Frap.ModelCheck <> A:59 var
+binder 3571:3572 <> s1:61
+binder 3574:3575 <> s2:62
+R3593:3598 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R3589:3590 Frap.ModelCheck <> s2:62 var
+R3592:3592 Frap.ModelCheck <> x:60 var
+R3599:3599 Frap.Sets <> :::x_'\cup'_x not
+R3602:3607 Frap.Sets <> :::x_'\cup'_x not
+R3610:3612 Frap.Sets <> :::x_'\cup'_x not
+R3600:3601 Frap.ModelCheck <> s1:61 var
+R3608:3609 Frap.ModelCheck <> s2:62 var
+R3612:3612 Frap.ModelCheck <> x:60 var
+R3631:3635 Frap.Sets <> union def
+ind 3690:3698 <> simulates
+constr 3803:3811 <> Simulates
+binder 3700:3705 <> state1:63
+binder 3707:3712 <> state2:64
+R3725:3728 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R3719:3724 Frap.ModelCheck <> state1:63 var
+R3735:3738 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R3729:3734 Frap.ModelCheck <> state2:64 var
+binder 3715:3715 <> R:65
+R3755:3759 Frap.Invariant <> trsys rec
+R3761:3766 Frap.ModelCheck <> state1:63 var
+binder 3748:3751 <> sys1:66
+R3777:3781 Frap.Invariant <> trsys rec
+R3783:3788 Frap.ModelCheck <> state2:64 var
+binder 3770:3773 <> sys2:67
+R3817:3817 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R3940:3946 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+binder 3825:3827 <> st1:70
+R3848:3866 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R3836:3842 Frap.Invariant <> Initial proj
+R3830:3833 Frap.ModelCheck <> sys1:66 var
+R3845:3847 Frap.ModelCheck <> st1:70 var
+R3867:3873 Coq.Init.Logic <> ::type_scope:'exists'_x_'..'_x_','_x not
+R3877:3878 Coq.Init.Logic <> ::type_scope:'exists'_x_'..'_x_','_x not
+binder 3874:3876 <> st2:71
+R3888:3921 Coq.Init.Logic <> ::type_scope:x_'/\'_x not
+R3879:3879 Frap.ModelCheck <> R:65 var
+R3885:3887 Frap.ModelCheck <> st2:71 var
+R3881:3883 Frap.ModelCheck <> st1:70 var
+R3928:3934 Frap.Invariant <> Initial proj
+R3922:3925 Frap.ModelCheck <> sys2:67 var
+R3937:3939 Frap.ModelCheck <> st2:71 var
+R3947:3947 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R4176:4182 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+binder 3955:3957 <> st1:72
+binder 3959:3961 <> st2:73
+R3973:3998 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R3964:3964 Frap.ModelCheck <> R:65 var
+R3970:3972 Frap.ModelCheck <> st2:73 var
+R3966:3968 Frap.ModelCheck <> st1:72 var
+binder 4006:4009 <> st1':74
+R4032:4073 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R4018:4021 Frap.Invariant <> Step proj
+R4012:4015 Frap.ModelCheck <> sys1:66 var
+R4028:4031 Frap.ModelCheck <> st1':74 var
+R4024:4026 Frap.ModelCheck <> st1:72 var
+R4074:4080 Coq.Init.Logic <> ::type_scope:'exists'_x_'..'_x_','_x not
+R4085:4086 Coq.Init.Logic <> ::type_scope:'exists'_x_'..'_x_','_x not
+binder 4081:4084 <> st2':75
+R4098:4155 Coq.Init.Logic <> ::type_scope:x_'/\'_x not
+R4087:4087 Frap.ModelCheck <> R:65 var
+R4094:4097 Frap.ModelCheck <> st2':75 var
+R4089:4092 Frap.ModelCheck <> st1':74 var
+R4162:4165 Frap.Invariant <> Step proj
+R4156:4159 Frap.ModelCheck <> sys2:67 var
+R4172:4175 Frap.ModelCheck <> st2':75 var
+R4168:4170 Frap.ModelCheck <> st2:73 var
+R4183:4191 Frap.ModelCheck <> simulates:68 ind
+R4200:4203 Frap.ModelCheck <> sys2:67 var
+R4195:4198 Frap.ModelCheck <> sys1:66 var
+R4193:4193 Frap.ModelCheck <> R:65 var
+scheme 3690:3698 <> simulates_rect
+scheme 3690:3698 <> simulates_ind
+scheme 3690:3698 <> simulates_rec
+scheme 3690:3698 <> simulates_sind
+ind 4217:4238 <> invariantViaSimulation
+constr 4335:4356 <> InvariantViaSimulation
+binder 4240:4245 <> state1:76
+binder 4247:4252 <> state2:77
+R4265:4268 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R4259:4264 Frap.ModelCheck <> state1:76 var
+R4275:4278 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R4269:4274 Frap.ModelCheck <> state2:77 var
+binder 4255:4255 <> R:78
+R4301:4304 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R4295:4300 Frap.ModelCheck <> state2:77 var
+binder 4288:4291 <> inv2:79
+R4321:4324 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+binder 4367:4369 <> st1:82
+binder 4371:4373 <> st2:83
+R4385:4390 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R4376:4376 Frap.ModelCheck <> R:78 var
+R4382:4384 Frap.ModelCheck <> st2:83 var
+R4378:4380 Frap.ModelCheck <> st1:82 var
+R4399:4404 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R4391:4394 Frap.ModelCheck <> inv2:79 var
+R4396:4398 Frap.ModelCheck <> st2:83 var
+R4405:4426 Frap.ModelCheck <> invariantViaSimulation:80 ind
+R4435:4437 Frap.ModelCheck <> st1:82 var
+R4430:4433 Frap.ModelCheck <> inv2:79 var
+R4428:4428 Frap.ModelCheck <> R:78 var
+scheme 4217:4238 <> invariantViaSimulation_ind
+scheme 4217:4238 <> invariantViaSimulation_sind
+prf 4447:4466 <> invariant_simulates'
+binder 4477:4482 <> state1:84
+binder 4484:4489 <> state2:85
+R4502:4505 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R4496:4501 Frap.ModelCheck <> state1:84 var
+R4512:4515 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R4506:4511 Frap.ModelCheck <> state2:85 var
+binder 4492:4492 <> R:86
+R4532:4536 Frap.Invariant <> trsys rec
+R4538:4543 Frap.ModelCheck <> state1:84 var
+binder 4525:4528 <> sys1:87
+R4554:4558 Frap.Invariant <> trsys rec
+R4560:4565 Frap.ModelCheck <> state2:85 var
+binder 4547:4550 <> sys2:88
+R4571:4571 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R4793:4799 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+binder 4579:4581 <> st1:89
+binder 4583:4585 <> st2:90
+R4597:4619 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R4588:4588 Frap.ModelCheck <> R:86 var
+R4594:4596 Frap.ModelCheck <> st2:90 var
+R4590:4592 Frap.ModelCheck <> st1:89 var
+binder 4627:4630 <> st1':91
+R4653:4692 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R4639:4642 Frap.Invariant <> Step proj
+R4633:4636 Frap.ModelCheck <> sys1:87 var
+R4649:4652 Frap.ModelCheck <> st1':91 var
+R4645:4647 Frap.ModelCheck <> st1:89 var
+R4693:4699 Coq.Init.Logic <> ::type_scope:'exists'_x_'..'_x_','_x not
+R4704:4705 Coq.Init.Logic <> ::type_scope:'exists'_x_'..'_x_','_x not
+binder 4700:4703 <> st2':92
+R4717:4772 Coq.Init.Logic <> ::type_scope:x_'/\'_x not
+R4706:4706 Frap.ModelCheck <> R:86 var
+R4713:4716 Frap.ModelCheck <> st2':92 var
+R4708:4711 Frap.ModelCheck <> st1':91 var
+R4779:4782 Frap.Invariant <> Step proj
+R4773:4776 Frap.ModelCheck <> sys2:88 var
+R4789:4792 Frap.ModelCheck <> st2':92 var
+R4785:4787 Frap.ModelCheck <> st2:90 var
+binder 4807:4809 <> st1:93
+binder 4811:4814 <> st1':94
+R4839:4864 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R4828:4838 Frap.Relations <> :::x_'^*' not
+R4823:4826 Frap.Invariant <> Step proj
+R4817:4820 Frap.ModelCheck <> sys1:87 var
+R4835:4838 Frap.ModelCheck <> st1':94 var
+R4831:4833 Frap.ModelCheck <> st1:93 var
+binder 4872:4874 <> st2:95
+R4886:4926 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R4877:4877 Frap.ModelCheck <> R:86 var
+R4883:4885 Frap.ModelCheck <> st2:95 var
+R4879:4881 Frap.ModelCheck <> st1:93 var
+R4927:4933 Coq.Init.Logic <> ::type_scope:'exists'_x_'..'_x_','_x not
+R4938:4939 Coq.Init.Logic <> ::type_scope:'exists'_x_'..'_x_','_x not
+binder 4934:4937 <> st2':96
+R4951:5007 Coq.Init.Logic <> ::type_scope:x_'/\'_x not
+R4940:4940 Frap.ModelCheck <> R:86 var
+R4947:4950 Frap.ModelCheck <> st2':96 var
+R4942:4945 Frap.ModelCheck <> st1':94 var
+R5019:5029 Frap.Relations <> :::x_'^*' not
+R5014:5017 Frap.Invariant <> Step proj
+R5008:5011 Frap.ModelCheck <> sys2:88 var
+R5026:5029 Frap.ModelCheck <> st2':96 var
+R5022:5024 Frap.ModelCheck <> st2:95 var
+R5192:5213 Frap.ModelCheck <> invariantViaSimulation ind
+prf 5232:5250 <> invariant_simulates
+binder 5261:5266 <> state1:97
+binder 5268:5273 <> state2:98
+R5286:5289 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R5280:5285 Frap.ModelCheck <> state1:97 var
+R5296:5299 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R5290:5295 Frap.ModelCheck <> state2:98 var
+binder 5276:5276 <> R:99
+R5316:5320 Frap.Invariant <> trsys rec
+R5322:5327 Frap.ModelCheck <> state1:97 var
+binder 5309:5312 <> sys1:100
+R5338:5342 Frap.Invariant <> trsys rec
+R5344:5349 Frap.ModelCheck <> state2:98 var
+binder 5331:5334 <> sys2:101
+R5366:5369 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R5360:5365 Frap.ModelCheck <> state2:98 var
+binder 5353:5356 <> inv2:102
+R5400:5405 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R5379:5387 Frap.ModelCheck <> simulates ind
+R5396:5399 Frap.ModelCheck <> sys2:101 var
+R5391:5394 Frap.ModelCheck <> sys1:100 var
+R5389:5389 Frap.ModelCheck <> R:99 var
+R5428:5433 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R5406:5417 Frap.Invariant <> invariantFor def
+R5424:5427 Frap.ModelCheck <> inv2:102 var
+R5419:5422 Frap.ModelCheck <> sys2:101 var
+R5434:5445 Frap.Invariant <> invariantFor def
+R5453:5474 Frap.ModelCheck <> invariantViaSimulation ind
+R5478:5481 Frap.ModelCheck <> inv2:102 var
+R5476:5476 Frap.ModelCheck <> R:99 var
+R5447:5450 Frap.ModelCheck <> sys1:100 var
+R5530:5541 Frap.Invariant <> invariantFor def
+R5592:5611 Frap.ModelCheck <> invariant_simulates' thm
+R5592:5611 Frap.ModelCheck <> invariant_simulates' thm

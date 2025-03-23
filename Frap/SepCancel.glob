@@ -1,0 +1,996 @@
+DIGEST 3a9fc72c5c679b1a34c99299024ecfa6
+FFrap.SepCancel
+R248:251 Frap.Frap <> <> lib
+R253:258 Coq.Setoids.Setoid <> <> lib
+R260:276 Coq.Classes.Morphisms <> <> lib
+modtype 317:319 <> SEP
+ax 334:338 SEP hprop
+ax 360:363 SEP lift
+R371:374 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R375:379 Frap.SepCancel SEP hprop defax
+ax 394:397 SEP star
+R406:409 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R401:405 Frap.SepCancel SEP hprop defax
+R415:418 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R410:414 Frap.SepCancel SEP hprop defax
+R419:423 Frap.SepCancel SEP hprop defax
+ax 438:441 SEP exis
+binder 452:452 <> A:7
+R455:455 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R466:470 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R457:460 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R456:456 Frap.SepCancel <> A:7 var
+R461:465 Frap.SepCancel SEP hprop defax
+R471:475 Frap.SepCancel SEP hprop defax
+R504:507 Frap.SepCancel SEP lift defax
+not 490:490 SEP :::'[|'_x_'|]'
+R528:531 Frap.SepCancel SEP star defax
+not 521:521 SEP :::x_'*'_x
+R571:574 Frap.SepCancel SEP exis defax
+binder 581:581 <> x:10
+R590:593 Frap.SepCancel SEP exis defax
+binder 600:600 <> y:11
+not 545:545 SEP :::'exists'_x_'..'_x_','_x
+ax 629:632 SEP himp
+ax 634:636 SEP heq
+R645:648 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R640:644 Frap.SepCancel SEP hprop defax
+R654:657 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R649:653 Frap.SepCancel SEP hprop defax
+R682:684 Frap.SepCancel SEP heq defax
+not 673:673 SEP :::x_'==='_x
+R737:740 Frap.SepCancel SEP himp defax
+not 727:727 SEP :::x_'===>'_x
+ax 784:791 SEP himp_heq
+binder 802:802 <> p:16
+binder 804:804 <> q:17
+R814:850 Coq.Init.Logic <> ::type_scope:x_'<->'_x not
+R871:871 Coq.Init.Logic <> ::type_scope:x_'<->'_x not
+R808:812 Frap.SepCancel SEP :::x_'==='_x not
+R807:807 Frap.SepCancel <> p:16 var
+R813:813 Frap.SepCancel <> q:17 var
+R859:862 Coq.Init.Logic <> ::type_scope:x_'/\'_x not
+R852:857 Frap.SepCancel SEP :::x_'===>'_x not
+R851:851 Frap.SepCancel <> p:16 var
+R858:858 Frap.SepCancel <> q:17 var
+R864:869 Frap.SepCancel SEP :::x_'===>'_x not
+R863:863 Frap.SepCancel <> q:17 var
+R870:870 Frap.SepCancel <> p:16 var
+ax 882:890 SEP himp_refl
+binder 901:901 <> p:20
+R905:910 Frap.SepCancel SEP :::x_'===>'_x not
+R904:904 Frap.SepCancel <> p:20 var
+R911:911 Frap.SepCancel <> p:20 var
+ax 922:931 SEP himp_trans
+binder 942:942 <> p:23
+binder 944:944 <> q:24
+binder 946:946 <> r:25
+R957:960 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R950:955 Frap.SepCancel SEP :::x_'===>'_x not
+R949:949 Frap.SepCancel <> p:23 var
+R956:956 Frap.SepCancel <> q:24 var
+R969:972 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R962:967 Frap.SepCancel SEP :::x_'===>'_x not
+R961:961 Frap.SepCancel <> q:24 var
+R968:968 Frap.SepCancel <> r:25 var
+R974:979 Frap.SepCancel SEP :::x_'===>'_x not
+R973:973 Frap.SepCancel <> p:23 var
+R980:980 Frap.SepCancel <> r:25 var
+ax 992:1000 SEP lift_left
+binder 1011:1011 <> p:28
+binder 1014:1014 <> Q:29
+binder 1024:1024 <> r:30
+R1031:1031 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R1045:1053 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R1033:1036 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R1032:1032 Frap.SepCancel <> Q:29 var
+R1038:1043 Frap.SepCancel SEP :::x_'===>'_x not
+R1037:1037 Frap.SepCancel <> p:28 var
+R1044:1044 Frap.SepCancel <> r:30 var
+R1065:1070 Frap.SepCancel SEP :::x_'===>'_x not
+R1055:1057 Frap.SepCancel SEP :::x_'*'_x not
+R1054:1054 Frap.SepCancel <> p:28 var
+R1058:1060 Frap.SepCancel SEP :::'[|'_x_'|]' not
+R1062:1064 Frap.SepCancel SEP :::'[|'_x_'|]' not
+R1061:1061 Frap.SepCancel <> Q:29 var
+R1071:1071 Frap.SepCancel <> r:30 var
+ax 1082:1091 SEP lift_right
+binder 1102:1102 <> p:33
+binder 1104:1104 <> q:34
+binder 1107:1107 <> R:35
+R1130:1137 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R1123:1128 Frap.SepCancel SEP :::x_'===>'_x not
+R1122:1122 Frap.SepCancel <> p:33 var
+R1129:1129 Frap.SepCancel <> q:34 var
+R1139:1146 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R1138:1138 Frap.SepCancel <> R:35 var
+R1148:1153 Frap.SepCancel SEP :::x_'===>'_x not
+R1147:1147 Frap.SepCancel <> p:33 var
+R1155:1157 Frap.SepCancel SEP :::x_'*'_x not
+R1154:1154 Frap.SepCancel <> q:34 var
+R1158:1160 Frap.SepCancel SEP :::'[|'_x_'|]' not
+R1162:1164 Frap.SepCancel SEP :::'[|'_x_'|]' not
+R1161:1161 Frap.SepCancel <> R:35 var
+ax 1175:1184 SEP extra_lift
+binder 1196:1196 <> P:38
+binder 1206:1206 <> p:39
+R1214:1221 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R1213:1213 Frap.SepCancel <> P:38 var
+R1223:1227 Frap.SepCancel SEP :::x_'==='_x not
+R1222:1222 Frap.SepCancel <> p:39 var
+R1235:1237 Frap.SepCancel SEP :::x_'*'_x not
+R1228:1230 Frap.SepCancel SEP :::'[|'_x_'|]' not
+R1232:1234 Frap.SepCancel SEP :::'[|'_x_'|]' not
+R1231:1231 Frap.SepCancel <> P:38 var
+R1238:1238 Frap.SepCancel <> p:39 var
+ax 1250:1258 SEP star_comm
+binder 1269:1269 <> p:42
+binder 1271:1271 <> q:43
+R1279:1283 Frap.SepCancel SEP :::x_'==='_x not
+R1275:1277 Frap.SepCancel SEP :::x_'*'_x not
+R1274:1274 Frap.SepCancel <> p:42 var
+R1278:1278 Frap.SepCancel <> q:43 var
+R1285:1287 Frap.SepCancel SEP :::x_'*'_x not
+R1284:1284 Frap.SepCancel <> q:43 var
+R1288:1288 Frap.SepCancel <> p:42 var
+ax 1299:1308 SEP star_assoc
+binder 1319:1319 <> p:46
+binder 1321:1321 <> q:47
+binder 1323:1323 <> r:48
+R1337:1341 Frap.SepCancel SEP :::x_'==='_x not
+R1327:1330 Frap.SepCancel SEP :::x_'*'_x not
+R1336:1336 Frap.SepCancel SEP :::x_'*'_x not
+R1326:1326 Frap.SepCancel <> p:46 var
+R1332:1334 Frap.SepCancel SEP :::x_'*'_x not
+R1331:1331 Frap.SepCancel <> q:47 var
+R1335:1335 Frap.SepCancel <> r:48 var
+R1342:1342 Frap.SepCancel SEP :::x_'*'_x not
+R1348:1351 Frap.SepCancel SEP :::x_'*'_x not
+R1344:1346 Frap.SepCancel SEP :::x_'*'_x not
+R1343:1343 Frap.SepCancel <> p:46 var
+R1347:1347 Frap.SepCancel <> q:47 var
+R1352:1352 Frap.SepCancel <> r:48 var
+ax 1363:1373 SEP star_cancel
+binder 1384:1385 <> p1:51
+binder 1387:1388 <> p2:52
+binder 1390:1391 <> q1:53
+binder 1393:1394 <> q2:54
+R1407:1414 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R1399:1404 Frap.SepCancel SEP :::x_'===>'_x not
+R1397:1398 Frap.SepCancel <> p1:51 var
+R1405:1406 Frap.SepCancel <> p2:52 var
+R1425:1432 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R1417:1422 Frap.SepCancel SEP :::x_'===>'_x not
+R1415:1416 Frap.SepCancel <> q1:53 var
+R1423:1424 Frap.SepCancel <> q2:54 var
+R1440:1445 Frap.SepCancel SEP :::x_'===>'_x not
+R1435:1437 Frap.SepCancel SEP :::x_'*'_x not
+R1433:1434 Frap.SepCancel <> p1:51 var
+R1438:1439 Frap.SepCancel <> q1:53 var
+R1448:1450 Frap.SepCancel SEP :::x_'*'_x not
+R1446:1447 Frap.SepCancel <> p2:52 var
+R1451:1452 Frap.SepCancel <> q2:54 var
+ax 1464:1472 SEP exis_gulp
+binder 1483:1483 <> A:57
+binder 1485:1485 <> p:58
+R1493:1496 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R1492:1492 Frap.SepCancel <> A:57 var
+binder 1488:1488 <> q:59
+R1515:1519 Frap.SepCancel SEP :::x_'==='_x not
+R1506:1508 Frap.SepCancel SEP :::x_'*'_x not
+R1505:1505 Frap.SepCancel <> p:58 var
+R1509:1512 Frap.SepCancel SEP exis defax
+R1514:1514 Frap.SepCancel <> q:59 var
+R1520:1523 Frap.SepCancel SEP exis defax
+binder 1530:1530 <> x:60
+R1536:1538 Frap.SepCancel SEP :::x_'*'_x not
+R1535:1535 Frap.SepCancel <> p:58 var
+R1539:1539 Frap.SepCancel <> q:59 var
+R1541:1541 Frap.SepCancel <> x:60 var
+ax 1553:1561 SEP exis_left
+binder 1572:1572 <> A:63
+R1580:1583 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R1579:1579 Frap.SepCancel <> A:63 var
+binder 1575:1575 <> p:64
+binder 1587:1587 <> q:65
+R1594:1594 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R1615:1623 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+binder 1602:1602 <> x:66
+R1608:1613 Frap.SepCancel SEP :::x_'===>'_x not
+R1605:1605 Frap.SepCancel <> p:64 var
+R1607:1607 Frap.SepCancel <> x:66 var
+R1614:1614 Frap.SepCancel <> q:65 var
+R1630:1635 Frap.SepCancel SEP :::x_'===>'_x not
+R1624:1627 Frap.SepCancel SEP exis defax
+R1629:1629 Frap.SepCancel <> p:64 var
+R1636:1636 Frap.SepCancel <> q:65 var
+ax 1647:1656 SEP exis_right
+binder 1667:1667 <> A:69
+binder 1669:1669 <> p:70
+R1677:1680 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R1676:1676 Frap.SepCancel <> A:69 var
+binder 1672:1672 <> q:71
+binder 1684:1684 <> x:72
+R1701:1708 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R1692:1697 Frap.SepCancel SEP :::x_'===>'_x not
+R1691:1691 Frap.SepCancel <> p:70 var
+R1698:1698 Frap.SepCancel <> q:71 var
+R1700:1700 Frap.SepCancel <> x:72 var
+R1710:1715 Frap.SepCancel SEP :::x_'===>'_x not
+R1709:1709 Frap.SepCancel <> p:70 var
+R1716:1719 Frap.SepCancel SEP exis defax
+R1721:1721 Frap.SepCancel <> q:71 var
+R1728:1730 Frap.SepCancel SEP <> modtype
+R1757:1759 Frap.SepCancel SEP <> mod
+mod 1741:1744 <> Make
+R1791:1795 Frap.SepCancel S hprop defax
+R1797:1800 Frap.SepCancel S himp defax
+R1791:1795 Frap.SepCancel S hprop defax
+R1797:1800 Frap.SepCancel S himp defax
+R1828:1836 Frap.SepCancel S himp_refl prfax
+R1791:1795 Frap.SepCancel S hprop defax
+R1797:1800 Frap.SepCancel S himp defax
+R1865:1874 Frap.SepCancel S himp_trans prfax
+R1791:1795 Frap.SepCancel S hprop defax
+R1797:1800 Frap.SepCancel S himp defax
+R1828:1836 Frap.SepCancel S himp_refl prfax
+R1865:1874 Frap.SepCancel S himp_trans prfax
+prf 1902:1909 Make heq_refl
+binder 1920:1920 <> p:75
+R1924:1928 Frap.SepCancel SEP :::x_'==='_x not
+R1923:1923 Frap.SepCancel <> p:75 var
+R1929:1929 Frap.SepCancel <> p:75 var
+R1959:1966 Frap.SepCancel S himp_heq prfax
+R1986:1994 Frap.SepCancel S himp_refl prfax
+R1959:1966 Frap.SepCancel S himp_heq prfax
+R1986:1994 Frap.SepCancel S himp_refl prfax
+R1986:1994 Frap.SepCancel S himp_refl prfax
+prf 2014:2020 Make heq_sym
+binder 2031:2031 <> p:76
+binder 2033:2033 <> q:77
+R2043:2046 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R2037:2041 Frap.SepCancel SEP :::x_'==='_x not
+R2036:2036 Frap.SepCancel <> p:76 var
+R2042:2042 Frap.SepCancel <> q:77 var
+R2048:2052 Frap.SepCancel SEP :::x_'==='_x not
+R2047:2047 Frap.SepCancel <> q:77 var
+R2053:2053 Frap.SepCancel <> p:76 var
+R2083:2090 Frap.SepCancel S himp_heq prfax
+R2099:2106 Frap.SepCancel S himp_heq prfax
+R2083:2090 Frap.SepCancel S himp_heq prfax
+R2099:2106 Frap.SepCancel S himp_heq prfax
+prf 2141:2149 Make heq_trans
+binder 2160:2160 <> p:78
+binder 2162:2162 <> q:79
+binder 2164:2164 <> r:80
+R2174:2177 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R2168:2172 Frap.SepCancel SEP :::x_'==='_x not
+R2167:2167 Frap.SepCancel <> p:78 var
+R2173:2173 Frap.SepCancel <> q:79 var
+R2185:2188 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R2179:2183 Frap.SepCancel SEP :::x_'==='_x not
+R2178:2178 Frap.SepCancel <> q:79 var
+R2184:2184 Frap.SepCancel <> r:80 var
+R2190:2194 Frap.SepCancel SEP :::x_'==='_x not
+R2189:2189 Frap.SepCancel <> p:78 var
+R2195:2195 Frap.SepCancel <> r:80 var
+R2225:2232 Frap.SepCancel S himp_heq prfax
+R2241:2248 Frap.SepCancel S himp_heq prfax
+R2262:2269 Frap.SepCancel S himp_heq prfax
+R2305:2314 Frap.SepCancel S himp_trans prfax
+R2225:2232 Frap.SepCancel S himp_heq prfax
+R2241:2248 Frap.SepCancel S himp_heq prfax
+R2262:2269 Frap.SepCancel S himp_heq prfax
+R2305:2314 Frap.SepCancel S himp_trans prfax
+R2305:2314 Frap.SepCancel S himp_trans prfax
+R2354:2358 Frap.SepCancel S hprop defax
+R2360:2362 Frap.SepCancel S heq defax
+R2354:2358 Frap.SepCancel S hprop defax
+R2360:2362 Frap.SepCancel S heq defax
+R2390:2397 Frap.SepCancel Make heq_refl thm
+R2354:2358 Frap.SepCancel S hprop defax
+R2360:2362 Frap.SepCancel S heq defax
+R2422:2428 Frap.SepCancel Make heq_sym thm
+R2354:2358 Frap.SepCancel S hprop defax
+R2360:2362 Frap.SepCancel S heq defax
+R2457:2465 Frap.SepCancel Make heq_trans thm
+R2354:2358 Frap.SepCancel S hprop defax
+R2360:2362 Frap.SepCancel S heq defax
+R2390:2397 Frap.SepCancel Make heq_refl thm
+R2422:2428 Frap.SepCancel Make heq_sym thm
+R2457:2465 Frap.SepCancel Make heq_trans thm
+inst 2502:2513 Make himp_heq_mor
+R2517:2522 Coq.Classes.Morphisms <> Proper class
+R2546:2549 Frap.SepCancel S himp defax
+R2528:2532 Coq.Classes.Morphisms ProperNotations ::signature_scope:x_'==>'_x not
+R2525:2527 Frap.SepCancel S heq defax
+R2536:2540 Coq.Classes.Morphisms ProperNotations ::signature_scope:x_'==>'_x not
+R2533:2535 Frap.SepCancel S heq defax
+R2541:2543 Coq.Init.Logic <> iff def
+R2601:2608 Frap.SepCancel S himp_heq prfax
+R2622:2629 Frap.SepCancel S himp_heq prfax
+R2601:2608 Frap.SepCancel S himp_heq prfax
+R2622:2629 Frap.SepCancel S himp_heq prfax
+R2664:2673 Frap.SepCancel S himp_trans prfax
+R2664:2673 Frap.SepCancel S himp_trans prfax
+R2664:2673 Frap.SepCancel S himp_trans prfax
+R2737:2741 Coq.Classes.Morphisms ProperNotations ::signature_scope:x_'==>'_x not
+R2734:2736 Frap.SepCancel S heq defax
+R2745:2749 Coq.Classes.Morphisms ProperNotations ::signature_scope:x_'==>'_x not
+R2742:2744 Frap.SepCancel S heq defax
+R2750:2752 Frap.SepCancel S heq defax
+R2712:2715 Frap.SepCancel S star defax
+R2796:2803 Frap.SepCancel S himp_heq prfax
+R2812:2819 Frap.SepCancel S himp_heq prfax
+R2833:2840 Frap.SepCancel S himp_heq prfax
+R2875:2885 Frap.SepCancel S star_cancel prfax
+R2796:2803 Frap.SepCancel S himp_heq prfax
+R2812:2819 Frap.SepCancel S himp_heq prfax
+R2833:2840 Frap.SepCancel S himp_heq prfax
+R2875:2885 Frap.SepCancel S star_cancel prfax
+R2875:2885 Frap.SepCancel S star_cancel prfax
+R2951:2955 Coq.Classes.Morphisms ProperNotations ::signature_scope:x_'==>'_x not
+R2947:2950 Frap.SepCancel S himp defax
+R2960:2964 Coq.Classes.Morphisms ProperNotations ::signature_scope:x_'==>'_x not
+R2956:2959 Frap.SepCancel S himp defax
+R2965:2968 Frap.SepCancel S himp defax
+R2925:2928 Frap.SepCancel S star defax
+R3010:3020 Frap.SepCancel S star_cancel prfax
+R3010:3020 Frap.SepCancel S star_cancel prfax
+inst 3049:3065 Make exis_iff_morphism
+binder 3068:3068 <> A:81
+R3084:3089 Coq.Classes.Morphisms <> Proper class
+R3128:3131 Frap.SepCancel S exis defax
+R3133:3133 Frap.SepCancel <> A:81 var
+R3116:3120 Coq.Classes.Morphisms ProperNotations ::signature_scope:x_'==>'_x not
+R3092:3109 Coq.Classes.Morphisms <> pointwise_relation def
+R3113:3115 Frap.SepCancel S heq defax
+R3111:3111 Frap.SepCancel <> A:81 var
+R3121:3123 Frap.SepCancel S heq defax
+R3169:3176 Frap.SepCancel S himp_heq prfax
+R3169:3176 Frap.SepCancel S himp_heq prfax
+R3214:3222 Frap.SepCancel S exis_left prfax
+R3214:3222 Frap.SepCancel S exis_left prfax
+R3243:3252 Frap.SepCancel S exis_right prfax
+R3243:3252 Frap.SepCancel S exis_right prfax
+R3271:3275 Frap.SepCancel SEP :::x_'==='_x not
+R3271:3275 Frap.SepCancel SEP :::x_'==='_x not
+R3302:3309 Frap.SepCancel S himp_heq prfax
+R3302:3309 Frap.SepCancel S himp_heq prfax
+R3359:3367 Frap.SepCancel S exis_left prfax
+R3359:3367 Frap.SepCancel S exis_left prfax
+R3388:3397 Frap.SepCancel S exis_right prfax
+R3388:3397 Frap.SepCancel S exis_right prfax
+R3416:3420 Frap.SepCancel SEP :::x_'==='_x not
+R3416:3420 Frap.SepCancel SEP :::x_'==='_x not
+R3447:3454 Frap.SepCancel S himp_heq prfax
+R3447:3454 Frap.SepCancel S himp_heq prfax
+inst 3506:3522 Make exis_imp_morphism
+binder 3525:3525 <> A:82
+R3541:3546 Coq.Classes.Morphisms <> Proper class
+R3587:3590 Frap.SepCancel S exis defax
+R3592:3592 Frap.SepCancel <> A:82 var
+R3574:3578 Coq.Classes.Morphisms ProperNotations ::signature_scope:x_'==>'_x not
+R3549:3566 Coq.Classes.Morphisms <> pointwise_relation def
+R3570:3573 Frap.SepCancel S himp defax
+R3568:3568 Frap.SepCancel <> A:82 var
+R3579:3582 Frap.SepCancel S himp defax
+R3632:3640 Frap.SepCancel S exis_left prfax
+R3632:3640 Frap.SepCancel S exis_left prfax
+R3661:3670 Frap.SepCancel S exis_right prfax
+R3661:3670 Frap.SepCancel S exis_right prfax
+R3684:3701 Coq.Classes.Morphisms <> pointwise_relation def
+prf 3736:3753 Make star_combine_lift1
+binder 3764:3764 <> P:83
+binder 3766:3766 <> Q:84
+R3786:3791 Frap.SepCancel SEP :::x_'===>'_x not
+R3776:3778 Frap.SepCancel SEP :::x_'*'_x not
+R3769:3771 Frap.SepCancel SEP :::'[|'_x_'|]' not
+R3773:3775 Frap.SepCancel SEP :::'[|'_x_'|]' not
+R3772:3772 Frap.SepCancel <> P:83 var
+R3779:3781 Frap.SepCancel SEP :::'[|'_x_'|]' not
+R3783:3785 Frap.SepCancel SEP :::'[|'_x_'|]' not
+R3782:3782 Frap.SepCancel <> Q:84 var
+R3792:3794 Frap.SepCancel SEP :::'[|'_x_'|]' not
+R3801:3803 Frap.SepCancel SEP :::'[|'_x_'|]' not
+R3796:3799 Coq.Init.Logic <> ::type_scope:x_'/\'_x not
+R3795:3795 Frap.SepCancel <> P:83 var
+R3800:3800 Frap.SepCancel <> Q:84 var
+R3837:3845 Frap.SepCancel S lift_left prfax
+R3837:3845 Frap.SepCancel S lift_left prfax
+R3889:3892 Coq.Init.Logic <> True ind
+R3867:3876 Frap.SepCancel S extra_lift prfax
+R3889:3892 Coq.Init.Logic <> True ind
+R3867:3876 Frap.SepCancel S extra_lift prfax
+R3889:3892 Coq.Init.Logic <> True ind
+R3867:3876 Frap.SepCancel S extra_lift prfax
+R3889:3892 Coq.Init.Logic <> True ind
+R3867:3876 Frap.SepCancel S extra_lift prfax
+R3912:3920 Frap.SepCancel S lift_left prfax
+R3912:3920 Frap.SepCancel S lift_left prfax
+R3964:3967 Coq.Init.Logic <> True ind
+R3976:3978 Frap.SepCancel SEP :::'[|'_x_'|]' not
+R3985:3987 Frap.SepCancel SEP :::'[|'_x_'|]' not
+R3980:3983 Coq.Init.Logic <> ::type_scope:x_'/\'_x not
+R3942:3951 Frap.SepCancel S extra_lift prfax
+R3964:3967 Coq.Init.Logic <> True ind
+R3976:3978 Frap.SepCancel SEP :::'[|'_x_'|]' not
+R3985:3987 Frap.SepCancel SEP :::'[|'_x_'|]' not
+R3980:3983 Coq.Init.Logic <> ::type_scope:x_'/\'_x not
+R3942:3951 Frap.SepCancel S extra_lift prfax
+R3964:3967 Coq.Init.Logic <> True ind
+R3976:3978 Frap.SepCancel SEP :::'[|'_x_'|]' not
+R3985:3987 Frap.SepCancel SEP :::'[|'_x_'|]' not
+R3980:3983 Coq.Init.Logic <> ::type_scope:x_'/\'_x not
+R3942:3951 Frap.SepCancel S extra_lift prfax
+R3964:3967 Coq.Init.Logic <> True ind
+R3976:3978 Frap.SepCancel SEP :::'[|'_x_'|]' not
+R3985:3987 Frap.SepCancel SEP :::'[|'_x_'|]' not
+R3980:3983 Coq.Init.Logic <> ::type_scope:x_'/\'_x not
+R3942:3951 Frap.SepCancel S extra_lift prfax
+R4007:4016 Frap.SepCancel S lift_right prfax
+R4007:4016 Frap.SepCancel S lift_right prfax
+prf 4063:4080 Make star_combine_lift2
+binder 4091:4091 <> P:85
+binder 4093:4093 <> Q:86
+R4108:4113 Frap.SepCancel SEP :::x_'===>'_x not
+R4096:4098 Frap.SepCancel SEP :::'[|'_x_'|]' not
+R4105:4107 Frap.SepCancel SEP :::'[|'_x_'|]' not
+R4100:4103 Coq.Init.Logic <> ::type_scope:x_'/\'_x not
+R4099:4099 Frap.SepCancel <> P:85 var
+R4104:4104 Frap.SepCancel <> Q:86 var
+R4121:4123 Frap.SepCancel SEP :::x_'*'_x not
+R4114:4116 Frap.SepCancel SEP :::'[|'_x_'|]' not
+R4118:4120 Frap.SepCancel SEP :::'[|'_x_'|]' not
+R4117:4117 Frap.SepCancel <> P:85 var
+R4124:4126 Frap.SepCancel SEP :::'[|'_x_'|]' not
+R4128:4130 Frap.SepCancel SEP :::'[|'_x_'|]' not
+R4127:4127 Frap.SepCancel <> Q:86 var
+R4188:4191 Coq.Init.Logic <> True ind
+R4166:4175 Frap.SepCancel S extra_lift prfax
+R4188:4191 Coq.Init.Logic <> True ind
+R4166:4175 Frap.SepCancel S extra_lift prfax
+R4188:4191 Coq.Init.Logic <> True ind
+R4166:4175 Frap.SepCancel S extra_lift prfax
+R4188:4191 Coq.Init.Logic <> True ind
+R4166:4175 Frap.SepCancel S extra_lift prfax
+R4211:4219 Frap.SepCancel S lift_left prfax
+R4211:4219 Frap.SepCancel S lift_left prfax
+R4239:4248 Frap.SepCancel S lift_right prfax
+R4239:4248 Frap.SepCancel S lift_right prfax
+R4296:4299 Coq.Init.Logic <> True ind
+R4308:4310 Frap.SepCancel SEP :::'[|'_x_'|]' not
+R4312:4314 Frap.SepCancel SEP :::'[|'_x_'|]' not
+R4274:4283 Frap.SepCancel S extra_lift prfax
+R4296:4299 Coq.Init.Logic <> True ind
+R4308:4310 Frap.SepCancel SEP :::'[|'_x_'|]' not
+R4312:4314 Frap.SepCancel SEP :::'[|'_x_'|]' not
+R4274:4283 Frap.SepCancel S extra_lift prfax
+R4296:4299 Coq.Init.Logic <> True ind
+R4308:4310 Frap.SepCancel SEP :::'[|'_x_'|]' not
+R4312:4314 Frap.SepCancel SEP :::'[|'_x_'|]' not
+R4274:4283 Frap.SepCancel S extra_lift prfax
+R4296:4299 Coq.Init.Logic <> True ind
+R4308:4310 Frap.SepCancel SEP :::'[|'_x_'|]' not
+R4312:4314 Frap.SepCancel SEP :::'[|'_x_'|]' not
+R4274:4283 Frap.SepCancel S extra_lift prfax
+R4334:4343 Frap.SepCancel S lift_right prfax
+R4334:4343 Frap.SepCancel S lift_right prfax
+prf 4390:4406 Make star_combine_lift
+binder 4417:4417 <> P:87
+binder 4419:4419 <> Q:88
+R4439:4443 Frap.SepCancel SEP :::x_'==='_x not
+R4429:4431 Frap.SepCancel SEP :::x_'*'_x not
+R4422:4424 Frap.SepCancel SEP :::'[|'_x_'|]' not
+R4426:4428 Frap.SepCancel SEP :::'[|'_x_'|]' not
+R4425:4425 Frap.SepCancel <> P:87 var
+R4432:4434 Frap.SepCancel SEP :::'[|'_x_'|]' not
+R4436:4438 Frap.SepCancel SEP :::'[|'_x_'|]' not
+R4435:4435 Frap.SepCancel <> Q:88 var
+R4444:4446 Frap.SepCancel SEP :::'[|'_x_'|]' not
+R4453:4455 Frap.SepCancel SEP :::'[|'_x_'|]' not
+R4448:4451 Coq.Init.Logic <> ::type_scope:x_'/\'_x not
+R4447:4447 Frap.SepCancel <> P:87 var
+R4452:4452 Frap.SepCancel <> Q:88 var
+R4489:4496 Frap.SepCancel S himp_heq prfax
+R4510:4527 Frap.SepCancel Make star_combine_lift1 thm
+R4530:4547 Frap.SepCancel Make star_combine_lift2 thm
+R4489:4496 Frap.SepCancel S himp_heq prfax
+R4510:4527 Frap.SepCancel Make star_combine_lift1 thm
+R4530:4547 Frap.SepCancel Make star_combine_lift2 thm
+prf 4566:4579 Make star_comm_lift
+binder 4590:4590 <> P:89
+binder 4592:4592 <> q:90
+R4606:4610 Frap.SepCancel SEP :::x_'==='_x not
+R4602:4604 Frap.SepCancel SEP :::x_'*'_x not
+R4595:4597 Frap.SepCancel SEP :::'[|'_x_'|]' not
+R4599:4601 Frap.SepCancel SEP :::'[|'_x_'|]' not
+R4598:4598 Frap.SepCancel <> P:89 var
+R4605:4605 Frap.SepCancel <> q:90 var
+R4612:4614 Frap.SepCancel SEP :::x_'*'_x not
+R4611:4611 Frap.SepCancel <> q:90 var
+R4615:4617 Frap.SepCancel SEP :::'[|'_x_'|]' not
+R4619:4621 Frap.SepCancel SEP :::'[|'_x_'|]' not
+R4618:4618 Frap.SepCancel <> P:89 var
+R4651:4659 Frap.SepCancel S star_comm prfax
+R4651:4659 Frap.SepCancel S star_comm prfax
+prf 4678:4692 Make star_assoc_lift
+binder 4703:4703 <> p:91
+binder 4705:4705 <> Q:92
+binder 4707:4707 <> r:93
+R4731:4735 Frap.SepCancel SEP :::x_'==='_x not
+R4714:4714 Frap.SepCancel SEP :::x_'*'_x not
+R4726:4729 Frap.SepCancel SEP :::x_'*'_x not
+R4716:4718 Frap.SepCancel SEP :::x_'*'_x not
+R4715:4715 Frap.SepCancel <> p:91 var
+R4719:4721 Frap.SepCancel SEP :::'[|'_x_'|]' not
+R4723:4725 Frap.SepCancel SEP :::'[|'_x_'|]' not
+R4722:4722 Frap.SepCancel <> Q:92 var
+R4730:4730 Frap.SepCancel <> r:93 var
+R4741:4743 Frap.SepCancel SEP :::x_'*'_x not
+R4737:4739 Frap.SepCancel SEP :::x_'*'_x not
+R4736:4736 Frap.SepCancel <> p:91 var
+R4740:4740 Frap.SepCancel <> r:93 var
+R4744:4746 Frap.SepCancel SEP :::'[|'_x_'|]' not
+R4748:4750 Frap.SepCancel SEP :::'[|'_x_'|]' not
+R4747:4747 Frap.SepCancel <> Q:92 var
+R4789:4798 Frap.SepCancel S star_assoc prfax
+R4789:4798 Frap.SepCancel S star_assoc prfax
+R4789:4798 Frap.SepCancel S star_assoc prfax
+R4814:4822 Frap.SepCancel S star_comm prfax
+R4824:4826 Frap.SepCancel SEP :::'[|'_x_'|]' not
+R4828:4830 Frap.SepCancel SEP :::'[|'_x_'|]' not
+R4814:4822 Frap.SepCancel S star_comm prfax
+R4824:4826 Frap.SepCancel SEP :::'[|'_x_'|]' not
+R4828:4830 Frap.SepCancel SEP :::'[|'_x_'|]' not
+R4814:4822 Frap.SepCancel S star_comm prfax
+R4824:4826 Frap.SepCancel SEP :::'[|'_x_'|]' not
+R4828:4830 Frap.SepCancel SEP :::'[|'_x_'|]' not
+R4844:4853 Frap.SepCancel S star_assoc prfax
+R4844:4853 Frap.SepCancel S star_assoc prfax
+prf 4872:4885 Make star_comm_exis
+binder 4896:4896 <> A:94
+R4904:4907 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R4903:4903 Frap.SepCancel <> A:94 var
+binder 4899:4899 <> p:95
+binder 4911:4911 <> q:96
+R4924:4928 Frap.SepCancel SEP :::x_'==='_x not
+R4920:4922 Frap.SepCancel SEP :::x_'*'_x not
+R4914:4917 Frap.SepCancel S exis defax
+R4919:4919 Frap.SepCancel <> p:95 var
+R4923:4923 Frap.SepCancel <> q:96 var
+R4930:4932 Frap.SepCancel SEP :::x_'*'_x not
+R4929:4929 Frap.SepCancel <> q:96 var
+R4933:4936 Frap.SepCancel S exis defax
+R4938:4938 Frap.SepCancel <> p:95 var
+R4968:4976 Frap.SepCancel S star_comm prfax
+R4968:4976 Frap.SepCancel S star_comm prfax
+R5020:5027 Frap.SepCancel S himp_heq prfax
+R5055:5063 Frap.SepCancel S lift_left prfax
+R5092:5101 Frap.SepCancel S lift_right prfax
+prf 5125:5136 Make lift_combine
+binder 5147:5147 <> p:97
+binder 5149:5149 <> Q:98
+binder 5151:5151 <> R:99
+R5179:5183 Frap.SepCancel SEP :::x_'==='_x not
+R5169:5171 Frap.SepCancel SEP :::x_'*'_x not
+R5159:5161 Frap.SepCancel SEP :::x_'*'_x not
+R5158:5158 Frap.SepCancel <> p:97 var
+R5162:5164 Frap.SepCancel SEP :::'[|'_x_'|]' not
+R5166:5168 Frap.SepCancel SEP :::'[|'_x_'|]' not
+R5165:5165 Frap.SepCancel <> Q:98 var
+R5172:5174 Frap.SepCancel SEP :::'[|'_x_'|]' not
+R5176:5178 Frap.SepCancel SEP :::'[|'_x_'|]' not
+R5175:5175 Frap.SepCancel <> R:99 var
+R5185:5187 Frap.SepCancel SEP :::x_'*'_x not
+R5184:5184 Frap.SepCancel <> p:97 var
+R5188:5190 Frap.SepCancel SEP :::'[|'_x_'|]' not
+R5197:5199 Frap.SepCancel SEP :::'[|'_x_'|]' not
+R5192:5195 Coq.Init.Logic <> ::type_scope:x_'/\'_x not
+R5191:5191 Frap.SepCancel <> Q:98 var
+R5196:5196 Frap.SepCancel <> R:99 var
+R5229:5236 Frap.SepCancel S himp_heq prfax
+R5264:5272 Frap.SepCancel S lift_left prfax
+R5301:5310 Frap.SepCancel S lift_right prfax
+R5229:5236 Frap.SepCancel S himp_heq prfax
+R5264:5272 Frap.SepCancel S lift_left prfax
+R5264:5272 Frap.SepCancel S lift_left prfax
+R5264:5272 Frap.SepCancel S lift_left prfax
+R5264:5272 Frap.SepCancel S lift_left prfax
+R5264:5272 Frap.SepCancel S lift_left prfax
+R5301:5310 Frap.SepCancel S lift_right prfax
+R5301:5310 Frap.SepCancel S lift_right prfax
+R5301:5310 Frap.SepCancel S lift_right prfax
+prf 5341:5350 Make lift1_left
+binder 5362:5362 <> P:100
+binder 5372:5372 <> q:101
+R5379:5379 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R5402:5410 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R5381:5384 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R5380:5380 Frap.SepCancel <> P:100 var
+R5395:5400 Frap.SepCancel SEP :::x_'===>'_x not
+R5385:5387 Frap.SepCancel SEP :::'[|'_x_'|]' not
+R5392:5394 Frap.SepCancel SEP :::'[|'_x_'|]' not
+R5388:5391 Coq.Init.Logic <> True ind
+R5401:5401 Frap.SepCancel <> q:101 var
+R5418:5423 Frap.SepCancel SEP :::x_'===>'_x not
+R5411:5413 Frap.SepCancel SEP :::'[|'_x_'|]' not
+R5415:5417 Frap.SepCancel SEP :::'[|'_x_'|]' not
+R5414:5414 Frap.SepCancel <> P:100 var
+R5424:5424 Frap.SepCancel <> q:101 var
+R5462:5471 Frap.SepCancel S extra_lift prfax
+R5473:5476 Coq.Init.Logic <> True ind
+R5478:5480 Frap.SepCancel SEP :::'[|'_x_'|]' not
+R5482:5484 Frap.SepCancel SEP :::'[|'_x_'|]' not
+R5462:5471 Frap.SepCancel S extra_lift prfax
+R5473:5476 Coq.Init.Logic <> True ind
+R5478:5480 Frap.SepCancel SEP :::'[|'_x_'|]' not
+R5482:5484 Frap.SepCancel SEP :::'[|'_x_'|]' not
+R5462:5471 Frap.SepCancel S extra_lift prfax
+R5473:5476 Coq.Init.Logic <> True ind
+R5478:5480 Frap.SepCancel SEP :::'[|'_x_'|]' not
+R5482:5484 Frap.SepCancel SEP :::'[|'_x_'|]' not
+R5462:5471 Frap.SepCancel S extra_lift prfax
+R5473:5476 Coq.Init.Logic <> True ind
+R5478:5480 Frap.SepCancel SEP :::'[|'_x_'|]' not
+R5482:5484 Frap.SepCancel SEP :::'[|'_x_'|]' not
+R5504:5512 Frap.SepCancel S lift_left prfax
+R5504:5512 Frap.SepCancel S lift_left prfax
+prf 5537:5547 Make lift1_right
+binder 5558:5558 <> p:102
+binder 5561:5561 <> Q:103
+R5577:5584 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R5576:5576 Frap.SepCancel <> Q:103 var
+R5602:5609 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R5586:5591 Frap.SepCancel SEP :::x_'===>'_x not
+R5585:5585 Frap.SepCancel <> p:102 var
+R5592:5594 Frap.SepCancel SEP :::'[|'_x_'|]' not
+R5599:5601 Frap.SepCancel SEP :::'[|'_x_'|]' not
+R5595:5598 Coq.Init.Logic <> True ind
+R5611:5616 Frap.SepCancel SEP :::x_'===>'_x not
+R5610:5610 Frap.SepCancel <> p:102 var
+R5617:5619 Frap.SepCancel SEP :::'[|'_x_'|]' not
+R5621:5623 Frap.SepCancel SEP :::'[|'_x_'|]' not
+R5620:5620 Frap.SepCancel <> Q:103 var
+R5661:5670 Frap.SepCancel S extra_lift prfax
+R5672:5675 Coq.Init.Logic <> True ind
+R5677:5679 Frap.SepCancel SEP :::'[|'_x_'|]' not
+R5681:5683 Frap.SepCancel SEP :::'[|'_x_'|]' not
+R5661:5670 Frap.SepCancel S extra_lift prfax
+R5672:5675 Coq.Init.Logic <> True ind
+R5677:5679 Frap.SepCancel SEP :::'[|'_x_'|]' not
+R5681:5683 Frap.SepCancel SEP :::'[|'_x_'|]' not
+R5661:5670 Frap.SepCancel S extra_lift prfax
+R5672:5675 Coq.Init.Logic <> True ind
+R5677:5679 Frap.SepCancel SEP :::'[|'_x_'|]' not
+R5681:5683 Frap.SepCancel SEP :::'[|'_x_'|]' not
+R5661:5670 Frap.SepCancel S extra_lift prfax
+R5672:5675 Coq.Init.Logic <> True ind
+R5677:5679 Frap.SepCancel SEP :::'[|'_x_'|]' not
+R5681:5683 Frap.SepCancel SEP :::'[|'_x_'|]' not
+R5703:5712 Frap.SepCancel S lift_right prfax
+R5703:5712 Frap.SepCancel S lift_right prfax
+R5789:5792 Frap.SepCancel S star defax
+R5798:5801 Frap.SepCancel S exis defax
+R5789:5792 Frap.SepCancel S star defax
+R5798:5801 Frap.SepCancel S exis defax
+R5856:5859 Frap.SepCancel S star defax
+R5882:5885 Frap.SepCancel S lift defax
+R5862:5865 Frap.SepCancel S star defax
+R5871:5874 Frap.SepCancel S lift defax
+R5856:5859 Frap.SepCancel S star defax
+R5882:5885 Frap.SepCancel S lift defax
+R5862:5865 Frap.SepCancel S star defax
+R5871:5874 Frap.SepCancel S lift defax
+R5945:5948 Frap.SepCancel S star defax
+R5954:5957 Frap.SepCancel S star defax
+R5945:5948 Frap.SepCancel S star defax
+R5954:5957 Frap.SepCancel S star defax
+R6018:6021 Frap.SepCancel S star defax
+R6034:6037 Frap.SepCancel S lift defax
+R6024:6027 Frap.SepCancel S lift defax
+R6018:6021 Frap.SepCancel S star defax
+R6034:6037 Frap.SepCancel S lift defax
+R6024:6027 Frap.SepCancel S lift defax
+R6100:6103 Frap.SepCancel S star defax
+R6106:6109 Frap.SepCancel S lift defax
+R6100:6103 Frap.SepCancel S star defax
+R6106:6109 Frap.SepCancel S lift defax
+R6173:6176 Frap.SepCancel S star defax
+R6179:6182 Frap.SepCancel S star defax
+R6188:6191 Frap.SepCancel S lift defax
+R6173:6176 Frap.SepCancel S star defax
+R6179:6182 Frap.SepCancel S star defax
+R6188:6191 Frap.SepCancel S lift defax
+R6258:6261 Frap.SepCancel S star defax
+R6264:6267 Frap.SepCancel S exis defax
+R6258:6261 Frap.SepCancel S star defax
+R6264:6267 Frap.SepCancel S exis defax
+R6291:6304 Frap.SepCancel Make star_comm_exis thm
+R6216:6230 Frap.SepCancel Make star_assoc_lift thm
+R6134:6147 Frap.SepCancel Make star_comm_lift thm
+R6058:6074 Frap.SepCancel Make star_combine_lift thm
+R5981:5990 Frap.SepCancel S star_assoc prfax
+R5906:5917 Frap.SepCancel Make lift_combine thm
+R5822:5830 Frap.SepCancel S exis_gulp prfax
+R6452:6457 Frap.SepCancel SEP :::x_'===>'_x not
+R6445:6448 Frap.SepCancel S lift defax
+R6452:6457 Frap.SepCancel SEP :::x_'===>'_x not
+R6445:6448 Frap.SepCancel S lift defax
+R6504:6507 Coq.Init.Logic <> True ind
+R6504:6507 Coq.Init.Logic <> True ind
+R6545:6554 Frap.SepCancel Make lift1_left thm
+R6372:6380 Frap.SepCancel S lift_left prfax
+R6353:6361 Frap.SepCancel S exis_left prfax
+R6660:6665 Frap.SepCancel SEP :::x_'===>'_x not
+R6666:6669 Frap.SepCancel S exis defax
+R6660:6665 Frap.SepCancel SEP :::x_'===>'_x not
+R6666:6669 Frap.SepCancel S exis defax
+R6708:6713 Frap.SepCancel SEP :::x_'===>'_x not
+R6715:6717 Frap.SepCancel SEP :::x_'*'_x not
+R6718:6721 Frap.SepCancel S lift defax
+R6708:6713 Frap.SepCancel SEP :::x_'===>'_x not
+R6715:6717 Frap.SepCancel SEP :::x_'*'_x not
+R6718:6721 Frap.SepCancel S lift defax
+R6759:6764 Frap.SepCancel SEP :::x_'===>'_x not
+R6765:6768 Frap.SepCancel S lift defax
+R6759:6764 Frap.SepCancel SEP :::x_'===>'_x not
+R6765:6768 Frap.SepCancel S lift defax
+R6805:6808 Coq.Init.Logic <> True ind
+R6805:6808 Coq.Init.Logic <> True ind
+R6839:6849 Frap.SepCancel Make lift1_right thm
+R6736:6745 Frap.SepCancel S lift_right prfax
+R6685:6694 Frap.SepCancel S exis_right prfax
+prf 6941:6954 Make lift_uncombine
+binder 6965:6965 <> p:104
+binder 6967:6967 <> P:105
+binder 6969:6969 <> Q:106
+R6992:6996 Frap.SepCancel SEP :::x_'==='_x not
+R6977:6979 Frap.SepCancel SEP :::x_'*'_x not
+R6976:6976 Frap.SepCancel <> p:104 var
+R6980:6982 Frap.SepCancel SEP :::'[|'_x_'|]' not
+R6989:6991 Frap.SepCancel SEP :::'[|'_x_'|]' not
+R6984:6987 Coq.Init.Logic <> ::type_scope:x_'/\'_x not
+R6983:6983 Frap.SepCancel <> P:105 var
+R6988:6988 Frap.SepCancel <> Q:106 var
+R7008:7010 Frap.SepCancel SEP :::x_'*'_x not
+R6998:7000 Frap.SepCancel SEP :::x_'*'_x not
+R6997:6997 Frap.SepCancel <> p:104 var
+R7001:7003 Frap.SepCancel SEP :::'[|'_x_'|]' not
+R7005:7007 Frap.SepCancel SEP :::'[|'_x_'|]' not
+R7004:7004 Frap.SepCancel <> P:105 var
+R7011:7013 Frap.SepCancel SEP :::'[|'_x_'|]' not
+R7015:7017 Frap.SepCancel SEP :::'[|'_x_'|]' not
+R7014:7014 Frap.SepCancel <> Q:106 var
+R7109:7112 Frap.SepCancel S star defax
+R7118:7121 Frap.SepCancel S lift defax
+R7126:7129 Coq.Init.Logic <> ::type_scope:x_'/\'_x not
+R7109:7112 Frap.SepCancel S star defax
+R7118:7121 Frap.SepCancel S lift defax
+R7126:7129 Coq.Init.Logic <> ::type_scope:x_'/\'_x not
+R7191:7194 Frap.SepCancel S star defax
+R7200:7203 Frap.SepCancel S star defax
+R7191:7194 Frap.SepCancel S star defax
+R7200:7203 Frap.SepCancel S star defax
+R7227:7236 Frap.SepCancel S star_assoc prfax
+R7150:7163 Frap.SepCancel Make lift_uncombine thm
+R7378:7383 Frap.SepCancel SEP :::x_'===>'_x not
+R7378:7383 Frap.SepCancel SEP :::x_'===>'_x not
+R7518:7519 Coq.Init.Logic <> ex ind
+R7518:7519 Coq.Init.Logic <> ex ind
+R7527:7532 Frap.SepCancel SEP :::x_'===>'_x not
+R7527:7532 Frap.SepCancel SEP :::x_'===>'_x not
+R7573:7576 Coq.Init.Logic <> ::type_scope:x_'/\'_x not
+R7573:7576 Coq.Init.Logic <> ::type_scope:x_'/\'_x not
+R7622:7624 Coq.Init.Logic <> ::type_scope:x_'='_x not
+R7622:7624 Coq.Init.Logic <> ::type_scope:x_'='_x not
+R7856:7857 Coq.Init.Logic <> ex ind
+R7856:7857 Coq.Init.Logic <> ex ind
+R7865:7870 Frap.SepCancel SEP :::x_'===>'_x not
+R7865:7870 Frap.SepCancel SEP :::x_'===>'_x not
+R7978:7980 Frap.SepCancel SEP :::x_'*'_x not
+R7978:7980 Frap.SepCancel SEP :::x_'*'_x not
+prf 8057:8060 Make stb1
+binder 8071:8071 <> p:107
+binder 8073:8073 <> q:108
+binder 8075:8075 <> r:109
+R8093:8097 Frap.SepCancel SEP :::x_'==='_x not
+R8082:8082 Frap.SepCancel SEP :::x_'*'_x not
+R8088:8091 Frap.SepCancel SEP :::x_'*'_x not
+R8084:8086 Frap.SepCancel SEP :::x_'*'_x not
+R8083:8083 Frap.SepCancel <> q:108 var
+R8087:8087 Frap.SepCancel <> p:107 var
+R8092:8092 Frap.SepCancel <> r:109 var
+R8103:8105 Frap.SepCancel SEP :::x_'*'_x not
+R8099:8101 Frap.SepCancel SEP :::x_'*'_x not
+R8098:8098 Frap.SepCancel <> q:108 var
+R8102:8102 Frap.SepCancel <> r:109 var
+R8106:8106 Frap.SepCancel <> p:107 var
+R8141:8150 Frap.SepCancel S star_assoc prfax
+R8162:8170 Frap.SepCancel S star_comm prfax
+R8184:8193 Frap.SepCancel S star_assoc prfax
+R8141:8150 Frap.SepCancel S star_assoc prfax
+R8141:8150 Frap.SepCancel S star_assoc prfax
+R8162:8170 Frap.SepCancel S star_comm prfax
+R8162:8170 Frap.SepCancel S star_comm prfax
+R8184:8193 Frap.SepCancel S star_assoc prfax
+R8270:8278 Frap.SepCancel S star_comm prfax
+R8247:8250 Frap.SepCancel Make stb1 thm
+prf 8299:8310 Make star_cancel'
+binder 8321:8322 <> p1:110
+binder 8324:8325 <> p2:111
+binder 8327:8327 <> q:112
+R8340:8347 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R8332:8337 Frap.SepCancel SEP :::x_'===>'_x not
+R8330:8331 Frap.SepCancel <> p1:110 var
+R8338:8339 Frap.SepCancel <> p2:111 var
+R8354:8359 Frap.SepCancel SEP :::x_'===>'_x not
+R8350:8352 Frap.SepCancel SEP :::x_'*'_x not
+R8348:8349 Frap.SepCancel <> p1:110 var
+R8353:8353 Frap.SepCancel <> q:112 var
+R8362:8364 Frap.SepCancel SEP :::x_'*'_x not
+R8360:8361 Frap.SepCancel <> p2:111 var
+R8365:8365 Frap.SepCancel <> q:112 var
+R8395:8405 Frap.SepCancel S star_cancel prfax
+R8419:8427 Frap.SepCancel S himp_refl prfax
+R8395:8405 Frap.SepCancel S star_cancel prfax
+R8419:8427 Frap.SepCancel S himp_refl prfax
+R8419:8427 Frap.SepCancel S himp_refl prfax
+prf 8448:8460 Make star_cancel''
+binder 8471:8471 <> p:113
+binder 8473:8473 <> q:114
+R8492:8499 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R8485:8490 Frap.SepCancel SEP :::x_'===>'_x not
+R8476:8479 Frap.SepCancel S lift defax
+R8481:8484 Coq.Init.Logic <> True ind
+R8491:8491 Frap.SepCancel <> q:114 var
+R8501:8506 Frap.SepCancel SEP :::x_'===>'_x not
+R8500:8500 Frap.SepCancel <> p:113 var
+R8508:8510 Frap.SepCancel SEP :::x_'*'_x not
+R8507:8507 Frap.SepCancel <> p:113 var
+R8511:8511 Frap.SepCancel <> q:114 var
+R8546:8555 Frap.SepCancel S himp_trans prfax
+R8546:8555 Frap.SepCancel S himp_trans prfax
+R8592:8595 Coq.Init.Logic <> True ind
+R8570:8579 Frap.SepCancel S extra_lift prfax
+R8592:8595 Coq.Init.Logic <> True ind
+R8570:8579 Frap.SepCancel S extra_lift prfax
+R8592:8595 Coq.Init.Logic <> True ind
+R8570:8579 Frap.SepCancel S extra_lift prfax
+R8592:8595 Coq.Init.Logic <> True ind
+R8570:8579 Frap.SepCancel S extra_lift prfax
+R8628:8630 Frap.SepCancel SEP :::x_'*'_x not
+R8628:8630 Frap.SepCancel SEP :::x_'*'_x not
+R8647:8655 Frap.SepCancel S star_comm prfax
+R8647:8655 Frap.SepCancel S star_comm prfax
+R8647:8655 Frap.SepCancel S star_comm prfax
+R8668:8678 Frap.SepCancel S star_cancel prfax
+R8668:8678 Frap.SepCancel S star_cancel prfax
+modtype 8743:8754 <> Make.TRY_ME_FIRST
+ax 8771:8782 Make.TRY_ME_FIRST try_me_first
+R8791:8794 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R8786:8790 Frap.SepCancel S hprop defax
+ax 8812:8828 Make.TRY_ME_FIRST try_me_first_easy
+binder 8839:8839 <> p:117
+R8842:8853 Frap.SepCancel Make.TRY_ME_FIRST try_me_first defax
+R8855:8855 Frap.SepCancel <> p:117 var
+R8864:8875 Frap.SepCancel Make.TRY_ME_FIRST <> modtype
+R8894:8905 Frap.SepCancel Make.TRY_ME_FIRST <> mod
+mod 8888:8890 <> Make.TMF
+def 8923:8934 Make.TMF try_me_first
+R8941:8945 Frap.SepCancel S hprop defax
+R8951:8954 Coq.Init.Logic <> True ind
+prf 8970:8986 Make.TMF try_me_first_easy
+binder 8997:8997 <> p:120
+R9000:9011 Frap.SepCancel Make.TMF try_me_first def
+R9013:9013 Frap.SepCancel <> p:120 var
+R9061:9063 Frap.SepCancel Make.TMF <> mod
+R9076:9078 Frap.SepCancel Make.TMF <> mod
+R9090:9092 Frap.SepCancel Make.TMF <> mod
+R9582:9587 Frap.SepCancel SEP :::x_'===>'_x not
+R9582:9587 Frap.SepCancel SEP :::x_'===>'_x not
+R9744:9749 Frap.SepCancel SEP :::x_'===>'_x not
+R9744:9749 Frap.SepCancel SEP :::x_'===>'_x not
+R9936:9947 Frap.SepCancel Make star_cancel' thm
+R9707:9715 Frap.SepCancel S himp_refl prfax
+R9149:9154 Frap.SepCancel SEP :::x_'===>'_x not
+R9149:9154 Frap.SepCancel SEP :::x_'===>'_x not
+R9272:9283 Frap.SepCancel Make try_me_first defax
+R9440:9451 Frap.SepCancel Make try_me_first defax
+R9522:9533 Frap.SepCancel Make star_cancel' thm
+R10073:10078 Frap.SepCancel SEP :::x_'===>'_x not
+R10073:10078 Frap.SepCancel SEP :::x_'===>'_x not
+R10122:10127 Frap.SepCancel SEP :::x_'===>'_x not
+R10122:10127 Frap.SepCancel SEP :::x_'===>'_x not
+R10179:10182 Frap.SepCancel S star defax
+R10179:10182 Frap.SepCancel S star defax
+R10238:10241 Frap.SepCancel S star defax
+R10238:10241 Frap.SepCancel S star defax
+R10290:10295 Frap.SepCancel SEP :::x_'===>'_x not
+R10296:10302 Frap.SepCancel SEP :::'exists'_x_'..'_x_','_x not
+R10304:10305 Frap.SepCancel SEP :::'exists'_x_'..'_x_','_x not
+binder 10303:10303 <> v:121
+R10307:10309 Frap.SepCancel SEP :::x_'*'_x not
+R10313:10313 Frap.SepCancel <> v:121 var
+R10290:10295 Frap.SepCancel SEP :::x_'===>'_x not
+R10296:10302 Frap.SepCancel SEP :::'exists'_x_'..'_x_','_x not
+R10304:10305 Frap.SepCancel SEP :::'exists'_x_'..'_x_','_x not
+binder 10303:10303 <> v:122
+R10307:10309 Frap.SepCancel SEP :::x_'*'_x not
+R10313:10313 Frap.SepCancel <> v:122 var
+def 10473:10483 Make flattenAnds
+R10491:10494 Coq.Init.Datatypes <> list ind
+binder 10486:10487 <> Ps:123
+R10522:10523 Frap.SepCancel <> Ps:123 var
+R10536:10538 Coq.Init.Datatypes <> nil constr
+R10543:10546 Coq.Init.Logic <> True ind
+R10554:10554 Coq.Lists.List ListNotations ::list_scope:'['_x_']' not
+R10556:10556 Coq.Lists.List ListNotations ::list_scope:'['_x_']' not
+R10570:10573 Coq.Init.Datatypes <> ::list_scope:x_'::'_x not
+R10581:10584 Coq.Init.Logic <> ::type_scope:x_'/\'_x not
+R10585:10595 Frap.SepCancel <> flattenAnds:124 def
+R10597:10598 Frap.SepCancel <> Ps:123 var
+R10822:10824 Coq.Init.Datatypes <> nil constr
+R10780:10783 Coq.Init.Datatypes <> ::list_scope:x_'::'_x not
+R11305:11305 Coq.Init.Datatypes <> ::core_scope:'('_x_','_x_','_'..'_','_x_')' not
+R11307:11308 Coq.Init.Datatypes <> ::core_scope:'('_x_','_x_','_'..'_','_x_')' not
+R11321:11321 Coq.Init.Datatypes <> ::core_scope:'('_x_','_x_','_'..'_','_x_')' not
+R11240:11243 Frap.SepCancel S lift defax
+R11247:11249 Coq.Init.Logic <> ::type_scope:x_'='_x not
+R11169:11172 Frap.SepCancel S lift defax
+R11176:11178 Coq.Init.Logic <> ::type_scope:x_'='_x not
+R11460:11461 Coq.Init.Datatypes <> tt constr
+R11460:11461 Coq.Init.Datatypes <> tt constr
+R11476:11476 Coq.Init.Datatypes <> ::core_scope:'('_x_','_x_','_'..'_','_x_')' not
+R11479:11480 Coq.Init.Datatypes <> ::core_scope:'('_x_','_x_','_'..'_','_x_')' not
+R11487:11487 Coq.Init.Datatypes <> ::core_scope:'('_x_','_x_','_'..'_','_x_')' not
+R11476:11476 Coq.Init.Datatypes <> ::core_scope:'('_x_','_x_','_'..'_','_x_')' not
+R11479:11480 Coq.Init.Datatypes <> ::core_scope:'('_x_','_x_','_'..'_','_x_')' not
+R11487:11487 Coq.Init.Datatypes <> ::core_scope:'('_x_','_x_','_'..'_','_x_')' not
+R11614:11617 Frap.SepCancel S exis defax
+R12049:12052 Coq.Init.Logic <> ::type_scope:x_'/\'_x not
+R12049:12052 Coq.Init.Logic <> ::type_scope:x_'/\'_x not
+R12122:12125 Coq.Init.Logic <> ::type_scope:x_'/\'_x not
+R12122:12125 Coq.Init.Logic <> ::type_scope:x_'/\'_x not
+R12203:12203 Coq.Init.Logic <> I constr
+R12283:12286 Coq.Init.Logic <> True ind
+R12283:12286 Coq.Init.Logic <> True ind
+R12525:12528 Coq.Init.Logic <> ::type_scope:x_'/\'_x not
+R12525:12528 Coq.Init.Logic <> ::type_scope:x_'/\'_x not
+R12731:12736 Frap.SepCancel SEP :::x_'===>'_x not
+R12739:12741 Frap.SepCancel SEP :::x_'*'_x not
+R12731:12736 Frap.SepCancel SEP :::x_'===>'_x not
+R12739:12741 Frap.SepCancel SEP :::x_'*'_x not
+R12878:12886 Frap.SepCancel S star_comm prfax
+R12900:12912 Frap.SepCancel Make star_cancel'' thm
+R12803:12815 Frap.SepCancel Make star_cancel'' thm
+R13009:13014 Frap.SepCancel SEP :::x_'===>'_x not
+R13009:13014 Frap.SepCancel SEP :::x_'===>'_x not
+R13810:13815 Frap.SepCancel SEP :::x_'===>'_x not
+R13810:13815 Frap.SepCancel SEP :::x_'===>'_x not
+R14409:14414 Frap.SepCancel SEP :::x_'===>'_x not
+R14409:14414 Frap.SepCancel SEP :::x_'===>'_x not
+R15250:15255 Frap.SepCancel SEP :::x_'===>'_x not
+R15250:15255 Frap.SepCancel SEP :::x_'===>'_x not
+R14596:14598 Coq.Init.Datatypes <> nil constr
+R14596:14598 Coq.Init.Datatypes <> nil constr
+R14740:14750 Frap.SepCancel Make flattenAnds def
+R14832:14835 Frap.SepCancel S star defax
+R14840:14843 Frap.SepCancel S lift defax
+R13991:13993 Coq.Init.Datatypes <> nil constr
+R13991:13993 Coq.Init.Datatypes <> nil constr
+R14133:14143 Frap.SepCancel Make flattenAnds def
+R14214:14217 Frap.SepCancel S star defax
+R14222:14225 Frap.SepCancel S lift defax
+R13107:13112 Frap.SepCancel SEP :::x_'===>'_x not
+R13115:13117 Frap.SepCancel SEP :::x_'*'_x not
+R13107:13112 Frap.SepCancel SEP :::x_'===>'_x not
+R13115:13117 Frap.SepCancel SEP :::x_'*'_x not
+R13171:13179 Frap.SepCancel S star_comm prfax
+R13349:13351 Coq.Init.Datatypes <> nil constr
+R13349:13351 Coq.Init.Datatypes <> nil constr
+R13512:13522 Frap.SepCancel Make flattenAnds def
+R13595:13598 Frap.SepCancel S lift defax
+R13374:13377 Frap.SepCancel S lift defax
+R13379:13382 Coq.Init.Logic <> True ind
+R15347:15350 Frap.SepCancel Make <> mod

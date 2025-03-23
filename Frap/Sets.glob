@@ -1,0 +1,1267 @@
+DIGEST 68ea430fe7f7a81791309bb99c70be1f
+FFrap.Sets
+R15:18 Coq.Bool.Bool <> <> lib
+R20:28 Coq.Logic.Classical <> <> lib
+R30:53 Coq.Logic.FunctionalExtensionality <> <> lib
+R55:58 Coq.Lists.List <> <> lib
+ax 94:101 <> prop_ext
+binder 112:112 <> P:1
+binder 114:114 <> Q:2
+R126:126 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R134:138 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R128:132 Coq.Init.Logic <> ::type_scope:x_'<->'_x not
+R127:127 Frap.Sets <> P:1 var
+R133:133 Frap.Sets <> Q:2 var
+R140:142 Coq.Init.Logic <> ::type_scope:x_'='_x not
+R139:139 Frap.Sets <> P:1 var
+R143:143 Frap.Sets <> Q:2 var
+sec 155:157 <> set
+var 171:171 set A
+def 195:197 <> set
+R203:206 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R202:202 Frap.Sets <> set.A var
+def 226:227 <> In
+R234:234 Frap.Sets <> set.A var
+binder 230:230 <> x:7
+R242:244 Frap.Sets <> set def
+binder 238:238 <> s:8
+R250:250 Frap.Sets <> s:8 var
+R252:252 Frap.Sets <> x:7 var
+def 269:276 <> constant
+R284:287 Coq.Init.Datatypes <> list ind
+R289:289 Frap.Sets <> set.A var
+binder 279:280 <> ls:9
+R294:296 Frap.Sets <> set def
+binder 305:305 <> x:10
+R310:316 Coq.Lists.List <> In def
+R320:321 Frap.Sets <> ls:9 var
+R318:318 Frap.Sets <> x:10 var
+def 337:344 <> universe
+R348:350 Frap.Sets <> set def
+R364:367 Coq.Init.Logic <> True ind
+def 383:387 <> check
+binder 390:390 <> P:11
+R402:404 Frap.Sets <> set def
+R418:418 Frap.Sets <> P:11 var
+def 435:439 <> union
+R450:452 Frap.Sets <> set def
+binder 442:443 <> s1:12
+binder 445:446 <> s2:13
+R457:459 Frap.Sets <> set def
+binder 468:468 <> x:14
+R477:480 Coq.Init.Logic <> ::type_scope:x_'\/'_x not
+R473:474 Frap.Sets <> s1:12 var
+R476:476 Frap.Sets <> x:14 var
+R481:482 Frap.Sets <> s2:13 var
+R484:484 Frap.Sets <> x:14 var
+def 500:511 <> intersection
+R522:524 Frap.Sets <> set def
+binder 514:515 <> s1:15
+binder 517:518 <> s2:16
+R529:531 Frap.Sets <> set def
+binder 540:540 <> x:17
+R549:552 Coq.Init.Logic <> ::type_scope:x_'/\'_x not
+R545:546 Frap.Sets <> s1:15 var
+R548:548 Frap.Sets <> x:17 var
+R553:554 Frap.Sets <> s2:16 var
+R556:556 Frap.Sets <> x:17 var
+def 572:576 <> minus
+R587:589 Frap.Sets <> set def
+binder 579:580 <> s1:18
+binder 582:583 <> s2:19
+R594:596 Frap.Sets <> set def
+binder 605:605 <> x:20
+R614:617 Coq.Init.Logic <> ::type_scope:x_'/\'_x not
+R610:611 Frap.Sets <> s1:18 var
+R613:613 Frap.Sets <> x:20 var
+R618:618 Coq.Init.Logic <> ::type_scope:'~'_x not
+R619:620 Frap.Sets <> s2:19 var
+R622:622 Frap.Sets <> x:20 var
+def 638:647 <> complement
+R654:656 Frap.Sets <> set def
+binder 650:650 <> s:21
+R661:663 Frap.Sets <> set def
+binder 672:672 <> x:22
+R677:677 Coq.Init.Logic <> ::type_scope:'~'_x not
+R678:678 Frap.Sets <> s:21 var
+R680:680 Frap.Sets <> x:22 var
+def 697:704 <> subseteq
+R715:717 Frap.Sets <> set def
+binder 707:708 <> s1:23
+binder 710:711 <> s2:24
+binder 730:730 <> x:25
+R737:740 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R733:734 Frap.Sets <> s1:23 var
+R736:736 Frap.Sets <> x:25 var
+R741:742 Frap.Sets <> s2:24 var
+R744:744 Frap.Sets <> x:25 var
+def 760:765 <> subset
+R776:778 Frap.Sets <> set def
+binder 768:769 <> s1:26
+binder 771:772 <> s2:27
+R798:801 Coq.Init.Logic <> ::type_scope:x_'/\'_x not
+R784:791 Frap.Sets <> subseteq def
+R796:797 Frap.Sets <> s2:27 var
+R793:794 Frap.Sets <> s1:26 var
+R802:802 Coq.Init.Logic <> ::type_scope:'~'_x not
+R803:810 Frap.Sets <> subseteq def
+R815:816 Frap.Sets <> s1:26 var
+R812:813 Frap.Sets <> s2:27 var
+def 833:837 <> scomp
+R845:848 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R844:844 Frap.Sets <> set.A var
+binder 840:840 <> P:28
+R857:859 Frap.Sets <> set def
+R864:864 Frap.Sets <> P:28 var
+prf 878:887 <> sets_equal
+R906:908 Frap.Sets <> set def
+binder 898:899 <> s1:29
+binder 901:902 <> s2:30
+R911:911 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R935:939 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+binder 919:919 <> x:31
+R926:930 Coq.Init.Logic <> ::type_scope:x_'<->'_x not
+R922:923 Frap.Sets <> s1:29 var
+R925:925 Frap.Sets <> x:31 var
+R931:932 Frap.Sets <> s2:30 var
+R934:934 Frap.Sets <> x:31 var
+R942:944 Coq.Init.Logic <> ::type_scope:x_'='_x not
+R940:941 Frap.Sets <> s1:29 var
+R945:946 Frap.Sets <> s2:30 var
+R980:1004 Coq.Logic.FunctionalExtensionality <> functional_extensionality thm
+R980:1004 Coq.Logic.FunctionalExtensionality <> functional_extensionality thm
+R1025:1032 Frap.Sets <> prop_ext prfax
+R1025:1032 Frap.Sets <> prop_ext prfax
+R1052:1054 Frap.Sets set <> sec
+R1073:1074 Frap.Sets <> In def
+not 1064:1064 <> :::x_'\in'_x
+R1142:1146 Frap.Sets <> union def
+not 1132:1132 <> :::x_'\cup'_x
+R1179:1190 Frap.Sets <> intersection def
+not 1169:1169 <> :::x_'\cap'_x
+R1228:1232 Frap.Sets <> minus def
+not 1213:1213 <> :::x_'\setminus'_x
+R1270:1277 Frap.Sets <> subseteq def
+not 1255:1255 <> :::x_'\subseteq'_x
+R1313:1318 Frap.Sets <> subset def
+not 1300:1300 <> :::x_'\subset'_x
+R1360:1364 Frap.Sets <> scomp def
+binder 1371:1371 <> x:32
+not 1344:1344 <> :::'['_x_'|'_x_']'
+modtype 1394:1398 <> EMPTY
+R1405:1409 Frap.Sets EMPTY <> modtype
+R1436:1440 Frap.Sets EMPTY <> mod
+mod 1419:1430 <> SetNotations
+R1465:1472 Frap.Sets <> constant def
+R1474:1476 Coq.Init.Datatypes <> nil constr
+not 1455:1455 SetNotations :::'{'_'}'
+R1514:1521 Frap.Sets <> constant def
+R1524:1527 Coq.Init.Datatypes <> cons constr
+R1537:1540 Coq.Init.Datatypes <> cons constr
+R1545:1547 Coq.Init.Datatypes <> nil constr
+not 1491:1491 SetNotations :::'{'_x_','_'..'_','_x_'}'
+R1561:1572 Frap.Sets SetNotations <> mod
+R1604:1605 Frap.Sets <> In def
+R1608:1615 Frap.Sets <> constant def
+R1618:1625 Frap.Sets <> universe def
+R1628:1632 Frap.Sets <> check def
+R1635:1639 Frap.Sets <> union def
+R1642:1653 Frap.Sets <> intersection def
+R1656:1660 Frap.Sets <> minus def
+R1663:1672 Frap.Sets <> complement def
+R1675:1682 Frap.Sets <> subseteq def
+R1685:1690 Frap.Sets <> subset def
+R1693:1697 Frap.Sets <> scomp def
+R1789:1790 Coq.Init.Logic <> eq ind
+R1793:1795 Frap.Sets <> set def
+R1789:1790 Coq.Init.Logic <> eq ind
+R1793:1795 Frap.Sets <> set def
+R1815:1824 Frap.Sets <> sets_equal thm
+sec 1929:1938 <> properties
+var 1952:1952 properties A
+var 1973:1973 properties x
+R1977:1977 Frap.Sets <> properties.A var
+var 1992:1993 properties s1
+var 1995:1996 properties s2
+var 1998:1999 properties s3
+R2003:2005 Frap.Sets <> set def
+R2007:2007 Frap.Sets <> properties.A var
+prf 2021:2030 <> union_comm
+R2044:2046 Coq.Init.Logic <> ::type_scope:x_'='_x not
+R2036:2041 Frap.Sets <> :::x_'\cup'_x not
+R2034:2035 Frap.Sets <> properties.s1 var
+R2042:2043 Frap.Sets <> properties.s2 var
+R2049:2054 Frap.Sets <> :::x_'\cup'_x not
+R2047:2048 Frap.Sets <> properties.s2 var
+R2055:2056 Frap.Sets <> properties.s1 var
+prf 2102:2112 <> union_assoc
+R2136:2138 Coq.Init.Logic <> ::type_scope:x_'='_x not
+R2116:2116 Frap.Sets <> :::x_'\cup'_x not
+R2127:2133 Frap.Sets <> :::x_'\cup'_x not
+R2119:2124 Frap.Sets <> :::x_'\cup'_x not
+R2117:2118 Frap.Sets <> properties.s1 var
+R2125:2126 Frap.Sets <> properties.s2 var
+R2134:2135 Frap.Sets <> properties.s3 var
+R2141:2147 Frap.Sets <> :::x_'\cup'_x not
+R2158:2158 Frap.Sets <> :::x_'\cup'_x not
+R2139:2140 Frap.Sets <> properties.s1 var
+R2150:2155 Frap.Sets <> :::x_'\cup'_x not
+R2148:2149 Frap.Sets <> properties.s2 var
+R2156:2157 Frap.Sets <> properties.s3 var
+prf 2204:2220 <> intersection_comm
+R2234:2236 Coq.Init.Logic <> ::type_scope:x_'='_x not
+R2226:2231 Frap.Sets <> :::x_'\cap'_x not
+R2224:2225 Frap.Sets <> properties.s1 var
+R2232:2233 Frap.Sets <> properties.s2 var
+R2239:2244 Frap.Sets <> :::x_'\cap'_x not
+R2237:2238 Frap.Sets <> properties.s2 var
+R2245:2246 Frap.Sets <> properties.s1 var
+prf 2292:2309 <> intersection_assoc
+R2333:2335 Coq.Init.Logic <> ::type_scope:x_'='_x not
+R2313:2313 Frap.Sets <> :::x_'\cap'_x not
+R2324:2330 Frap.Sets <> :::x_'\cap'_x not
+R2316:2321 Frap.Sets <> :::x_'\cap'_x not
+R2314:2315 Frap.Sets <> properties.s1 var
+R2322:2323 Frap.Sets <> properties.s2 var
+R2331:2332 Frap.Sets <> properties.s3 var
+R2338:2344 Frap.Sets <> :::x_'\cap'_x not
+R2355:2355 Frap.Sets <> :::x_'\cap'_x not
+R2336:2337 Frap.Sets <> properties.s1 var
+R2347:2352 Frap.Sets <> :::x_'\cap'_x not
+R2345:2346 Frap.Sets <> properties.s2 var
+R2353:2354 Frap.Sets <> properties.s3 var
+prf 2401:2409 <> not_union
+R2436:2438 Coq.Init.Logic <> ::type_scope:x_'='_x not
+R2413:2422 Frap.Sets <> complement def
+R2427:2432 Frap.Sets <> :::x_'\cup'_x not
+R2425:2426 Frap.Sets <> properties.s1 var
+R2433:2434 Frap.Sets <> properties.s2 var
+R2452:2457 Frap.Sets <> :::x_'\cap'_x not
+R2439:2448 Frap.Sets <> complement def
+R2450:2451 Frap.Sets <> properties.s1 var
+R2458:2467 Frap.Sets <> complement def
+R2469:2470 Frap.Sets <> properties.s2 var
+prf 2516:2531 <> not_intersection
+R2558:2560 Coq.Init.Logic <> ::type_scope:x_'='_x not
+R2535:2544 Frap.Sets <> complement def
+R2549:2554 Frap.Sets <> :::x_'\cap'_x not
+R2547:2548 Frap.Sets <> properties.s1 var
+R2555:2556 Frap.Sets <> properties.s2 var
+R2574:2579 Frap.Sets <> :::x_'\cup'_x not
+R2561:2570 Frap.Sets <> complement def
+R2572:2573 Frap.Sets <> properties.s1 var
+R2580:2589 Frap.Sets <> complement def
+R2591:2592 Frap.Sets <> properties.s2 var
+prf 2638:2650 <> subseteq_refl
+R2656:2666 Frap.Sets <> :::x_'\subseteq'_x not
+R2654:2655 Frap.Sets <> properties.s1 var
+R2667:2668 Frap.Sets <> properties.s1 var
+R2691:2698 Frap.Sets <> subseteq def
+prf 2726:2736 <> subseteq_In
+R2755:2758 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R2742:2752 Frap.Sets <> :::x_'\subseteq'_x not
+R2740:2741 Frap.Sets <> properties.s1 var
+R2753:2754 Frap.Sets <> properties.s2 var
+R2767:2770 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R2760:2764 Frap.Sets <> :::x_'\in'_x not
+R2759:2759 Frap.Sets <> properties.x var
+R2765:2766 Frap.Sets <> properties.s1 var
+R2772:2776 Frap.Sets <> :::x_'\in'_x not
+R2771:2771 Frap.Sets <> properties.x var
+R2777:2778 Frap.Sets <> properties.s2 var
+R2801:2808 Frap.Sets <> subseteq def
+R2811:2812 Frap.Sets <> In def
+prf 2840:2848 <> cap_split
+R2869:2872 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R2868:2868 Frap.Sets <> properties.A var
+binder 2860:2861 <> P1:43
+binder 2863:2864 <> P2:44
+R2884:2884 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R2907:2915 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+binder 2892:2892 <> s:45
+R2899:2902 Coq.Init.Logic <> ::type_scope:x_'\/'_x not
+R2895:2896 Frap.Sets <> P1:43 var
+R2898:2898 Frap.Sets <> s:45 var
+R2903:2904 Frap.Sets <> P2:44 var
+R2906:2906 Frap.Sets <> s:45 var
+R2947:2954 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R2934:2944 Frap.Sets <> :::x_'\subseteq'_x not
+R2918:2923 Frap.Sets <> :::x_'\cap'_x not
+R2916:2917 Frap.Sets <> properties.s1 var
+R2924:2924 Frap.Sets <> :::'['_x_'|'_x_']' not
+R2926:2928 Frap.Sets <> :::'['_x_'|'_x_']' not
+R2933:2933 Frap.Sets <> :::'['_x_'|'_x_']' not
+binder 2925:2925 <> s:46
+R2929:2930 Frap.Sets <> P1:43 var
+R2932:2932 Frap.Sets <> s:46 var
+R2945:2946 Frap.Sets <> properties.s2 var
+R2986:2993 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R2973:2983 Frap.Sets <> :::x_'\subseteq'_x not
+R2957:2962 Frap.Sets <> :::x_'\cap'_x not
+R2955:2956 Frap.Sets <> properties.s1 var
+R2963:2963 Frap.Sets <> :::'['_x_'|'_x_']' not
+R2965:2967 Frap.Sets <> :::'['_x_'|'_x_']' not
+R2972:2972 Frap.Sets <> :::'['_x_'|'_x_']' not
+binder 2964:2964 <> s:47
+R2968:2969 Frap.Sets <> P2:44 var
+R2971:2971 Frap.Sets <> s:47 var
+R2984:2985 Frap.Sets <> properties.s3 var
+R2996:3006 Frap.Sets <> :::x_'\subseteq'_x not
+R2994:2995 Frap.Sets <> properties.s1 var
+R3007:3007 Frap.Sets <> :::x_'\cup'_x not
+R3026:3033 Frap.Sets <> :::x_'\cup'_x not
+R3052:3052 Frap.Sets <> :::x_'\cup'_x not
+R3010:3015 Frap.Sets <> :::x_'\cap'_x not
+R3008:3009 Frap.Sets <> properties.s2 var
+R3016:3016 Frap.Sets <> :::'['_x_'|'_x_']' not
+R3018:3020 Frap.Sets <> :::'['_x_'|'_x_']' not
+R3025:3025 Frap.Sets <> :::'['_x_'|'_x_']' not
+binder 3017:3017 <> s:48
+R3021:3022 Frap.Sets <> P1:43 var
+R3024:3024 Frap.Sets <> s:48 var
+R3036:3041 Frap.Sets <> :::x_'\cap'_x not
+R3034:3035 Frap.Sets <> properties.s3 var
+R3042:3042 Frap.Sets <> :::'['_x_'|'_x_']' not
+R3044:3046 Frap.Sets <> :::'['_x_'|'_x_']' not
+R3051:3051 Frap.Sets <> :::'['_x_'|'_x_']' not
+binder 3043:3043 <> s:49
+R3047:3048 Frap.Sets <> P2:44 var
+R3050:3050 Frap.Sets <> s:49 var
+var 3190:3192 properties ss1
+var 3194:3196 properties ss2
+R3200:3203 Coq.Init.Datatypes <> list ind
+R3205:3205 Frap.Sets <> properties.A var
+prf 3219:3232 <> union_constant
+R3266:3268 Coq.Init.Logic <> ::type_scope:x_'='_x not
+R3248:3253 Frap.Sets <> :::x_'\cup'_x not
+R3236:3243 Frap.Sets <> constant def
+R3245:3247 Frap.Sets <> properties.ss1 var
+R3254:3261 Frap.Sets <> constant def
+R3263:3265 Frap.Sets <> properties.ss2 var
+R3269:3276 Frap.Sets <> constant def
+R3282:3285 Coq.Init.Datatypes <> ::list_scope:x_'++'_x not
+R3279:3281 Frap.Sets <> properties.ss1 var
+R3286:3288 Frap.Sets <> properties.ss2 var
+R3312:3319 Frap.Sets <> constant def
+R3322:3326 Frap.Sets <> union def
+R3347:3356 Frap.Sets <> sets_equal thm
+R3347:3356 Frap.Sets <> sets_equal thm
+R3388:3397 Frap.Sets properties <> sec
+ind 3543:3552 <> removeDups
+constr 3588:3592 <> RdNil
+constr 3617:3621 <> RdNew
+constr 3720:3724 <> RdDup
+binder 3554:3554 <> A:54
+R3564:3567 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R3558:3561 Coq.Init.Datatypes <> list ind
+R3574:3577 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R3568:3571 Coq.Init.Datatypes <> list ind
+R3596:3605 Frap.Sets <> removeDups:55 ind
+R3611:3613 Coq.Init.Datatypes <> nil constr
+R3607:3609 Coq.Init.Datatypes <> nil constr
+binder 3632:3632 <> x:57
+binder 3634:3635 <> ls:58
+binder 3637:3639 <> ls':59
+R3657:3662 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R3644:3644 Coq.Init.Logic <> ::type_scope:'~'_x not
+R3645:3651 Coq.Lists.List <> In def
+R3655:3656 Frap.Sets <> ls:58 var
+R3653:3653 Frap.Sets <> x:57 var
+R3680:3685 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R3663:3672 Frap.Sets <> removeDups:55 ind
+R3677:3679 Frap.Sets <> ls':59 var
+R3674:3675 Frap.Sets <> ls:58 var
+R3686:3695 Frap.Sets <> removeDups:55 ind
+R3709:3712 Coq.Init.Datatypes <> ::list_scope:x_'::'_x not
+R3708:3708 Frap.Sets <> x:57 var
+R3713:3715 Frap.Sets <> ls':59 var
+R3699:3702 Coq.Init.Datatypes <> ::list_scope:x_'::'_x not
+R3698:3698 Frap.Sets <> x:57 var
+R3703:3704 Frap.Sets <> ls:58 var
+binder 3735:3735 <> x:60
+binder 3737:3738 <> ls:61
+binder 3740:3742 <> ls':62
+R3759:3764 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R3747:3753 Coq.Lists.List <> In def
+R3757:3758 Frap.Sets <> ls:61 var
+R3755:3755 Frap.Sets <> x:60 var
+R3782:3787 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R3765:3774 Frap.Sets <> removeDups:55 ind
+R3779:3781 Frap.Sets <> ls':62 var
+R3776:3777 Frap.Sets <> ls:61 var
+R3788:3797 Frap.Sets <> removeDups:55 ind
+R3809:3811 Frap.Sets <> ls':62 var
+R3801:3804 Coq.Init.Datatypes <> ::list_scope:x_'::'_x not
+R3800:3800 Frap.Sets <> x:60 var
+R3805:3806 Frap.Sets <> ls:61 var
+scheme 3543:3552 <> removeDups_ind
+scheme 3543:3552 <> removeDups_sind
+prf 3823:3836 <> removeDups_fwd
+binder 3847:3847 <> A:63
+binder 3849:3849 <> x:64
+R3861:3864 Coq.Init.Datatypes <> list ind
+R3866:3866 Frap.Sets <> A:63 var
+binder 3852:3853 <> ls:65
+binder 3855:3857 <> ls':66
+R3889:3894 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R3872:3881 Frap.Sets <> removeDups ind
+R3886:3888 Frap.Sets <> ls':66 var
+R3883:3884 Frap.Sets <> ls:65 var
+R3907:3912 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R3895:3901 Coq.Lists.List <> In def
+R3905:3906 Frap.Sets <> ls:65 var
+R3903:3903 Frap.Sets <> x:64 var
+R3913:3919 Coq.Lists.List <> In def
+R3923:3925 Frap.Sets <> ls':66 var
+R3921:3921 Frap.Sets <> x:64 var
+prf 3998:4011 <> removeDups_bwd
+binder 4022:4022 <> A:67
+binder 4024:4024 <> x:68
+R4036:4039 Coq.Init.Datatypes <> list ind
+R4041:4041 Frap.Sets <> A:67 var
+binder 4027:4028 <> ls:69
+binder 4030:4032 <> ls':70
+R4064:4069 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R4047:4056 Frap.Sets <> removeDups ind
+R4061:4063 Frap.Sets <> ls':70 var
+R4058:4059 Frap.Sets <> ls:69 var
+R4083:4088 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R4070:4076 Coq.Lists.List <> In def
+R4080:4082 Frap.Sets <> ls':70 var
+R4078:4078 Frap.Sets <> x:68 var
+R4089:4095 Coq.Lists.List <> In def
+R4099:4100 Frap.Sets <> ls:69 var
+R4097:4097 Frap.Sets <> x:68 var
+prf 4157:4169 <> removeDups_ok
+binder 4180:4180 <> A:71
+R4192:4195 Coq.Init.Datatypes <> list ind
+R4197:4197 Frap.Sets <> A:71 var
+binder 4183:4184 <> ls:72
+binder 4186:4188 <> ls':73
+R4220:4225 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R4203:4212 Frap.Sets <> removeDups ind
+R4217:4219 Frap.Sets <> ls':73 var
+R4214:4215 Frap.Sets <> ls:72 var
+R4237:4239 Coq.Init.Logic <> ::type_scope:x_'='_x not
+R4226:4233 Frap.Sets <> constant def
+R4235:4236 Frap.Sets <> ls:72 var
+R4240:4247 Frap.Sets <> constant def
+R4249:4251 Frap.Sets <> ls':73 var
+R4279:4288 Frap.Sets <> sets_equal thm
+R4279:4288 Frap.Sets <> sets_equal thm
+R4300:4307 Frap.Sets <> constant def
+R4332:4345 Frap.Sets <> removeDups_fwd thm
+R4348:4361 Frap.Sets <> removeDups_bwd thm
+R4332:4345 Frap.Sets <> removeDups_fwd thm
+R4348:4361 Frap.Sets <> removeDups_bwd thm
+R4332:4345 Frap.Sets <> removeDups_fwd thm
+R4348:4361 Frap.Sets <> removeDups_bwd thm
+R4413:4416 Coq.Init.Datatypes <> ::list_scope:x_'::'_x not
+R4413:4416 Coq.Init.Datatypes <> ::list_scope:x_'::'_x not
+R4579:4582 Coq.Init.Datatypes <> ::list_scope:x_'::'_x not
+R4579:4582 Coq.Init.Datatypes <> ::list_scope:x_'::'_x not
+R4487:4490 Coq.Init.Datatypes <> ::list_scope:x_'::'_x not
+R4487:4490 Coq.Init.Datatypes <> ::list_scope:x_'::'_x not
+R4513:4516 Coq.Init.Datatypes <> ::list_scope:x_'::'_x not
+R4513:4516 Coq.Init.Datatypes <> ::list_scope:x_'::'_x not
+R4667:4674 Frap.Sets <> constant def
+R4667:4674 Frap.Sets <> constant def
+R4864:4868 Frap.Sets <> RdDup constr
+R4795:4799 Frap.Sets <> RdNew constr
+R4762:4766 Frap.Sets <> RdNil constr
+R4719:4731 Frap.Sets <> removeDups_ok thm
+ind 4983:4992 <> doSubtract
+constr 5038:5042 <> DsNil
+constr 5081:5086 <> DsKeep
+constr 5198:5203 <> DsDrop
+binder 4994:4994 <> A:74
+R5004:5007 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R4998:5001 Coq.Init.Datatypes <> list ind
+R5014:5017 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R5008:5011 Coq.Init.Datatypes <> list ind
+R5024:5027 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R5018:5021 Coq.Init.Datatypes <> list ind
+binder 5053:5054 <> ls:77
+R5057:5066 Frap.Sets <> doSubtract:75 ind
+R5075:5077 Coq.Init.Datatypes <> nil constr
+R5072:5073 Frap.Sets <> ls:77 var
+R5068:5070 Coq.Init.Datatypes <> nil constr
+binder 5097:5097 <> x:78
+binder 5099:5100 <> ls:79
+binder 5102:5104 <> ls0:80
+binder 5106:5108 <> ls':81
+R5127:5132 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R5113:5113 Coq.Init.Logic <> ::type_scope:'~'_x not
+R5114:5120 Coq.Lists.List <> In def
+R5124:5126 Frap.Sets <> ls0:80 var
+R5122:5122 Frap.Sets <> x:78 var
+R5154:5159 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R5133:5142 Frap.Sets <> doSubtract:75 ind
+R5151:5153 Frap.Sets <> ls':81 var
+R5147:5149 Frap.Sets <> ls0:80 var
+R5144:5145 Frap.Sets <> ls:79 var
+R5160:5169 Frap.Sets <> doSubtract:75 ind
+R5187:5190 Coq.Init.Datatypes <> ::list_scope:x_'::'_x not
+R5186:5186 Frap.Sets <> x:78 var
+R5191:5193 Frap.Sets <> ls':81 var
+R5181:5183 Frap.Sets <> ls0:80 var
+R5173:5176 Coq.Init.Datatypes <> ::list_scope:x_'::'_x not
+R5172:5172 Frap.Sets <> x:78 var
+R5177:5178 Frap.Sets <> ls:79 var
+binder 5214:5214 <> x:82
+binder 5216:5217 <> ls:83
+binder 5219:5221 <> ls0:84
+binder 5223:5225 <> ls':85
+R5243:5248 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R5230:5236 Coq.Lists.List <> In def
+R5240:5242 Frap.Sets <> ls0:84 var
+R5238:5238 Frap.Sets <> x:82 var
+R5270:5275 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R5249:5258 Frap.Sets <> doSubtract:75 ind
+R5267:5269 Frap.Sets <> ls':85 var
+R5263:5265 Frap.Sets <> ls0:84 var
+R5260:5261 Frap.Sets <> ls:83 var
+R5276:5285 Frap.Sets <> doSubtract:75 ind
+R5301:5303 Frap.Sets <> ls':85 var
+R5297:5299 Frap.Sets <> ls0:84 var
+R5289:5292 Coq.Init.Datatypes <> ::list_scope:x_'::'_x not
+R5288:5288 Frap.Sets <> x:82 var
+R5293:5294 Frap.Sets <> ls:83 var
+scheme 4983:4992 <> doSubtract_ind
+scheme 4983:4992 <> doSubtract_sind
+prf 5315:5328 <> doSubtract_fwd
+binder 5339:5339 <> A:86
+binder 5341:5341 <> x:87
+R5357:5360 Coq.Init.Datatypes <> list ind
+R5362:5362 Frap.Sets <> A:86 var
+binder 5344:5345 <> ls:88
+binder 5347:5349 <> ls0:89
+binder 5351:5353 <> ls':90
+R5389:5394 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R5368:5377 Frap.Sets <> doSubtract ind
+R5386:5388 Frap.Sets <> ls':90 var
+R5382:5384 Frap.Sets <> ls0:89 var
+R5379:5380 Frap.Sets <> ls:88 var
+R5407:5412 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R5395:5401 Coq.Lists.List <> In def
+R5405:5406 Frap.Sets <> ls:88 var
+R5403:5403 Frap.Sets <> x:87 var
+R5427:5432 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R5413:5413 Coq.Init.Logic <> ::type_scope:'~'_x not
+R5414:5420 Coq.Lists.List <> In def
+R5424:5426 Frap.Sets <> ls0:89 var
+R5422:5422 Frap.Sets <> x:87 var
+R5433:5439 Coq.Lists.List <> In def
+R5443:5445 Frap.Sets <> ls':90 var
+R5441:5441 Frap.Sets <> x:87 var
+prf 5527:5541 <> doSubtract_bwd1
+binder 5552:5552 <> A:91
+binder 5554:5554 <> x:92
+R5570:5573 Coq.Init.Datatypes <> list ind
+R5575:5575 Frap.Sets <> A:91 var
+binder 5557:5558 <> ls:93
+binder 5560:5562 <> ls0:94
+binder 5564:5566 <> ls':95
+R5602:5607 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R5581:5590 Frap.Sets <> doSubtract ind
+R5599:5601 Frap.Sets <> ls':95 var
+R5595:5597 Frap.Sets <> ls0:94 var
+R5592:5593 Frap.Sets <> ls:93 var
+R5621:5626 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R5608:5614 Coq.Lists.List <> In def
+R5618:5620 Frap.Sets <> ls':95 var
+R5616:5616 Frap.Sets <> x:92 var
+R5627:5633 Coq.Lists.List <> In def
+R5637:5638 Frap.Sets <> ls:93 var
+R5635:5635 Frap.Sets <> x:92 var
+prf 5695:5709 <> doSubtract_bwd2
+binder 5720:5720 <> A:96
+binder 5722:5722 <> x:97
+R5738:5741 Coq.Init.Datatypes <> list ind
+R5743:5743 Frap.Sets <> A:96 var
+binder 5725:5726 <> ls:98
+binder 5728:5730 <> ls0:99
+binder 5732:5734 <> ls':100
+R5770:5775 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R5749:5758 Frap.Sets <> doSubtract ind
+R5767:5769 Frap.Sets <> ls':100 var
+R5763:5765 Frap.Sets <> ls0:99 var
+R5760:5761 Frap.Sets <> ls:98 var
+R5789:5794 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R5776:5782 Coq.Lists.List <> In def
+R5786:5788 Frap.Sets <> ls':100 var
+R5784:5784 Frap.Sets <> x:97 var
+R5808:5813 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R5795:5801 Coq.Lists.List <> In def
+R5805:5807 Frap.Sets <> ls0:99 var
+R5803:5803 Frap.Sets <> x:97 var
+R5814:5818 Coq.Init.Logic <> False ind
+prf 5891:5903 <> doSubtract_ok
+binder 5914:5914 <> A:101
+R5930:5933 Coq.Init.Datatypes <> list ind
+R5935:5935 Frap.Sets <> A:101 var
+binder 5917:5918 <> ls:102
+binder 5920:5922 <> ls0:103
+binder 5924:5926 <> ls':104
+R5962:5967 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R5941:5950 Frap.Sets <> doSubtract ind
+R5959:5961 Frap.Sets <> ls':104 var
+R5955:5957 Frap.Sets <> ls0:103 var
+R5952:5953 Frap.Sets <> ls:102 var
+R6002:6004 Coq.Init.Logic <> ::type_scope:x_'='_x not
+R5979:5989 Frap.Sets <> :::x_'\setminus'_x not
+R5968:5975 Frap.Sets <> constant def
+R5977:5978 Frap.Sets <> ls:102 var
+R5990:5997 Frap.Sets <> constant def
+R5999:6001 Frap.Sets <> ls0:103 var
+R6005:6012 Frap.Sets <> constant def
+R6014:6016 Frap.Sets <> ls':104 var
+R6035:6039 Frap.Sets <> minus def
+R6060:6069 Frap.Sets <> sets_equal thm
+R6060:6069 Frap.Sets <> sets_equal thm
+R6081:6088 Frap.Sets <> constant def
+R6113:6126 Frap.Sets <> doSubtract_fwd thm
+R6129:6143 Frap.Sets <> doSubtract_bwd1 thm
+R6146:6160 Frap.Sets <> doSubtract_bwd2 thm
+R6113:6126 Frap.Sets <> doSubtract_fwd thm
+R6129:6143 Frap.Sets <> doSubtract_bwd1 thm
+R6146:6160 Frap.Sets <> doSubtract_bwd2 thm
+R6113:6126 Frap.Sets <> doSubtract_fwd thm
+R6129:6143 Frap.Sets <> doSubtract_bwd1 thm
+R6146:6160 Frap.Sets <> doSubtract_bwd2 thm
+R6113:6126 Frap.Sets <> doSubtract_fwd thm
+R6129:6143 Frap.Sets <> doSubtract_bwd1 thm
+R6146:6160 Frap.Sets <> doSubtract_bwd2 thm
+R6246:6247 Coq.Init.Logic <> eq ind
+R6253:6256 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R6250:6252 Coq.Init.Datatypes <> nat ind
+R6246:6247 Coq.Init.Logic <> eq ind
+R6253:6256 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R6250:6252 Coq.Init.Datatypes <> nat ind
+R6336:6338 Coq.Init.Logic <> ::type_scope:x_'='_x not
+R6336:6338 Coq.Init.Logic <> ::type_scope:x_'='_x not
+R6281:6287 Coq.Init.Logic <> f_equal thm
+binder 6294:6294 <> f:105
+R6299:6299 Frap.Sets <> f:105 var
+R6459:6463 Frap.Sets <> minus def
+R6470:6477 Frap.Sets <> constant def
+R6490:6497 Frap.Sets <> constant def
+R6459:6463 Frap.Sets <> minus def
+R6470:6477 Frap.Sets <> constant def
+R6490:6497 Frap.Sets <> constant def
+R6570:6577 Frap.Sets <> constant def
+R6570:6577 Frap.Sets <> constant def
+R6593:6600 Frap.Sets <> constant def
+R6672:6679 Frap.Sets <> constant def
+R6672:6679 Frap.Sets <> constant def
+R6696:6703 Frap.Sets <> constant def
+R6901:6906 Frap.Sets <> DsDrop constr
+R6816:6821 Frap.Sets <> DsKeep constr
+R6783:6787 Frap.Sets <> DsNil constr
+R6736:6748 Frap.Sets <> doSubtract_ok thm
+R7096:7101 Frap.Sets <> :::x_'\cup'_x not
+R7096:7101 Frap.Sets <> :::x_'\cup'_x not
+R7153:7155 Frap.Sets <> set def
+R7153:7155 Frap.Sets <> set def
+R7199:7202 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R7199:7202 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R7220:7227 Frap.Sets <> constant def
+R7231:7233 Coq.Init.Datatypes <> nil constr
+R7172:7179 Frap.Sets <> constant def
+R7183:7185 Coq.Init.Datatypes <> nil constr
+R7343:7347 Coq.Arith.Arith <> <> lib
+R7357:7360 Coq.Lists.List <> <> mod
+R7362:7374 Coq.Lists.List ListNotations <> mod
+sec 7386:7392 <> setexpr
+var 7406:7406 setexpr A
+ind 7429:7435 <> setexpr
+constr 7444:7450 <> Literal
+constr 7472:7479 <> Constant
+constr 7497:7501 <> Union
+R7458:7461 Coq.Init.Datatypes <> list ind
+R7463:7465 Coq.Init.Datatypes <> nat ind
+binder 7453:7454 <> vs:110
+R7486:7488 Frap.Sets <> set def
+R7490:7490 Frap.Sets <> setexpr.A var
+binder 7482:7482 <> s:111
+R7512:7518 Frap.Sets <> setexpr:108 ind
+binder 7504:7505 <> e1:112
+binder 7507:7508 <> e2:113
+scheme 7429:7435 <> setexpr_rect
+scheme 7429:7435 <> setexpr_ind
+scheme 7429:7435 <> setexpr_rec
+scheme 7429:7435 <> setexpr_sind
+def 7534:7547 <> interp_setexpr
+R7556:7559 Coq.Init.Datatypes <> list ind
+R7561:7561 Frap.Sets <> setexpr.A var
+binder 7550:7552 <> env:114
+R7569:7575 Frap.Sets <> setexpr ind
+binder 7565:7565 <> e:115
+R7580:7582 Frap.Sets <> set def
+R7584:7584 Frap.Sets <> setexpr.A var
+R7599:7599 Frap.Sets <> e:115 var
+R7612:7618 Frap.Sets <> Literal constr
+R7638:7640 Frap.Sets <> env:114 var
+R7655:7656 Coq.Lists.List ListNotations ::list_scope:'['_']' not
+R7661:7668 Frap.Sets <> constant def
+R7670:7671 Coq.Lists.List ListNotations ::list_scope:'['_']' not
+R7682:7685 Coq.Init.Datatypes <> ::list_scope:x_'::'_x not
+R7691:7698 Frap.Sets <> constant def
+R7701:7703 Coq.Lists.List <> map def
+R7706:7716 Coq.Lists.List <> nth_default def
+R7720:7722 Frap.Sets <> env:114 var
+R7745:7752 Frap.Sets <> Constant constr
+R7767:7771 Frap.Sets <> Union constr
+R7803:7808 Frap.Sets <> :::x_'\cup'_x not
+R7782:7795 Frap.Sets <> interp_setexpr:116 def
+R7797:7799 Frap.Sets <> env:114 var
+R7809:7822 Frap.Sets <> interp_setexpr:116 def
+R7824:7826 Frap.Sets <> env:114 var
+rec 7850:7860 <> normal_form
+proj 7871:7878 <> Elements
+proj 7896:7900 <> Other
+R7882:7885 Coq.Init.Datatypes <> list ind
+R7887:7889 Coq.Init.Datatypes <> nat ind
+R7904:7909 Coq.Init.Datatypes <> option ind
+R7912:7914 Frap.Sets <> set def
+R7916:7916 Frap.Sets <> setexpr.A var
+def 7936:7941 <> member
+R7948:7950 Coq.Init.Datatypes <> nat ind
+binder 7944:7944 <> n:122
+R7959:7962 Coq.Init.Datatypes <> list ind
+R7964:7966 Coq.Init.Datatypes <> nat ind
+binder 7954:7955 <> ls:123
+R7971:7974 Coq.Init.Datatypes <> bool ind
+R7989:7990 Frap.Sets <> ls:123 var
+R8003:8004 Coq.Lists.List ListNotations ::list_scope:'['_']' not
+R8009:8013 Coq.Init.Datatypes <> false constr
+R8022:8025 Coq.Init.Datatypes <> ::list_scope:x_'::'_x not
+R8033:8033 Coq.Init.Datatypes <> ::bool_scope:x_'||'_x not
+R8040:8044 Coq.Init.Datatypes <> ::bool_scope:x_'||'_x not
+R8035:8038 Coq.Arith.PeanoNat <> ::nat_scope:x_'=?'_x not
+R8034:8034 Frap.Sets <> n:122 var
+R8045:8050 Frap.Sets <> member:124 def
+R8052:8052 Frap.Sets <> n:122 var
+def 8079:8083 <> dedup
+R8091:8094 Coq.Init.Datatypes <> list ind
+R8096:8098 Coq.Init.Datatypes <> nat ind
+binder 8086:8087 <> ls:126
+R8103:8106 Coq.Init.Datatypes <> list ind
+R8108:8110 Coq.Init.Datatypes <> nat ind
+R8125:8126 Frap.Sets <> ls:126 var
+R8139:8140 Coq.Lists.List ListNotations ::list_scope:'['_']' not
+R8145:8146 Coq.Lists.List ListNotations ::list_scope:'['_']' not
+R8155:8158 Coq.Init.Datatypes <> ::list_scope:x_'::'_x not
+R8182:8186 Frap.Sets <> dedup:127 def
+R8188:8189 Frap.Sets <> ls:126 var
+binder 8175:8177 <> ls':129
+R8203:8208 Frap.Sets <> member def
+R8212:8214 Frap.Sets <> ls':129 var
+R8231:8234 Coq.Init.Datatypes <> ::list_scope:x_'::'_x not
+R8235:8237 Frap.Sets <> ls':129 var
+R8221:8223 Frap.Sets <> ls':129 var
+def 8260:8267 <> setmerge
+R8280:8283 Coq.Init.Datatypes <> list ind
+R8285:8287 Coq.Init.Datatypes <> nat ind
+binder 8270:8272 <> ls1:130
+binder 8274:8276 <> ls2:131
+R8292:8295 Coq.Init.Datatypes <> list ind
+R8297:8299 Coq.Init.Datatypes <> nat ind
+R8314:8316 Frap.Sets <> ls1:130 var
+R8329:8330 Coq.Lists.List ListNotations ::list_scope:'['_']' not
+R8335:8337 Frap.Sets <> ls2:131 var
+R8346:8349 Coq.Init.Datatypes <> ::list_scope:x_'::'_x not
+R8367:8372 Frap.Sets <> member def
+R8376:8378 Frap.Sets <> ls2:131 var
+R8409:8412 Coq.Init.Datatypes <> ::list_scope:x_'::'_x not
+R8413:8420 Frap.Sets <> setmerge:132 def
+R8427:8429 Frap.Sets <> ls2:131 var
+R8385:8392 Frap.Sets <> setmerge:132 def
+R8399:8401 Frap.Sets <> ls2:131 var
+def 8452:8468 <> normalize_setexpr
+R8475:8481 Frap.Sets <> setexpr ind
+binder 8471:8471 <> e:134
+R8486:8496 Frap.Sets <> normal_form rec
+R8511:8511 Frap.Sets <> e:134 var
+R8524:8530 Frap.Sets <> Literal constr
+R8541:8548 Frap.Sets <> Elements proj
+R8541:8548 Frap.Sets <> Elements proj
+R8541:8548 Frap.Sets <> Elements proj
+R8563:8567 Frap.Sets <> Other proj
+R8563:8567 Frap.Sets <> Other proj
+R8553:8557 Frap.Sets <> dedup def
+R8572:8575 Coq.Init.Datatypes <> None constr
+R8586:8593 Frap.Sets <> Constant constr
+R8603:8610 Frap.Sets <> Elements proj
+R8603:8610 Frap.Sets <> Elements proj
+R8603:8610 Frap.Sets <> Elements proj
+R8619:8623 Frap.Sets <> Other proj
+R8619:8623 Frap.Sets <> Other proj
+R8615:8616 Coq.Lists.List ListNotations ::list_scope:'['_']' not
+R8628:8631 Coq.Init.Datatypes <> Some constr
+R8644:8648 Frap.Sets <> Union constr
+R8676:8692 Frap.Sets <> normalize_setexpr:135 def
+binder 8669:8671 <> nf1:137
+R8717:8733 Frap.Sets <> normalize_setexpr:135 def
+binder 8710:8712 <> nf2:138
+R8752:8759 Frap.Sets <> Elements proj
+R8752:8759 Frap.Sets <> Elements proj
+R8752:8759 Frap.Sets <> Elements proj
+R8815:8819 Frap.Sets <> Other proj
+R8815:8819 Frap.Sets <> Other proj
+R8764:8771 Frap.Sets <> setmerge def
+R8793:8800 Frap.Sets <> Elements proj
+R8788:8790 Frap.Sets <> nf2:138 var
+R8778:8785 Frap.Sets <> Elements proj
+R8773:8775 Frap.Sets <> nf1:137 var
+R8848:8852 Frap.Sets <> Other proj
+R8843:8845 Frap.Sets <> nf2:138 var
+R8835:8839 Frap.Sets <> Other proj
+R8830:8832 Frap.Sets <> nf1:137 var
+R8882:8885 Coq.Init.Datatypes <> None constr
+R8888:8891 Coq.Init.Datatypes <> None constr
+R8896:8899 Coq.Init.Datatypes <> None constr
+R8926:8929 Coq.Init.Datatypes <> None constr
+R8958:8961 Coq.Init.Datatypes <> None constr
+R8993:8996 Coq.Init.Datatypes <> Some constr
+R9002:9005 Coq.Init.Datatypes <> Some constr
+R9013:9016 Coq.Init.Datatypes <> Some constr
+R9021:9026 Frap.Sets <> :::x_'\cup'_x not
+def 9081:9098 <> interp_normal_form
+R9107:9110 Coq.Init.Datatypes <> list ind
+R9112:9112 Frap.Sets <> setexpr.A var
+binder 9101:9103 <> env:139
+R9121:9131 Frap.Sets <> normal_form rec
+binder 9116:9117 <> nf:140
+R9136:9138 Frap.Sets <> set def
+R9140:9140 Frap.Sets <> setexpr.A var
+R9165:9167 Frap.Sets <> env:139 var
+R9190:9191 Coq.Lists.List ListNotations ::list_scope:'['_']' not
+R9196:9203 Frap.Sets <> constant def
+R9205:9206 Coq.Lists.List ListNotations ::list_scope:'['_']' not
+R9225:9228 Coq.Init.Datatypes <> ::list_scope:x_'::'_x not
+R9234:9241 Frap.Sets <> constant def
+R9244:9246 Coq.Lists.List <> map def
+R9272:9279 Frap.Sets <> Elements proj
+R9268:9269 Frap.Sets <> nf:140 var
+R9249:9259 Coq.Lists.List <> nth_default def
+R9263:9265 Frap.Sets <> env:139 var
+binder 9153:9154 <> cs:142
+R9318:9322 Frap.Sets <> Other proj
+R9314:9315 Frap.Sets <> nf:140 var
+R9336:9339 Coq.Init.Datatypes <> None constr
+R9344:9345 Frap.Sets <> cs:142 var
+R9353:9356 Coq.Init.Datatypes <> Some constr
+R9365:9370 Frap.Sets <> :::x_'\cup'_x not
+R9363:9364 Frap.Sets <> cs:142 var
+prf 9391:9399 <> member_ok
+binder 9410:9410 <> n:143
+binder 9412:9413 <> ns:144
+R9425:9430 Frap.Sets <> member def
+R9434:9435 Frap.Sets <> ns:144 var
+R9432:9432 Frap.Sets <> n:143 var
+R9455:9455 Coq.Init.Logic <> ::type_scope:'~'_x not
+R9456:9457 Coq.Lists.List <> In def
+R9461:9462 Frap.Sets <> ns:144 var
+R9459:9459 Frap.Sets <> n:143 var
+R9442:9443 Coq.Lists.List <> In def
+R9447:9448 Frap.Sets <> ns:144 var
+R9445:9445 Frap.Sets <> n:143 var
+R9524:9527 Coq.Arith.PeanoNat <> ::nat_scope:x_'=?'_x not
+R9524:9527 Coq.Arith.PeanoNat <> ::nat_scope:x_'=?'_x not
+R9557:9566 Coq.Arith.PeanoNat Nat eqb_eq thm
+R9557:9566 Coq.Arith.PeanoNat Nat eqb_eq thm
+R9590:9600 Coq.Arith.PeanoNat Nat eqb_neq thm
+R9590:9600 Coq.Arith.PeanoNat Nat eqb_neq thm
+R9622:9627 Frap.Sets <> member def
+R9622:9627 Frap.Sets <> member def
+prf 9663:9674 <> In_dedup_fwd
+binder 9685:9685 <> n:145
+binder 9687:9688 <> ns:146
+R9712:9721 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R9697:9698 Coq.Lists.List <> In def
+R9703:9707 Frap.Sets <> dedup def
+R9709:9710 Frap.Sets <> ns:146 var
+R9700:9700 Frap.Sets <> n:145 var
+R9722:9723 Coq.Lists.List <> In def
+R9727:9728 Frap.Sets <> ns:146 var
+R9725:9725 Frap.Sets <> n:145 var
+R9792:9800 Frap.Sets <> member_ok thm
+R9805:9809 Frap.Sets <> dedup def
+R9792:9800 Frap.Sets <> member_ok thm
+R9805:9809 Frap.Sets <> dedup def
+R9831:9836 Frap.Sets <> member def
+R9841:9845 Frap.Sets <> dedup def
+R9831:9836 Frap.Sets <> member def
+R9841:9845 Frap.Sets <> dedup def
+prf 9892:9903 <> In_dedup_bwd
+binder 9914:9914 <> n:147
+binder 9916:9917 <> ns:148
+R9933:9942 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R9926:9927 Coq.Lists.List <> In def
+R9931:9932 Frap.Sets <> ns:148 var
+R9929:9929 Frap.Sets <> n:147 var
+R9943:9944 Coq.Lists.List <> In def
+R9949:9953 Frap.Sets <> dedup def
+R9955:9956 Frap.Sets <> ns:148 var
+R9946:9946 Frap.Sets <> n:147 var
+R10021:10029 Frap.Sets <> member_ok thm
+R10034:10038 Frap.Sets <> dedup def
+R10021:10029 Frap.Sets <> member_ok thm
+R10034:10038 Frap.Sets <> dedup def
+R10060:10065 Frap.Sets <> member def
+R10070:10074 Frap.Sets <> dedup def
+R10060:10065 Frap.Sets <> member def
+R10070:10074 Frap.Sets <> dedup def
+R10132:10140 Frap.Sets <> member_ok thm
+R10145:10149 Frap.Sets <> dedup def
+R10132:10140 Frap.Sets <> member_ok thm
+R10145:10149 Frap.Sets <> dedup def
+R10171:10176 Frap.Sets <> member def
+R10181:10185 Frap.Sets <> dedup def
+R10171:10176 Frap.Sets <> member def
+R10181:10185 Frap.Sets <> dedup def
+prf 10243:10256 <> constant_dedup
+R10273:10276 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R10277:10277 Frap.Sets <> setexpr.A var
+binder 10268:10268 <> f:149
+binder 10280:10281 <> vs:150
+R10317:10319 Coq.Init.Logic <> ::type_scope:x_'='_x not
+R10290:10297 Frap.Sets <> constant def
+R10300:10302 Coq.Lists.List <> map def
+R10307:10311 Frap.Sets <> dedup def
+R10313:10314 Frap.Sets <> vs:150 var
+R10304:10304 Frap.Sets <> f:149 var
+R10320:10327 Frap.Sets <> constant def
+R10330:10332 Coq.Lists.List <> map def
+R10336:10337 Frap.Sets <> vs:150 var
+R10334:10334 Frap.Sets <> f:149 var
+R10402:10410 Frap.Sets <> member_ok thm
+R10415:10419 Frap.Sets <> dedup def
+R10402:10410 Frap.Sets <> member_ok thm
+R10415:10419 Frap.Sets <> dedup def
+R10440:10445 Frap.Sets <> member def
+R10450:10454 Frap.Sets <> dedup def
+R10440:10445 Frap.Sets <> member def
+R10450:10454 Frap.Sets <> dedup def
+R10518:10529 Frap.Sets <> In_dedup_fwd thm
+R10518:10529 Frap.Sets <> In_dedup_fwd thm
+R10547:10556 Frap.Sets <> sets_equal thm
+R10547:10556 Frap.Sets <> sets_equal thm
+R10570:10577 Frap.Sets <> constant def
+R10616:10625 Coq.Lists.List <> in_map_iff thm
+R10616:10625 Coq.Lists.List <> in_map_iff thm
+R10660:10669 Frap.Sets <> sets_equal thm
+R10660:10669 Frap.Sets <> sets_equal thm
+prf 10725:10745 <> constant_map_setmerge
+R10762:10765 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R10766:10766 Frap.Sets <> setexpr.A var
+binder 10757:10757 <> f:151
+binder 10769:10771 <> ns2:152
+binder 10773:10775 <> ns1:153
+R10819:10821 Coq.Init.Logic <> ::type_scope:x_'='_x not
+R10784:10791 Frap.Sets <> constant def
+R10794:10796 Coq.Lists.List <> map def
+R10801:10808 Frap.Sets <> setmerge def
+R10814:10816 Frap.Sets <> ns2:152 var
+R10810:10812 Frap.Sets <> ns1:153 var
+R10798:10798 Frap.Sets <> f:151 var
+R10842:10847 Frap.Sets <> :::x_'\cup'_x not
+R10822:10829 Frap.Sets <> constant def
+R10832:10834 Coq.Lists.List <> map def
+R10838:10840 Frap.Sets <> ns1:153 var
+R10836:10836 Frap.Sets <> f:151 var
+R10848:10855 Frap.Sets <> constant def
+R10858:10860 Coq.Lists.List <> map def
+R10864:10866 Frap.Sets <> ns2:152 var
+R10862:10862 Frap.Sets <> f:151 var
+R10970:10978 Frap.Sets <> member_ok thm
+R10970:10978 Frap.Sets <> member_ok thm
+R11002:11007 Frap.Sets <> member def
+R11002:11007 Frap.Sets <> member def
+R11097:11106 Coq.Lists.List <> in_map_iff thm
+R11097:11106 Coq.Lists.List <> in_map_iff thm
+R11179:11180 Coq.Lists.List <> In def
+R11185:11187 Coq.Lists.List <> map def
+R11192:11199 Frap.Sets <> setmerge def
+binder 11223:11223 <> x:154
+R11228:11229 Coq.Lists.List <> In def
+R11234:11236 Coq.Lists.List <> map def
+R11241:11248 Frap.Sets <> setmerge def
+R11231:11231 Frap.Sets <> x:154 var
+R11179:11180 Coq.Lists.List <> In def
+R11185:11187 Coq.Lists.List <> map def
+R11192:11199 Frap.Sets <> setmerge def
+binder 11223:11223 <> x:155
+R11228:11229 Coq.Lists.List <> In def
+R11234:11236 Coq.Lists.List <> map def
+R11241:11248 Frap.Sets <> setmerge def
+R11231:11231 Frap.Sets <> x:155 var
+R11319:11320 Coq.Lists.List <> In def
+R11325:11327 Coq.Lists.List <> map def
+R11332:11339 Frap.Sets <> setmerge def
+binder 11363:11363 <> x:156
+R11368:11369 Coq.Lists.List <> In def
+R11374:11376 Coq.Lists.List <> map def
+R11381:11388 Frap.Sets <> setmerge def
+R11371:11371 Frap.Sets <> x:156 var
+R11319:11320 Coq.Lists.List <> In def
+R11325:11327 Coq.Lists.List <> map def
+R11332:11339 Frap.Sets <> setmerge def
+binder 11363:11363 <> x:157
+R11368:11369 Coq.Lists.List <> In def
+R11374:11376 Coq.Lists.List <> map def
+R11381:11388 Frap.Sets <> setmerge def
+R11371:11371 Frap.Sets <> x:157 var
+R11447:11448 Coq.Lists.List <> In def
+R11453:11455 Coq.Lists.List <> map def
+R11460:11467 Frap.Sets <> setmerge def
+binder 11491:11491 <> x:158
+R11496:11497 Coq.Lists.List <> In def
+R11502:11504 Coq.Lists.List <> map def
+R11509:11516 Frap.Sets <> setmerge def
+R11499:11499 Frap.Sets <> x:158 var
+R11447:11448 Coq.Lists.List <> In def
+R11453:11455 Coq.Lists.List <> map def
+R11460:11467 Frap.Sets <> setmerge def
+binder 11491:11491 <> x:159
+R11496:11497 Coq.Lists.List <> In def
+R11502:11504 Coq.Lists.List <> map def
+R11509:11516 Frap.Sets <> setmerge def
+R11499:11499 Frap.Sets <> x:159 var
+prf 11581:11600 <> normalize_setexpr_ok
+binder 11611:11613 <> env:160
+binder 11615:11615 <> e:161
+R11668:11670 Coq.Init.Logic <> ::type_scope:x_'='_x not
+R11624:11641 Frap.Sets <> interp_normal_form def
+R11648:11664 Frap.Sets <> normalize_setexpr def
+R11666:11666 Frap.Sets <> e:161 var
+R11643:11645 Frap.Sets <> env:160 var
+R11671:11684 Frap.Sets <> interp_setexpr def
+R11690:11690 Frap.Sets <> e:161 var
+R11686:11688 Frap.Sets <> env:160 var
+R11746:11763 Frap.Sets <> interp_normal_form def
+R11810:11823 Frap.Sets <> constant_dedup thm
+R11810:11823 Frap.Sets <> constant_dedup thm
+R11838:11855 Frap.Sets <> interp_normal_form def
+R11930:11947 Frap.Sets <> interp_normal_form def
+R11981:11985 Frap.Sets <> Other proj
+R11988:12004 Frap.Sets <> normalize_setexpr def
+R12013:12017 Frap.Sets <> Other proj
+R12020:12036 Frap.Sets <> normalize_setexpr def
+R11981:11985 Frap.Sets <> Other proj
+R11988:12004 Frap.Sets <> normalize_setexpr def
+R12013:12017 Frap.Sets <> Other proj
+R12020:12036 Frap.Sets <> normalize_setexpr def
+R12013:12017 Frap.Sets <> Other proj
+R12020:12036 Frap.Sets <> normalize_setexpr def
+R12197:12217 Frap.Sets <> constant_map_setmerge thm
+R12197:12217 Frap.Sets <> constant_map_setmerge thm
+R12197:12217 Frap.Sets <> constant_map_setmerge thm
+R12370:12390 Frap.Sets <> constant_map_setmerge thm
+R12370:12390 Frap.Sets <> constant_map_setmerge thm
+R12370:12390 Frap.Sets <> constant_map_setmerge thm
+R12585:12605 Frap.Sets <> constant_map_setmerge thm
+R12585:12605 Frap.Sets <> constant_map_setmerge thm
+R12585:12605 Frap.Sets <> constant_map_setmerge thm
+R12800:12820 Frap.Sets <> constant_map_setmerge thm
+R12800:12820 Frap.Sets <> constant_map_setmerge thm
+R12800:12820 Frap.Sets <> constant_map_setmerge thm
+def 12923:12930 <> included
+R12943:12946 Coq.Init.Datatypes <> list ind
+R12948:12950 Coq.Init.Datatypes <> nat ind
+binder 12933:12935 <> ns1:162
+binder 12937:12939 <> ns2:163
+R12955:12958 Coq.Init.Datatypes <> bool ind
+R12973:12975 Frap.Sets <> ns1:162 var
+R12988:12989 Coq.Lists.List ListNotations ::list_scope:'['_']' not
+R12994:12997 Coq.Init.Datatypes <> true constr
+R13006:13009 Coq.Init.Datatypes <> ::list_scope:x_'::'_x not
+R13030:13033 Coq.Init.Datatypes <> ::bool_scope:x_'&&'_x not
+R13018:13023 Frap.Sets <> member def
+R13027:13029 Frap.Sets <> ns2:163 var
+R13034:13041 Frap.Sets <> included:164 def
+R13048:13050 Frap.Sets <> ns2:163 var
+prf 13070:13082 <> included_true
+binder 13093:13095 <> ns2:166
+binder 13097:13099 <> ns1:167
+R13131:13141 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R13172:13172 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R13124:13126 Coq.Init.Logic <> ::type_scope:x_'='_x not
+R13108:13115 Frap.Sets <> included def
+R13121:13123 Frap.Sets <> ns2:166 var
+R13117:13119 Frap.Sets <> ns1:167 var
+R13127:13130 Coq.Init.Datatypes <> true constr
+binder 13149:13149 <> x:168
+R13160:13163 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R13152:13153 Coq.Lists.List <> In def
+R13157:13159 Frap.Sets <> ns1:167 var
+R13155:13155 Frap.Sets <> x:168 var
+R13164:13165 Coq.Lists.List <> In def
+R13169:13171 Frap.Sets <> ns2:166 var
+R13167:13167 Frap.Sets <> x:168 var
+R13244:13252 Frap.Sets <> member_ok thm
+R13244:13252 Frap.Sets <> member_ok thm
+R13276:13281 Frap.Sets <> member def
+R13276:13281 Frap.Sets <> member def
+R13338:13346 Frap.Sets <> member_ok thm
+R13338:13346 Frap.Sets <> member_ok thm
+R13370:13375 Frap.Sets <> member def
+R13370:13375 Frap.Sets <> member def
+prf 13433:13444 <> compare_sets
+binder 13455:13457 <> env:169
+binder 13459:13460 <> e1:170
+binder 13462:13463 <> e2:171
+R13483:13499 Frap.Sets <> normalize_setexpr def
+R13501:13502 Frap.Sets <> e1:170 var
+binder 13476:13478 <> nf1:172
+R13524:13540 Frap.Sets <> normalize_setexpr def
+R13542:13543 Frap.Sets <> e2:171 var
+binder 13517:13519 <> nf2:173
+R13749:13758 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R13571:13575 Frap.Sets <> Other proj
+R13577:13579 Frap.Sets <> nf2:173 var
+R13560:13564 Frap.Sets <> Other proj
+R13566:13568 Frap.Sets <> nf1:172 var
+R13594:13597 Coq.Init.Datatypes <> None constr
+R13600:13603 Coq.Init.Datatypes <> None constr
+R13710:13712 Coq.Init.Logic <> ::type_scope:x_'='_x not
+R13646:13671 Coq.Init.Datatypes <> ::bool_scope:x_'&&'_x not
+R13608:13615 Frap.Sets <> included def
+R13637:13644 Frap.Sets <> Elements proj
+R13632:13634 Frap.Sets <> nf2:173 var
+R13622:13629 Frap.Sets <> Elements proj
+R13617:13619 Frap.Sets <> nf1:172 var
+R13672:13679 Frap.Sets <> included def
+R13701:13708 Frap.Sets <> Elements proj
+R13696:13698 Frap.Sets <> nf1:172 var
+R13686:13693 Frap.Sets <> Elements proj
+R13681:13683 Frap.Sets <> nf2:173 var
+R13713:13716 Coq.Init.Datatypes <> true constr
+R13734:13738 Coq.Init.Logic <> False ind
+R13780:13782 Coq.Init.Logic <> ::type_scope:x_'='_x not
+R13759:13772 Frap.Sets <> interp_setexpr def
+R13778:13779 Frap.Sets <> e1:170 var
+R13774:13776 Frap.Sets <> env:169 var
+R13783:13796 Frap.Sets <> interp_setexpr def
+R13802:13803 Frap.Sets <> e2:171 var
+R13798:13800 Frap.Sets <> env:169 var
+R13847:13866 Frap.Sets <> normalize_setexpr_ok thm
+R13847:13866 Frap.Sets <> normalize_setexpr_ok thm
+R13847:13866 Frap.Sets <> normalize_setexpr_ok thm
+R13847:13866 Frap.Sets <> normalize_setexpr_ok thm
+R13847:13866 Frap.Sets <> normalize_setexpr_ok thm
+R13910:13927 Frap.Sets <> interp_normal_form def
+R13944:13948 Frap.Sets <> Other proj
+R13951:13967 Frap.Sets <> normalize_setexpr def
+R13976:13980 Frap.Sets <> Other proj
+R13983:13999 Frap.Sets <> normalize_setexpr def
+R13944:13948 Frap.Sets <> Other proj
+R13951:13967 Frap.Sets <> normalize_setexpr def
+R13976:13980 Frap.Sets <> Other proj
+R13983:13999 Frap.Sets <> normalize_setexpr def
+R13976:13980 Frap.Sets <> Other proj
+R13983:13999 Frap.Sets <> normalize_setexpr def
+R14055:14067 Coq.Bool.Bool <> andb_true_iff thm
+R14055:14067 Coq.Bool.Bool <> andb_true_iff thm
+R14102:14114 Frap.Sets <> included_true thm
+R14102:14114 Frap.Sets <> included_true thm
+R14141:14153 Frap.Sets <> included_true thm
+R14141:14153 Frap.Sets <> included_true thm
+R14203:14212 Frap.Sets <> sets_equal thm
+R14203:14212 Frap.Sets <> sets_equal thm
+R14226:14233 Frap.Sets <> constant def
+R14264:14273 Coq.Lists.List <> in_map_iff thm
+R14264:14273 Coq.Lists.List <> in_map_iff thm
+R14286:14295 Coq.Lists.List <> in_map_iff thm
+R14286:14295 Coq.Lists.List <> in_map_iff thm
+R14330:14339 Coq.Lists.List <> in_map_iff thm
+R14330:14339 Coq.Lists.List <> in_map_iff thm
+R14352:14361 Coq.Lists.List <> in_map_iff thm
+R14352:14361 Coq.Lists.List <> in_map_iff thm
+R14397:14403 Frap.Sets setexpr <> sec
+R14486:14489 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R14486:14489 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R14562:14563 Coq.Lists.List ListNotations ::list_scope:'['_']' not
+R14562:14563 Coq.Lists.List ListNotations ::list_scope:'['_']' not
+R14587:14590 Coq.Init.Datatypes <> ::list_scope:x_'::'_x not
+R14587:14590 Coq.Init.Datatypes <> ::list_scope:x_'::'_x not
+R14617:14620 Coq.Init.Datatypes <> ::list_scope:x_'::'_x not
+R14617:14620 Coq.Init.Datatypes <> ::list_scope:x_'::'_x not
+R14680:14680 Coq.Init.Datatypes <> S constr
+R14690:14693 Coq.Init.Datatypes <> ::list_scope:x_'::'_x not
+R14572:14572 Coq.Lists.List ListNotations ::list_scope:'['_x_']' not
+R14574:14574 Coq.Lists.List ListNotations ::list_scope:'['_x_']' not
+R14782:14783 Coq.Lists.List ListNotations ::list_scope:'['_']' not
+R14782:14783 Coq.Lists.List ListNotations ::list_scope:'['_']' not
+R14817:14820 Coq.Init.Datatypes <> ::list_scope:x_'::'_x not
+R14817:14820 Coq.Init.Datatypes <> ::list_scope:x_'::'_x not
+R14974:14977 Coq.Init.Datatypes <> ::list_scope:x_'::'_x not
+R14792:14794 Coq.Init.Datatypes <> nil constr
+R14796:14798 Coq.Init.Datatypes <> nat ind
+R15069:15076 Frap.Sets <> constant def
+R15069:15076 Frap.Sets <> constant def
+R15171:15176 Frap.Sets <> :::x_'\cup'_x not
+R15171:15176 Frap.Sets <> :::x_'\cup'_x not
+R15439:15446 Frap.Sets <> Constant constr
+R15371:15373 Coq.Init.Logic <> ::type_scope:x_'='_x not
+R15374:15381 Frap.Sets <> constant def
+R15383:15384 Coq.Lists.List ListNotations ::list_scope:'['_']' not
+R15360:15366 Coq.Init.Logic <> eq_refl constr
+R15404:15410 Frap.Sets <> Literal constr
+R15414:15415 Coq.Lists.List ListNotations ::list_scope:'['_']' not
+R15295:15299 Frap.Sets <> Union constr
+R15136:15142 Frap.Sets <> Literal constr
+R15541:15558 Frap.Sets <> interp_normal_form def
+R15560:15576 Frap.Sets <> normalize_setexpr def
+R15578:15588 Coq.Lists.List <> nth_default def
+R15633:15640 Frap.Sets <> setmerge def
+R15642:15649 Frap.Sets <> Elements proj
+R15651:15655 Frap.Sets <> Other proj
+R15657:15665 Coq.Lists.List <> nth_error def
+R15667:15669 Coq.Lists.List <> map def
+R15671:15675 Frap.Sets <> dedup def
+R15677:15682 Frap.Sets <> member def
+R15684:15690 Coq.Arith.PeanoNat Nat eqb def
+R15692:15694 Coq.Init.Datatypes <> orb def
+R15739:15742 Coq.Init.Datatypes <> andb def
+R15744:15751 Frap.Sets <> included def
+R15804:15821 Frap.Sets <> interp_normal_form def
+R15823:15839 Frap.Sets <> normalize_setexpr def
+R15841:15851 Coq.Lists.List <> nth_default def
+R15920:15927 Frap.Sets <> setmerge def
+R15929:15936 Frap.Sets <> Elements proj
+R15938:15942 Frap.Sets <> Other proj
+R15944:15952 Coq.Lists.List <> nth_error def
+R15954:15956 Coq.Lists.List <> map def
+R15958:15962 Frap.Sets <> dedup def
+R15964:15969 Frap.Sets <> member def
+R15971:15977 Coq.Arith.PeanoNat Nat eqb def
+R15979:15981 Coq.Init.Datatypes <> orb def
+R16050:16053 Coq.Init.Datatypes <> andb def
+R16055:16062 Frap.Sets <> included def
+R16151:16155 Frap.Sets <> union def
+R16151:16155 Frap.Sets <> union def
+R16348:16352 Frap.Sets <> union def
+R16348:16352 Frap.Sets <> union def
+R16386:16390 Frap.Sets <> union def
+R16401:16403 Coq.Init.Datatypes <> nil constr
+R16442:16446 Frap.Sets <> union def
+R16442:16446 Frap.Sets <> union def
+R16461:16474 Frap.Sets <> interp_setexpr def
+R16505:16524 Frap.Sets <> normalize_setexpr_ok thm
+R16184:16188 Frap.Sets <> union def
+R16199:16201 Coq.Init.Datatypes <> nil constr
+R16240:16244 Frap.Sets <> union def
+R16240:16244 Frap.Sets <> union def
+R16259:16272 Frap.Sets <> interp_setexpr def
+R16298:16317 Frap.Sets <> normalize_setexpr_ok thm
+R16603:16604 Coq.Init.Logic <> eq ind
+R16603:16604 Coq.Init.Logic <> eq ind
+R16657:16660 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R16657:16660 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R16682:16684 Coq.Init.Datatypes <> nil constr
+R16787:16789 Coq.Init.Logic <> ::type_scope:x_'='_x not
+R16766:16779 Frap.Sets <> interp_setexpr def
+R16790:16803 Frap.Sets <> interp_setexpr def
+R16828:16839 Frap.Sets <> compare_sets thm

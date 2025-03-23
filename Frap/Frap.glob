@@ -1,0 +1,7 @@
+DIGEST 8f44b33fb2ce2b003d1b3d42c2371628
+FFrap.Frap
+R15:29 Frap.FrapWithoutSets <> <> lib
+R53:64 Frap.Sets SetNotations <> modtype
+R66:80 Frap.FrapWithoutSets <> <> modtype
+mod 47:48 <> SN
+R47:48 Frap.Frap SN <> mod

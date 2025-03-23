@@ -1,0 +1,21 @@
+DIGEST 7a05724989d367ef107c19b6c891488f
+FFrap.Var
+R15:20 Coq.Strings.String <> <> lib
+abbrev 34:36 <> var
+R41:46 Coq.Strings.String <> string ind
+def 60:65 <> var_eq
+R82:84 Frap.Var <> var abbrev
+binder 76:76 <> x:1
+binder 78:78 <> y:2
+R87:87 Coq.Init.Specif <> ::type_scope:'{'_x_'}'_'+'_'{'_x_'}' not
+R93:97 Coq.Init.Specif <> ::type_scope:'{'_x_'}'_'+'_'{'_x_'}' not
+R104:104 Coq.Init.Specif <> ::type_scope:'{'_x_'}'_'+'_'{'_x_'}' not
+R89:91 Coq.Init.Logic <> ::type_scope:x_'='_x not
+R88:88 Frap.Var <> x:1 var
+R92:92 Frap.Var <> y:2 var
+R99:102 Coq.Init.Logic <> ::type_scope:x_'<>'_x not
+R98:98 Frap.Var <> x:1 var
+R103:103 Frap.Var <> y:2 var
+R109:118 Coq.Strings.String <> string_dec def
+R137:142 Frap.Var <> var_eq def
+not 128:128 <> :::x_'==v'_x
