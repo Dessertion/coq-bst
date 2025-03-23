@@ -3,8 +3,11 @@
 *.log
 tmp/
 
+.Makefile.d
 
 *.vo
 *.vos
+*.vok
 *.vosk
 *.glob
+*.aux
