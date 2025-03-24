@@ -1,15 +1,97 @@
-Require Export ssreflect Utf8 CpdtTactics Frap ZArith.
-Close Scope string_scope.
-Open Scope Z_scope.
+Require Import ssreflect Utf8 CpdtTactics FrapWithoutSets ZArith Psatz.
+
+Require Import Classical.
+Require Export ConstructiveEpsilon.
+
+Set Implicit Arguments.
+
+Section find.
+Variable (P : nat → Prop).
+Hypothesis P_decidable : forall n, {P n} + {¬ P n}.
+Variable (H : ∃ n, P n).
+
+Local Definition lbp (m n : nat) : Prop :=
+  m = n + 1 ∧ ∀ k, k ≤ n → ¬ P k.
+
+Print well_founded.
+Lemma wf_lbp : well_founded lbp.
+  unfold well_founded.
+  destruct H as [n Pn].
+  have : ∀ m k, n ≤ k + m → Acc lbp k.
+  { induction m.
+    - move => k n_le_k.
+      rewrite Nat.add_0_r in n_le_k.
+      constructor.
+      move => y [y_def Hy].
+      exfalso.
+      have {}Hy := Hy n n_le_k.
+      done.
+    - move => k n_le_k.
+      constructor.
+      move => y [y_def Hy].
+      apply IHm.
+      lia.
+  }
+  move => hyp a.
+  have h : ∀ k, n ≤ k + n by lia.
+  have {}hyp := hyp n _ (h _).
+  apply hyp.
+Qed.
+
+Definition nat_findX : {n | P n ∧ ∀ m, m < n → ¬ P m}.
+  have rec := well_founded_induction_type wf_lbp.
+  pose p k := (∀ n, n < k → ¬ P n) → {n | P n ∧ ∀ m, m < n → ¬ P m}.
+  specialize (rec p).
+  refine (rec _ 0 (fun _ h => _)).
+  - refine (fun m IH al => _).
+    refine (match P_decidable m with
+          | left Pm => exist _ m (conj Pm al)
+          | right Pm => _
+            end).
+    have this : ∀ n, n ≤ m → ¬ P n.
+    { move => n h.
+      destruct (le_lt_eq_dec _ _ h) as [|e].
+      - by apply al.
+      - by destruct e.
+    }
+    apply: IH _ (conj eq_refl this) _.
+    move => n h.
+    apply this.
+    apply Nat.lt_succ_r.
+    by rewrite -Nat.add_1_r.
+  - exfalso; apply: Nat.nlt_0_r _ h.
+Qed.
+
+Definition nat_find : nat :=
+  (proj1_sig nat_findX).
+
+Theorem nat_find_spec : P (nat_find).
+  exact: proj1 (proj2_sig nat_findX).
+Qed.
+
+Theorem nat_find_min : ∀ m, m < nat_find → ¬ P m.
+  exact: proj2 (proj2_sig nat_findX).
+Qed.
+
+Theorem nat_find_min' {m} (h : P m) : nat_find ≤ m.
+Proof.
+  rewrite Nat.le_ngt.
+  move => bad; exact: nat_find_min _ bad h.
+Qed.
+
+Lemma nat_find_eq_iff {m} : nat_find = m ↔ P m ∧ ∀ n, n < m → ¬ P n.
+Proof.
+  split.
+  - intros [].
+    by auto using nat_find_spec, nat_find_min.
+  - intros [hm hlt].
+    Print Nat.le_antisymm.
+    apply: Nat.le_antisymm _ _ (nat_find_min' hm) _.
+    rewrite Nat.le_ngt => bad.
+    by apply: hlt _ bad (nat_find_spec).
+Qed.
 
 
-(* A useful tactic to quickly break (x ?= y) into cases. *)
-Hint Rewrite Z.compare_eq_iff Z.compare_lt_iff Z.compare_gt_iff : core.
-Ltac case_compare' x y :=
-  let i := fresh "Heq" in
-  remember (x ?= y) as e eqn:i;
-  symmetry in i;
-  destruct e; simplify.
-(* A variant that also adds `crush` to try to close out as many goals as possible. *)
-Ltac case_compare x y :=
-  case_compare' x y; crush.
+
+End find.
+
