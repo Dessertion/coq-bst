@@ -3,6 +3,7 @@ Require Import Arith Orders OrdersTac OrdersFacts.
 Require Import DecidableClass.
 Require Import ssrbool.
 Require Import FrapWithoutSets.
+Require Import Psatz.
 
 Set Implicit Arguments.
 Close Scope string_scope.
@@ -17,6 +18,7 @@ Module AVL (OT : UsualOrderedType').
   Include CmpNotation OT OT.
 
   Include OrderedTypeFacts OT.
+  Include OrderedTypeTest OT.
 
   Local Notation A := OT.t.
   Notation compare := OT.compare.
@@ -26,6 +28,7 @@ Module AVL (OT : UsualOrderedType').
   Local Notation Gt := Datatypes.Gt.
 
   Hint Rewrite compare_eq_iff compare_lt_iff compare_gt_iff : core.
+  Hint Extern 1 => order : core.
   (* Hint Rewrite compare_refl : core. *)
 
   (* if we're trying to match a compare in the goal,
@@ -43,6 +46,7 @@ Module AVL (OT : UsualOrderedType').
 
   Ltac case_compare' x y :=
     let i := fresh "Heq" in
+    let e := fresh in
     remember (compare x y) as e eqn:i;
     symmetry in i;
     destruct e; simplify; try order.
@@ -315,11 +319,11 @@ Module AVL (OT : UsualOrderedType').
 
     Lemma Anyb_iff_Any P t : Anyb P t = true ↔ Any (fun x => P x = true) t.
     Proof.
-      induction t; by crush.
+       induction t; by crush.
     Qed.
 
     (* we can weaken on All *)
-    Lemma All_imp {p q : A → Prop} (H : ∀ {x}, p x → q x) :
+    Lemma All_imp (p : A → Prop) {q : A → Prop} (H : ∀ {x}, p x → q x) :
       ∀ {t}, All p t → All q t.
     Proof.
       induction t; by crush.
@@ -362,46 +366,52 @@ Module AVL (OT : UsualOrderedType').
 
   Section Rotations.
     (* rotate root towards left *)
-    Definition rotate_left t : tree :=
-      match t with
-      | Node v l (Node rv rl rr) => Node rv (Node v l rl) rr
-      | _ => t
+    Definition rotate_left v l r : tree :=
+      match r with
+      | Node rv rl rr => Node rv (Node v l rl) rr
+      | r => Node v l r
       end.
 
     (* rotate root towards right *)
-    Definition rotate_right t : tree :=
-      match t with
-      | Node v (Node lv ll lr) r => Node lv ll (Node v lr r)
-      | t => t
+    Definition rotate_right (v : A) (l r : tree) : tree :=
+      match l with
+      | Node lv ll lr => Node lv ll (Node v lr r)
+      | l => Node v l r
       end.
 
     (* left heavy *)
-    Definition balance_left t : tree :=
-      match t with
-      | Node v (Node lv ll lr) r =>
-          if (height r + 1) <? (height (Node lv ll lr)) then
+    Definition balance_left (v : A) (l r : tree) : tree :=
+      if (height r + 1) <? (height l) then
+        match l with
+        (* this is never true in a well-formed AVL tree *)
+        | Nil => Node v l r
+        (* rather, we will always be in this case *)
+        | Node lv ll lr =>
             if height lr <? height ll then
-              rotate_right (Node v (Node lv ll lr) r)
+              (* left-left, one rotation *)
+              rotate_right v (Node lv ll lr) r
             else
-              rotate_right (Node v (rotate_left (Node lv ll lr)) r)
-          else
-            Node v (Node lv ll lr) r
-      | _ => t
-      end.
+              (* left-right, two rotations *)
+              rotate_right v (rotate_left lv ll lr) r
+        end
+      else
+        Node v l r.
 
     (* right heavy *)
-    Definition balance_right t : tree :=
-      match t with
-      | Node v l (Node rv rl rr) =>
-          if height l + 1 <? height (Node rv rl rr) then
+    Definition balance_right (v : A) (l r : tree) : tree :=
+      if height l + 1 <? height r then
+        match r with
+        | Nil => Node v l r
+        | Node rv rl rr =>
             if height rl <? height rr then
-              rotate_left (Node v l (Node rv rl rr))
+              (* right-right, one rotation *)
+              rotate_left v l (Node rv rl rr)
             else
-              rotate_left (Node v l (rotate_right (Node rv rl rr)))
-          else
-            Node v l (Node rv rl rr)
-      | _ => t
-      end.
+              (* right-left, two rotations *)
+              rotate_left v l (rotate_right rv rl rr)
+        end
+      else
+        Node v l r.
 
   End Rotations.
 
@@ -572,25 +582,168 @@ Module AVL (OT : UsualOrderedType').
       - by apply: Contains_In.
     Qed.
 
-    Lemma rotate_left_preserves_Order v l r : Ordered l → Ordered r → Ordered (rotate_left v l r).
-    Proof.
-      rewrite !Ordered_iff_Ordered'.
-      move=>l_Ordered r_Ordered.
-      induction r_Ordered.
-      - crush.
-      crush.
-      Admitted.
+    Ltac invert_ordered' :=
+      repeat match goal with
+      | [ H : Ordered' (Node _ _ _) |- _ ] => invert H
+      end.
 
-    Lemma insert_preserves_Order x t : Ordered t → Ordered (insert x t).
+    Lemma rotate_left_preserves_Ordered v l r : Ordered (Node v l r) → Ordered (rotate_left v l r).
     Proof.
-      move=>t_Ordered.
+      rewrite !Ordered_iff_Ordered' /rotate_left.
+      move=>ordered.
+      destruct r; invert_ordered'; try by constructor.
+      constructor; crush.
+      - apply (All_imp (fun x => x < v)); by crush.
+      - constructor; by crush.
+    Qed.
+
+    Lemma rotate_right_preserves_Ordered v l r : Ordered (Node v l r) → Ordered (rotate_right v l r).
+    Proof.
+      rewrite !Ordered_iff_Ordered' /rotate_right.
+      intros; destruct l; invert_ordered'; try by constructor.
+      constructor; crush.
+      - apply (All_imp (fun x => v < x)); by crush.
+      - constructor; by crush.
+    Qed.
+
+    Lemma rotate_left_preserves_Ordered' v l r : Ordered' (Node v l r) → Ordered' (rotate_left v l r).
+      rewrite -!Ordered_iff_Ordered'.
+      exact: rotate_left_preserves_Ordered.
+    Qed.
+
+    Lemma rotate_right_preserves_Ordered' v l r : Ordered' (Node v l r) → Ordered' (rotate_right v l r).
+      rewrite -!Ordered_iff_Ordered'.
+      exact: rotate_right_preserves_Ordered.
+    Qed.
+
+    Tactic Notation "split_ifs" "as" ident(h) :=
+      repeat match goal with
+      | [ |- context[if ?b then _ else _ ] ] =>
+          let i := fresh "Heq" in
+          let e := fresh in
+          move i : b => e;
+          destruct e as [h|h]
+      end.
+
+    Tactic Notation "split_ifs" :=
+      repeat match goal with
+      | [ |- context[if ?b then _ else _ ] ] =>
+          let i := fresh "Heq" in
+          let e := fresh in
+          move i : b => e;
+          destruct e
+      end.
+
+    Lemma rotate_left_preserves_All P v l r : (All P (Node v l r)) → All P (rotate_left v l r).
+    Proof.
+      move=>[Pv [Pl Pr]].
+      destruct r; by crush.
+    Qed.
+
+    Lemma rotate_right_preserves_All P v l r : All P (Node v l r) → All P (rotate_right v l r).
+    Proof.
+      destruct l; by crush.
+    Qed.
+
+    Ltac unrotate :=
+      match goal with
+      | [ |- All _ (rotate_left _ _ _) ] => eapply rotate_left_preserves_All
+      | [ |- All _ (rotate_right _ _ _) ] => eapply rotate_right_preserves_All
+      | [ |- Ordered' (rotate_left _ _ _) ] => eapply rotate_left_preserves_Ordered'
+      | [ |- Ordered' (rotate_right _ _ _) ] => eapply rotate_right_preserves_Ordered'
+      end.
+
+    Hint Extern 1 => unrotate : core.
+
+    (* Hint Resolve rotate_left_preserves_Ordered' rotate_right_preserves_Ordered' : core. *)
+    (* Hint Resolve rotate_left_preserves_All rotate_right_preserves_All : core. *)
+
+    Lemma balance_left_preserves_Ordered v l r : Ordered (Node v l r) → Ordered (balance_left v l r).
+    Proof.
+      move => H_order.
+      have := H_order.
+      rewrite !Ordered_iff_Ordered' /balance_left.
+      intros; invert_ordered'.
+      split_ifs.
+      - destruct l.
+        + by crush.
+        + crush.
+          split_ifs.
+          * constructor; crush.
+            -- apply (All_imp (fun x => v < x)); by crush.
+            -- constructor; by crush.
+          * unrotate.
+            constructor; crush.
+            unrotate; by crush.
+      - destruct l.
+        + constructor; by crush.
+        + try repeat constructor; by crush.
+    Qed.
+
+    Lemma balance_right_preserves_Ordered v l r : Ordered (Node v l r) → Ordered (balance_right v l r).
+    Proof.
+      move => H_order.
+      have := H_order.
+      rewrite !Ordered_iff_Ordered' /balance_right.
+      intros; invert_ordered'.
+      split_ifs.
+      - destruct r; try repeat constructor; crush.
+        split_ifs; try repeat constructor; crush.
+        + apply (All_imp (fun x => x < v)); by crush.
+        + unrotate; repeat constructor; crush.
+          unrotate; by crush.
+      - destruct r; try repeat constructor; by crush.
+    Qed.
+
+    Lemma balance_left_preserves_Ordered' v l r : Ordered' (Node v l r) → Ordered' (balance_left v l r).
+    Proof.
+      rewrite -!Ordered_iff_Ordered'.
+      exact: balance_left_preserves_Ordered.
+    Qed.
+
+    Lemma balance_right_preserves_Ordered' v l r : Ordered' (Node v l r) → Ordered' (balance_right v l r).
+    Proof.
+      rewrite -!Ordered_iff_Ordered'.
+      exact: balance_right_preserves_Ordered.
+    Qed.
+
+    (* Hint Resolve balance_left_preserves_Ordered : core. *)
+    Lemma balance_left_preserves_All P v l r : All P (Node v l r) → All P (balance_left v l r).
+    Proof.
+      move=> Pt.
+      rewrite /balance_left.
+      split_ifs; destruct l; split_ifs; try repeat (constructor || unrotate); crush; done.
+    Qed.
+
+    Lemma balance_right_preserves_All P v l r : All P (Node v l r) → All P (balance_right v l r).
+    Proof.
+      move=> Pt.
+      rewrite /balance_right.
+      split_ifs; destruct r; split_ifs; try repeat (constructor || unrotate); crush; done.
+    Qed.
+
+    Lemma insert_preserves_All P x t : All P t → P x → All P (insert x t).
+    Proof.
+      move=>Pt Px.
       induction t.
       - by crush.
-      - have {t_Ordered}[[t1_lt t1_Ordered] [t2_gt t2_Ordered]] := t_Ordered.
-        have {IHt1}IHt1 := IHt1 t1_Ordered.
-        have {IHt2}IHt2 := IHt2 t2_Ordered.
-        rewrite /insert.
-        Admitted.
+      - crush.
+        elim_compare v x; crush;
+          (apply balance_left_preserves_All || apply balance_right_preserves_All); crush;
+          done.
+    Qed.
+
+    Lemma insert_preserves_Ordered' x t : Ordered' t → Ordered' (insert x t).
+    Proof.
+      move=>t_Ordered.
+      induction t_Ordered; crush.
+      - repeat constructor; by crush.
+      - elim_compare v x; repeat constructor; crush;
+        (apply balance_left_preserves_Ordered' || apply balance_right_preserves_Ordered');
+        repeat constructor; crush;
+        apply insert_preserves_All; crush;
+        done.
+    Qed.
 
   End Facts.
 
