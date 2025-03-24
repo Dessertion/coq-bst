@@ -381,7 +381,7 @@ Module AVL (OT : UsualOrderedType').
 
     (* left heavy *)
     Definition balance_left (v : A) (l r : tree) : tree :=
-      if (height r + 1) <? (height l) then
+      if (1 + height r) <? (height l) then
         match l with
         (* this is never true in a well-formed AVL tree *)
         | Nil => Node v l r
@@ -399,7 +399,7 @@ Module AVL (OT : UsualOrderedType').
 
     (* right heavy *)
     Definition balance_right (v : A) (l r : tree) : tree :=
-      if height l + 1 <? height r then
+      if 1 + height l <? height r then
         match r with
         | Nil => Node v l r
         | Node rv rl rr =>
@@ -419,12 +419,23 @@ Module AVL (OT : UsualOrderedType').
 
   Fixpoint insert x t :=
     match t with
-    | Nil => singleton x
+    | Nil => Node x Nil Nil
     | Node v l r =>
         match (v ?= x) with
         | Eq => Node v l r
         | Lt => balance_right v l (insert x r)
         | Gt => balance_left  v (insert x l) r
+        end
+    end.
+
+  Fixpoint stupid_insert x t :=
+    match t with
+    | Nil => Node x Nil Nil
+    | Node v l r =>
+        match (v ?= x) with
+        | Eq => Node v l r
+        | Lt => Node v l (stupid_insert x r)
+        | Gt => Node v (stupid_insert x l) r
         end
     end.
 
@@ -499,10 +510,10 @@ Module AVL (OT : UsualOrderedType').
       ∀ l r, Balanced l → Balanced r → height l = height r → ∀ v, Balanced (Node v l r)
     (* if height l = height r + 1, then the resulting thing is Balanced *)
     | Balanced_left_heavy :
-      ∀ l r, Balanced l → Balanced r → height l = height r + 1 → ∀ v, Balanced (Node v l r)
+      ∀ l r, Balanced l → Balanced r → height l = 1 + height r → ∀ v, Balanced (Node v l r)
     (* symmetric. *)
     | Balanced_right_heavy :
-      ∀ l r, Balanced l → Balanced r → height l + 1 = height r → ∀ v, Balanced (Node v l r).
+      ∀ l r, Balanced l → Balanced r → 1 + height l = height r → ∀ v, Balanced (Node v l r).
     Hint Constructors Balanced : core.
 
     (* well-formedness invariant *)
@@ -616,23 +627,24 @@ Module AVL (OT : UsualOrderedType').
       exact: rotate_right_preserves_Ordered.
     Qed.
 
-    Tactic Notation "split_ifs" "as" ident(h) :=
-      repeat match goal with
-      | [ |- context[if ?b then _ else _ ] ] =>
-          let i := fresh "Heq" in
-          let e := fresh in
-          move i : b => e;
-          destruct e as [h|h]
+    Tactic Notation "split_ifs" ident(h) :=
+      match goal with
+      | [ |- context[if ?exp then _ else _ ] ] =>
+          let i := fresh h in
+          let b := fresh in
+          move i : exp => b;
+          destruct b
       end.
+    Tactic Notation "split_ifs" := split_ifs Hb.
 
-    Tactic Notation "split_ifs" :=
-      repeat match goal with
-      | [ |- context[if ?b then _ else _ ] ] =>
-          let i := fresh "Heq" in
-          let e := fresh in
-          move i : b => e;
-          destruct e
-      end.
+    (* Tactic Notation "split_ifs" := let h := fresh in split_ifs h. *)
+      (* repeat match goal with *)
+      (* | [ |- context[if ?b then _ else _ ] ] => *)
+      (*     let i := fresh "Heq" in *)
+      (*     let e := fresh in *)
+      (*     move i : b => e; *)
+      (*     destruct e *)
+      (* end. *)
 
     Lemma rotate_left_preserves_All P v l r : (All P (Node v l r)) → All P (rotate_left v l r).
     Proof.
@@ -712,14 +724,14 @@ Module AVL (OT : UsualOrderedType').
     Proof.
       move=> Pt.
       rewrite /balance_left.
-      split_ifs; destruct l; split_ifs; try repeat (constructor || unrotate); crush; done.
+      split_ifs; destruct l; try repeat (split_ifs || constructor || unrotate); crush; done.
     Qed.
 
     Lemma balance_right_preserves_All P v l r : All P (Node v l r) → All P (balance_right v l r).
     Proof.
       move=> Pt.
       rewrite /balance_right.
-      split_ifs; destruct r; split_ifs; try repeat (constructor || unrotate); crush; done.
+      split_ifs; destruct r; try repeat (split_ifs || constructor || unrotate); crush; done.
     Qed.
 
     Lemma insert_preserves_All P x t : All P t → P x → All P (insert x t).
@@ -744,6 +756,299 @@ Module AVL (OT : UsualOrderedType').
         apply insert_preserves_All; crush;
         done.
     Qed.
+
+    Search "<?" true.
+    Search "<?" false.
+    Search (S ?a = S ?b).
+    Search (S ?a ≤ S ?b).
+    Search (S ?a < S ?b)%nat.
+    Ltac ltb_to_lt :=
+      match goal with
+      | [ H : (?a <? ?b)%nat = true |- _ ] => rewrite Nat.ltb_lt
+      end.
+    Hint Rewrite Nat.ltb_lt Nat.ltb_ge : core.
+      (* Nat.succ_inj le_S_n : core. *)
+    (* Hint Resolve le_n_S : core. *)
+
+    Lemma invert_Balanced_left v l r : Balanced (Node v l r) → Balanced l.
+    Proof.
+      move=>H; by invert H.
+    Qed.
+
+    Lemma invert_Balanced_right v l r : Balanced (Node v l r) → Balanced r.
+    Proof.
+      move=>H; by invert H.
+    Qed.
+
+    Lemma rotate_left_height_change_at_most_one v l r :
+      height (rotate_left v l r) ≤ 1 + height (Node v l r).
+    Proof.
+      destruct r; by crush.
+    Qed.
+
+    Lemma rotate_right_height_change_at_most_one v l r :
+      height (rotate_right v l r) ≤ 1 + height (Node v l r).
+    Proof.
+      destruct l; by crush.
+    Qed.
+
+    Lemma rotate_left_height_change v l r :
+      (height (rotate_left v l r) = height (Node v l r))
+      ∨ (height (rotate_left v l r) = 1 + height (Node v l r))
+      ∨ (1 + height (rotate_left v l r) = height (Node v l r)).
+    Proof.
+      destruct r; by crush.
+    Qed.
+
+    Lemma rotate_right_height_change v l r :
+      (height (rotate_right v l r) = height (Node v l r))
+      ∨ (height (rotate_right v l r) = 1 + height (Node v l r))
+      ∨ (1 + height (rotate_right v l r) = height (Node v l r)).
+    Proof.
+      destruct l; by crush.
+    Qed.
+
+    Lemma rotate_left_right_heavy v l r :
+      (height l < height r)%nat → height (rotate_left v l r) ≤ height (Node v l r).
+    Proof.
+      destruct r; by crush.
+    Qed.
+
+    Lemma rotate_right_left_heavy v l r :
+      (height r < height l)%nat → height (rotate_right v l r) ≤ height (Node v l r).
+    Proof.
+      destruct l; by crush.
+    Qed.
+
+    Lemma rotate_left_right_heavy' v l r :
+      (height l < height r)%nat →
+        height (rotate_left v l r) = height (Node v l r)
+        ∨ 1 + height (rotate_left v l r) = height (Node v l r).
+    Proof.
+      destruct r; by crush.
+    Qed.
+
+    Lemma rotate_right_left_heavy' v l r :
+      (height r < height l)%nat →
+        height (rotate_right v l r) = height (Node v l r)
+        ∨ 1 + height (rotate_right v l r) = height (Node v l r).
+    Proof.
+      destruct l; by crush.
+    Qed.
+
+    Lemma rotate_left_right_heavy_1 v l rv rl rr :
+      (1 + height l < height (Node rv rl rr))%nat →
+      (height rl < height rr)%nat →
+      1 + height (rotate_left v l (Node rv rl rr)) = height (Node v l (Node rv rl rr)).
+    Proof.
+      by crush.
+    Qed.
+
+
+    Lemma rotate_left_equal v l r :
+      r ≠ Nil → height l = height r → height (rotate_left v l r) = 1 + height (Node v l r).
+    Proof.
+      destruct r; by crush.
+    Qed.
+
+    Lemma rotate_right_equal v l r :
+      l ≠ Nil → height l = height r → height (rotate_right v l r) = 1 + height (Node v l r).
+    Proof.
+      destruct l; by crush.
+    Qed.
+
+
+
+    Lemma balance_left_preserves_Balanced v l r : Balanced (Node v l r) → Balanced (balance_left v l r).
+    Proof.
+      move=> Hbal.
+      rewrite /balance_left.
+      split_ifs.
+      - destruct l.
+        + by crush.
+        + split_ifs; invert Hbal; by crush.
+      - assumption.
+    Qed.
+
+    Lemma balance_right_preserves_Balanced v l r : Balanced (Node v l r) → Balanced (balance_right v l r).
+    Proof.
+      move=>Hbal.
+      rewrite /balance_right.
+      split_ifs.
+      - destruct r.
+        + by crush.
+        + split_ifs; invert Hbal; by crush.
+      - assumption.
+    Qed.
+
+    Lemma balance_left_Balanced_same v l r : Balanced (Node v l r) → balance_left v l r = Node v l r.
+    Proof.
+      move=>Hbal.
+      rewrite /balance_left.
+      split_ifs.
+      - destruct l.
+        + done.
+        + split_ifs; invert Hbal; by crush.
+      - done.
+    Qed.
+
+    Lemma balance_right_Balanced_same v l r : Balanced (Node v l r) → balance_right v l r = Node v l r.
+    Proof.
+      move=>Hbal.
+      rewrite /balance_right.
+      split_ifs; destruct r; try (split_ifs; invert Hbal); by crush.
+    Qed.
+
+    Ltac match_compare :=
+      repeat rewrite_match_compare;
+      match goal with
+      | [ |- context[match compare ?v ?x with |_ => _ end] ] =>
+          elim_compare v x
+      end.
+
+    Hint Rewrite Nat.max_id : core.
+
+    Lemma rotate_left_not_Nil v l r : rotate_left v l r = Nil → False.
+    Proof.
+      by destruct r.
+    Qed.
+
+    Lemma rotate_right_not_Nil v l r : rotate_right v l r = Nil → False.
+    Proof.
+      by destruct l.
+    Qed.
+    (* Hint Resolve rotate_left_not_Nil rotate_right_not_Nil : core. *)
+
+    Ltac rotate_not_nil :=
+      match goal with
+      | [ H : Node _ _ _ = Nil |- _ ] => by invert H
+      | [ H : rotate_left _ _ _ = Nil |- _ ] => exfalso; exact: rotate_left_not_Nil _ _ _ H
+      | [ H : rotate_right _ _ _ = Nil |- _ ] => exfalso; exact: rotate_right_not_Nil _ _ _ H
+      end.
+    Hint Extern 0 => rotate_not_nil : core.
+
+    Lemma balance_left_not_Nil v l r : balance_left v l r = Nil → False.
+    Proof.
+      rewrite /balance_left.
+      split_ifs; destruct l; try split_ifs; by crush.
+    Qed.
+
+    Lemma balance_right_not_Nil v l r : balance_right v l r = Nil → False.
+    Proof.
+      rewrite /balance_right.
+      split_ifs; destruct r; try split_ifs; by crush.
+    Qed.
+
+    Ltac balance_not_nil :=
+      match goal with
+      | [ H : balance_left _ _ _ = Nil |- _ ] => exfalso; exact: balance_left_not_Nil _ _ _ H
+      | [ H : balance_right _ _ _  = Nil |- _ ] => exfalso; exact: balance_right_not_Nil _ _ _ H
+      end.
+    Hint Extern 0 => balance_not_nil : core.
+
+    Lemma insert_not_Nil x t : insert x t ≠ Nil.
+    Proof.
+      move=>bad.
+      induction t.
+      - invert bad.
+      - rewrite /insert in bad.
+        elim_compare v x; rewrite -/insert in bad; by crush.
+    Qed.
+
+    Hint Extern 0 =>
+      match goal with
+      | [ H : insert _ _ = Nil |- _ ] => exfalso; exact: insert_not_Nil _ _ H
+      end : core.
+
+    Ltac gen_destruct exp :=
+      let eq := fresh "Heq" in
+      let e := fresh "e" in
+      move eq : exp => e;
+      destruct e.
+
+    Lemma balance_left_height_le v l r :
+      height (balance_left v l r) ≤ height (Node v l r).
+    Proof.
+      rewrite /balance_left.
+      split_ifs; destruct l; try split_ifs; crush.
+      destruct l2; by crush.
+    Qed.
+
+    Lemma balance_right_height_le v l r :
+      height (balance_right v l r) ≤ height (Node v l r).
+    Proof.
+      rewrite /balance_right.
+      split_ifs; destruct r; try split_ifs; crush.
+      destruct r1; by crush.
+    Qed.
+
+    Search Nat.max le.
+    Hint Extern 0 =>
+      match goal with
+      | [ H : (?a < ?b)%nat |- context[Nat.max ?a ?b] ] =>
+          rewrite (Nat.max_r _ _ (Nat.lt_le_incl _ _ H))
+      | [ H : (?b < ?a)%nat |- context[Nat.max ?a ?b] ] =>
+          rewrite (Nat.max_l _ _ (Nat.lt_le_incl _ _ H))
+      end : core.
+
+
+    Lemma max_size_le_pow_2_height t :
+      (size t < 2 ^ (height t))%nat.
+    Proof.
+      induction t.
+      { by crush. }
+      rewrite /size -/size.
+      rewrite /height -/height.
+      have one_lt_two : (1 < 2)%nat by lia.
+      suff :
+        ∀ t1 t2, (size t1 < 2 ^ height t1)%nat → (size t2 < 2 ^ height t2)%nat → (height t1 < height t2)%nat →
+                 (1 + size t1 + size t2 < 2 ^ (1 + Nat.max (height t1) (height t2)))%nat.
+      { move => winner.
+        destruct (Nat.lt_trichotomy (height t1) (height t2)) as [h|[h|h]].
+        - by apply winner.
+        - destruct h; by crush.
+        -
+          rewrite Nat.max_comm.
+          replace (1 + size t1 + size t2) with (1 + size t2 + size t1) by ring.
+          by apply winner.
+      }
+      clear v t1 t2 IHt1 IHt2.
+      move=>t1 t2 IHt1 IHt2 h.
+      have : (size t1 < 2^height t2)%nat by have H := Nat.pow_lt_mono_r _ _ _ one_lt_two h; lia.
+      by crush.
+    Qed.
+
+    Lemma insert_height_change x t :
+      Balanced t →
+      height (insert x t) = height t
+      ∨ height (insert x t) = 1 + height t.
+    Proof.
+      induction t.
+      { by crush. }
+      rewrite /insert; elim_compare v x; rewrite -/insert.
+      - by auto.
+      - destruct IHt2.
+        +
+      -
+
+
+    Lemma insert_preserves_Balanced x t : Balanced t → Balanced (insert x t).
+    Proof.
+      move=>Hbal.
+      induction t; try by constructor.
+      rewrite /insert -/insert.
+      have {}IHt1 := IHt1 (invert_Balanced_left Hbal).
+      have {}IHt2 := IHt2 (invert_Balanced_right Hbal).
+      elim_compare v x; simplify.
+      - assumption.
+      - invert Hbal.
+        +
+        apply balance_right_preserves_Balanced.
+
+
+
+
+
 
   End Facts.
 
