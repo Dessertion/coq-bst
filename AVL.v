@@ -1,15 +1,17 @@
-Require Import ssreflect Utf8 CpdtTactics.
+Require Import ssreflect Utf8 CpdtTactics Util.
 Require Import Arith Orders OrdersTac OrdersFacts.
 Require Import DecidableClass.
 Require Import ssrbool.
 Require Import FrapWithoutSets.
 Require Import Psatz.
+Require Import Classical ClassicalDescription IndefiniteDescription.
 
 Set Implicit Arguments.
 Close Scope string_scope.
 Close Scope boolean_if_scope.
 Open Scope general_if_scope.
 Close Scope Z_scope.
+Search (?a ^ ?b) "mul".
 
 
 (* we're going to say no to setoid hell today, please give us the usual equality thank you *)
@@ -211,6 +213,34 @@ Module AVL (OT : UsualOrderedType').
     Hint Resolve Contains_In : core.
 
   End Contains_In.
+  Hint Constructors In' Contains' : core.
+  Hint Resolve
+    Contains_Nil_False Contains'_Nil_False
+    Contains_not_Nil Contains'_not_Nil
+    In_Nil_False In_not_Nil In'_Nil_False In'_not_Nil
+    Contains_In
+    : core.
+  Hint Rewrite Contains'_iff_Contains : core.
+
+  (* a really simple tactic to deconstruct ands/ors of bools *)
+  Ltac simplify_bool :=
+    repeat match goal with
+    | [H: (?a && ?b) = true |- _ ] =>
+        let H1 := fresh in
+        let H2 := fresh in
+        have {H}[H1 H2] := andb_prop _ _ H
+    | [H: (?a || ?b) = false |- _] =>
+        let H1 := fresh in
+        let H2 := fresh in
+        have {H}[H1 H2] := orb_false_elim _ _ H
+    | [H: (?a || ?b) = true |- _] =>
+        apply orb_prop in H;
+        invert H
+    | [H: (?a && ?b) = false |- _] =>
+        apply andb_false_elim in H;
+        invert H
+    end.
+  Hint Extern 2 => simplify_bool : core.
 
   Section AnyAll.
 
@@ -280,37 +310,11 @@ Module AVL (OT : UsualOrderedType').
         induction t; by crush.
       - (* backwards *)
         move=> H.
-        induction t; crush.
-        + apply H; by constructor.
-        + apply IHt1.
-          move=>x x_In'.
-          apply H.
-          by constructor.
-        + apply IHt2.
-          move=>x x_In'; apply H; by constructor.
+        induction t; by crush.
     Qed.
 
     (* Hint Rewrite Any_iff_exists All_iff_forall : core. *)
 
-    (* a really simple tactic to deconstruct ands/ors of bools *)
-    Ltac simplify_bool :=
-      repeat match goal with
-      | [H: (?a && ?b) = true |- _ ] =>
-          let H1 := fresh in
-          let H2 := fresh in
-          have {H}[H1 H2] := andb_prop _ _ H
-      | [H: (?a || ?b) = false |- _] =>
-          let H1 := fresh in
-          let H2 := fresh in
-          have {H}[H1 H2] := orb_false_elim _ _ H
-      | [H: (?a || ?b) = true |- _] =>
-          apply orb_prop in H;
-          invert H
-      | [H: (?a && ?b) = false |- _] =>
-          apply andb_false_elim in H;
-          invert H
-      end.
-    Hint Extern 2 => simplify_bool : core.
 
     Lemma Allb_iff_All P t : Allb P t = true ↔ All (fun x => P x = true) t.
     Proof.
@@ -363,6 +367,9 @@ Module AVL (OT : UsualOrderedType').
     Defined.
 
   End AnyAll.
+  Hint Resolve All_dec Any_dec : core.
+  Hint Rewrite Allb_iff_All Anyb_iff_Any Any_iff_exists : core.
+  (* Hint Rewrite All_iff_forall Any_iff_exists Allb_iff_All Anyb_iff_Any : core. *)
 
   Section Rotations.
     (* rotate root towards left *)
@@ -471,7 +478,24 @@ Module AVL (OT : UsualOrderedType').
         end
     end.
 
+  Inductive path : Type :=
+  | Path_root  : path
+  | Path_left  : ∀ (parent : path) (v : A) (r : tree), path
+  | Path_right : ∀ (parent : path) (v : A) (l : tree), path.
+
+  Fixpoint get_path' x t p : tree * path :=
+    match t with
+    | Nil => (Nil, p)
+    | Node v l r =>
+        match (v ?= x) with
+        | Eq => (Node v l r, p)
+        | Lt => get_path' x r (Path_right p v l)
+        | Gt => get_path' x l (Path_left  p v r)
+        end
+    end.
+  Definition get_path x t : tree * path := get_path' x t Path_root.
   End InsertDelete.
+  Hint Constructors path : core.
 
   Section OfToList.
     Definition of_list (l : list A) : tree :=
@@ -531,8 +555,40 @@ Module AVL (OT : UsualOrderedType').
 
 
   End WF_def.
+  Hint Constructors Ordered' Balanced WF : core.
 
-  Section Facts.
+  Ltac invert_ordered' :=
+    repeat match goal with
+    | [ H : Ordered' (Node _ _ _) |- _ ] => invert H
+    end.
+
+  Tactic Notation "split_ifs" ident(h) :=
+    match goal with
+    | [ |- context[if ?exp then _ else _ ] ] =>
+        let i := fresh h in
+        let b := fresh in
+        move i : exp => b;
+        destruct b
+    end.
+  Tactic Notation "split_ifs" := split_ifs Hb.
+
+  Ltac ltb_to_lt :=
+    match goal with
+    | [ H : (?a <? ?b)%nat = true |- _ ] => rewrite Nat.ltb_lt
+    end.
+  Hint Rewrite Nat.ltb_lt Nat.ltb_ge : core.
+
+  Ltac match_compare :=
+    rewrite_match_compare ||
+    match goal with
+    | [ |- context[match compare ?v ?x with |_ => _ end] ] =>
+        elim_compare v x
+    end.
+  Hint Extern 1 => match_compare : core.
+
+  Hint Rewrite Nat.max_id : core.
+
+  (* Section Facts. *)
 
     Lemma All_lt_dec v l : {All (fun x => x < v) l} + {¬ All (fun x => x < v) l}.
     Proof.
@@ -578,11 +634,14 @@ Module AVL (OT : UsualOrderedType').
       - crush.
         rewrite All_iff_forall in H1.
         specialize (H1 x x_In).
-        by case_compare y x.
+        by match_compare.
+        (* rewrite All_iff_forall in H1. *)
+        (* specialize (H1 x x_In). *)
+        (* by case_compare y x. *)
       - crush.
         rewrite All_iff_forall in H.
         specialize (H x x_In).
-        by case_compare y x.
+        by match_compare.
     Qed.
 
     Lemma Ordered_In_iff_Contains x t : Ordered t → In x t ↔ Contains x t.
@@ -593,19 +652,15 @@ Module AVL (OT : UsualOrderedType').
       - by apply: Contains_In.
     Qed.
 
-    Ltac invert_ordered' :=
-      repeat match goal with
-      | [ H : Ordered' (Node _ _ _) |- _ ] => invert H
-      end.
-
     Lemma rotate_left_preserves_Ordered v l r : Ordered (Node v l r) → Ordered (rotate_left v l r).
     Proof.
       rewrite !Ordered_iff_Ordered' /rotate_left.
       move=>ordered.
       destruct r; invert_ordered'; try by constructor.
       constructor; crush.
-      - apply (All_imp (fun x => x < v)); by crush.
-      - constructor; by crush.
+      apply (All_imp (fun x => x < v)); crush.
+      (* - apply (All_imp (fun x => x < v)); crush. *)
+      (* - constructor; by crush. *)
     Qed.
 
     Lemma rotate_right_preserves_Ordered v l r : Ordered (Node v l r) → Ordered (rotate_right v l r).
@@ -613,8 +668,9 @@ Module AVL (OT : UsualOrderedType').
       rewrite !Ordered_iff_Ordered' /rotate_right.
       intros; destruct l; invert_ordered'; try by constructor.
       constructor; crush.
-      - apply (All_imp (fun x => v < x)); by crush.
-      - constructor; by crush.
+      apply (All_imp (fun x => v < x)); by crush.
+      (* - apply (All_imp (fun x => v < x)); by crush. *)
+      (* - constructor; by crush. *)
     Qed.
 
     Lemma rotate_left_preserves_Ordered' v l r : Ordered' (Node v l r) → Ordered' (rotate_left v l r).
@@ -627,15 +683,6 @@ Module AVL (OT : UsualOrderedType').
       exact: rotate_right_preserves_Ordered.
     Qed.
 
-    Tactic Notation "split_ifs" ident(h) :=
-      match goal with
-      | [ |- context[if ?exp then _ else _ ] ] =>
-          let i := fresh h in
-          let b := fresh in
-          move i : exp => b;
-          destruct b
-      end.
-    Tactic Notation "split_ifs" := split_ifs Hb.
 
     (* Tactic Notation "split_ifs" := let h := fresh in split_ifs h. *)
       (* repeat match goal with *)
@@ -664,7 +711,6 @@ Module AVL (OT : UsualOrderedType').
       | [ |- Ordered' (rotate_left _ _ _) ] => eapply rotate_left_preserves_Ordered'
       | [ |- Ordered' (rotate_right _ _ _) ] => eapply rotate_right_preserves_Ordered'
       end.
-
     Hint Extern 1 => unrotate : core.
 
     (* Hint Resolve rotate_left_preserves_Ordered' rotate_right_preserves_Ordered' : core. *)
@@ -682,8 +728,9 @@ Module AVL (OT : UsualOrderedType').
         + crush.
           split_ifs.
           * constructor; crush.
-            -- apply (All_imp (fun x => v < x)); by crush.
-            -- constructor; by crush.
+            apply (All_imp (fun x => v < x)); by crush.
+            (* -- apply (All_imp (fun x => v < x)); by crush. *)
+            (* -- constructor; by crush. *)
           * unrotate.
             constructor; crush.
             unrotate; by crush.
@@ -740,7 +787,7 @@ Module AVL (OT : UsualOrderedType').
       induction t.
       - by crush.
       - crush.
-        elim_compare v x; crush;
+        match_compare; crush;
           (apply balance_left_preserves_All || apply balance_right_preserves_All); crush;
           done.
     Qed.
@@ -750,7 +797,7 @@ Module AVL (OT : UsualOrderedType').
       move=>t_Ordered.
       induction t_Ordered; crush.
       - repeat constructor; by crush.
-      - elim_compare v x; repeat constructor; crush;
+      - match_compare; repeat constructor; crush;
         (apply balance_left_preserves_Ordered' || apply balance_right_preserves_Ordered');
         repeat constructor; crush;
         apply insert_preserves_All; crush;
@@ -762,11 +809,6 @@ Module AVL (OT : UsualOrderedType').
     Search (S ?a = S ?b).
     Search (S ?a ≤ S ?b).
     Search (S ?a < S ?b)%nat.
-    Ltac ltb_to_lt :=
-      match goal with
-      | [ H : (?a <? ?b)%nat = true |- _ ] => rewrite Nat.ltb_lt
-      end.
-    Hint Rewrite Nat.ltb_lt Nat.ltb_ge : core.
       (* Nat.succ_inj le_S_n : core. *)
     (* Hint Resolve le_n_S : core. *)
 
@@ -899,15 +941,6 @@ Module AVL (OT : UsualOrderedType').
       split_ifs; destruct r; try (split_ifs; invert Hbal); by crush.
     Qed.
 
-    Ltac match_compare :=
-      repeat rewrite_match_compare;
-      match goal with
-      | [ |- context[match compare ?v ?x with |_ => _ end] ] =>
-          elim_compare v x
-      end.
-
-    Hint Rewrite Nat.max_id : core.
-
     Lemma rotate_left_not_Nil v l r : rotate_left v l r = Nil → False.
     Proof.
       by destruct r.
@@ -991,8 +1024,7 @@ Module AVL (OT : UsualOrderedType').
           rewrite (Nat.max_l _ _ (Nat.lt_le_incl _ _ H))
       end : core.
 
-
-    Lemma max_size_le_pow_2_height t :
+    Lemma size_lt_height t :
       (size t < 2 ^ (height t))%nat.
     Proof.
       induction t.
@@ -1018,20 +1050,6 @@ Module AVL (OT : UsualOrderedType').
       by crush.
     Qed.
 
-    Lemma insert_height_change x t :
-      Balanced t →
-      height (insert x t) = height t
-      ∨ height (insert x t) = 1 + height t.
-    Proof.
-      induction t.
-      { by crush. }
-      rewrite /insert; elim_compare v x; rewrite -/insert.
-      - by auto.
-      - destruct IHt2.
-        +
-      -
-
-
     Lemma insert_preserves_Balanced x t : Balanced t → Balanced (insert x t).
     Proof.
       move=>Hbal.
@@ -1042,15 +1060,207 @@ Module AVL (OT : UsualOrderedType').
       elim_compare v x; simplify.
       - assumption.
       - invert Hbal.
-        +
-        apply balance_right_preserves_Balanced.
+        Admitted.
 
 
 
 
 
 
-  End Facts.
+  (* End Facts. *)
+
+
+  Section MaxHeight.
+
+
+
+    Fixpoint perfect_tree x (h : nat) :=
+      match h with
+      | 0 => Nil
+      | S h => Node x (perfect_tree x h) (perfect_tree x h)
+      end.
+
+    Lemma perfect_tree_height x h :
+      height (perfect_tree x h) = h.
+    Proof.
+      induction h; by crush.
+    Qed.
+
+    Lemma perfect_tree_balanced x h :
+      Balanced (perfect_tree x h).
+    Proof.
+      induction h; constructor; crush.
+    Qed.
+
+    (* a tree with 2^h elements must have height at least h + 1  *)
+    Lemma min_height_of_size t h :
+      2 ^ h ≤ size t → (h < height t)%nat.
+    Proof.
+      move => t_size.
+      apply Classical_Prop.NNPP.
+      move=>bad.
+      rewrite Nat.nlt_ge in bad.
+      have hmmm := size_lt_height t.
+      suff : (size t < 2^h)%nat by lia.
+      apply (Nat.lt_le_trans (size t) (2^height t) (2 ^ h) hmmm).
+      by apply Nat.pow_le_mono_r.
+    Qed.
+
+    (* given any height, there exists a Balanced tree with that height.
+       (as long as A is not an empty type!)
+     *)
+    Lemma exists_tree_of_height (nonempty : inhabited A) (h : nat)  :
+      ∃ t : tree, Balanced t ∧ height t = h.
+    Proof.
+      destruct nonempty as [x].
+      exists (perfect_tree x h).
+      by auto using perfect_tree_height, perfect_tree_balanced.
+    Qed.
+
+    Search nat lt ex.
+    Search "well".
+
+    Definition is_tree_of_height_size h s : tree → Prop :=
+      fun t => Balanced t ∧ height t = h ∧ size t = s.
+    Hint Unfold is_tree_of_height_size : core.
+    Hint Extern 1 =>
+           match goal with
+           | [ H : is_tree_of_height_size _ _ _ |- _ ] => destruct H
+           end : core.
+
+    Lemma exists_size_of_height (nonempty : inhabited A) (h : nat) :
+      ∃ s : nat, ∃ t, is_tree_of_height_size h s t.
+    Proof.
+      destruct nonempty as [x].
+      exists (size (perfect_tree x h)), (perfect_tree x h).
+      by auto using perfect_tree_balanced, perfect_tree_height.
+    Qed.
+
+    Lemma classical_dec_pred {A} {P : A → Prop} : ∀ x, {P x} + {¬ P x}.
+      exact (fun x => excluded_middle_informative _).
+    Qed.
+
+    Lemma exists_min_size_of_height (nonempty : inhabited A) (h : nat) :
+      ∃ s : nat,
+        ((∃ t, is_tree_of_height_size h s t) ∧
+        ∀ t', Balanced t' ∧ height t' = h → s ≤ size t').
+    Proof.
+      pose foundX := nat_findX
+                      (fun s => ∃ t, is_tree_of_height_size h s t)
+                      classical_dec_pred
+                      (exists_size_of_height nonempty h).
+      set s := proj1_sig foundX.
+      have [t t_spec] := (proj1 (proj2_sig foundX)).
+      exists s; split.
+      - exists t; assumption.
+      - move => t' [t'_bal t'_height].
+        have solver := nat_find_min'
+                      (fun s => ∃ t, is_tree_of_height_size h s t)
+                      classical_dec_pred
+                      (exists_size_of_height nonempty h).
+        have H : is_tree_of_height_size h (size t') t' by crush.
+        exact: solver (size t') (ex_intro _ _ H).
+    Qed.
+
+    Definition min_size_of_height (nonempty : inhabited A) (h : nat) : nat :=
+      nat_find _ classical_dec_pred (exists_min_size_of_height nonempty h).
+
+    Definition min_size_of_height' (nonempty : inhabited A) (h : nat) :=
+      nat_findX _ classical_dec_pred (exists_min_size_of_height nonempty h).
+
+    Lemma uninhabited_no_height :
+      ¬ inhabited A → ∀ t, height t = 0.
+    Proof.
+      move=>empty t.
+      destruct t; by crush.
+    Qed.
+
+    Lemma exists_tree_of_height_of_min_size (nonempty : inhabited A) (h : nat) :
+      ∃ t : tree, is_tree_of_height_size h (min_size_of_height nonempty h) t.
+    Proof.
+      pose found :=
+        nat_findX _ classical_dec_pred (exists_min_size_of_height nonempty h).
+      replace (min_size_of_height nonempty h) with (proj1_sig found) by reflexivity.
+      have t_ex := proj2_sig found.
+      by crush.
+    Qed.
+
+    Lemma min_size_0 (nonempty : inhabited A) :
+      min_size_of_height nonempty 0 = 0.
+    Proof.
+      rewrite nat_find_eq_iff.
+      repeat (split; auto).
+      - by exists Nil.
+      - by crush.
+      - lia.
+    Qed.
+
+    Lemma height_eq_zero_nil t : height t = 0 → t = Nil.
+    Proof.
+      by destruct t.
+    Qed.
+
+    Lemma height_eq_one_singleton t : height t = 1 → ∃ v, t = Node v Nil Nil.
+    Proof.
+      move => t_height.
+      destruct t.
+      - by crush.
+      - exists v.
+        invert t_height.
+        have t1_zero : (height t1) = 0 by lia.
+        have t2_zero : (height t2) = 0 by lia.
+        by rewrite (height_eq_zero_nil _ t1_zero) (height_eq_zero_nil _ t2_zero).
+    Qed.
+
+    Lemma size_eq_zero_nil t : size t = 0 → t = Nil.
+    Proof.
+      by destruct t.
+    Qed.
+
+    Lemma size_eq_one_singleton t : size t = 1 → ∃ v, t = Node v Nil Nil.
+    Proof.
+      move => t_size.
+      destruct t.
+      - by crush.
+      - exists v.
+        invert t_size.
+        have t1_zero : size t1 = 0 by lia.
+        have t2_zero : size t2 = 0 by lia.
+        by rewrite (size_eq_zero_nil _ t1_zero) (size_eq_zero_nil _ t2_zero).
+    Qed.
+
+    Lemma min_size_1 (nonempty : inhabited A) :
+      min_size_of_height nonempty 1 = 1.
+    Proof.
+      rewrite nat_find_eq_iff.
+      have [v] := nonempty.
+      repeat (split; auto).
+      - exists (perfect_tree v 1); by crush.
+      - move => t [_ t_height].
+        have [t' t'_eq] := height_eq_one_singleton _ t_height.
+        by rewrite t'_eq.
+      - move => n n_zero [bad_ex _].
+        have {}n_zero : n = 0 by lia.
+        symmetry in n_zero; destruct n_zero.
+        destruct bad_ex as [t [_ [t_height t_size]]].
+        rewrite (size_eq_zero_nil _ t_size) in t_height.
+        by invert t_height.
+    Qed.
+
+
+    Lemma nonzero_height_nonzero_subtree (nonempty : inhabited A) (h : nat) {v l r}:
+      (0 < h)%nat → size (Node v l r) = proj1_sig (min_size_of_height' nonempty h) →
+      l ≠ Nil ∨ r ≠ Nil.
+
+    Lemma balanced_uneven (nonempty : inhabited A) (h : nat) {v l r} :
+      (0 < h)%nat → size (Node v l r) = proj1_sig (min_size_of_height' nonempty h) →
+      height l ≠ height r.
+    Proof.
+      move => h_gt_0 is_minimal bad.
+
+
+
+  End MaxHeight.
 
 End AVL.
 
@@ -1073,39 +1283,4 @@ Compute (match (Ordered_dec tt) with | left _ => 0 | right _ => 1 end).
 Compute (match (Ordered_dec not_ordered) with | left _ => 0 | right _ => 1 end).
 
 Print M.tree.
-
-Require Import OrdersEx OrdersTac.
-
-Module LIST (T : OrderedTypeFull').
-  Notation A := T.t.
-  Inductive L : Type :=
-  | NIL  : L
-  | CONS : ∀ (x : A) (l : L), L.
-
-  Include EqLtLeNotation T.
-  Include CmpNotation T T.
-
-  Include OTF_to_OrderTac T.
-
-  Search CompareSpec.
-
-  About Z.compare_eq_iff.
-
-  Lemma compare_eq_iff (x y : A) : (x ?= y) = Datatypes.Eq ↔ x == y.
-    by destruct (T.compare_spec x y); crush; order.
-  Qed.
-
-  Lemma compare_lt_iff (x y : A) : (x ?= y) = Datatypes.Lt ↔ x < y.
-    by destruct (T.compare_spec x y); crush; order.
-  Qed.
-
-  Lemma compare_gt_iff (x y : A) : (x ?= y) = Datatypes.Gt ↔ y < x.
-    by destruct (T.compare_spec x y); crush; order.
-  Qed.
-
-  Hint Rewrite compare_eq_iff compare_lt_iff compare_gt_iff : core.
-
-
-  Print ord.
-End LIST.
 

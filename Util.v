@@ -1,4 +1,4 @@
-Require Import ssreflect Utf8 CpdtTactics FrapWithoutSets ZArith Psatz.
+Require Import ssreflect Utf8 CpdtTactics ZArith Psatz.
 
 Require Import Classical.
 Require Export ConstructiveEpsilon.
@@ -64,6 +64,10 @@ Qed.
 
 Definition nat_find : nat :=
   (proj1_sig nat_findX).
+
+Theorem nat_find_eq : proj1_sig nat_findX = nat_find.
+  reflexivity.
+Qed.
 
 Theorem nat_find_spec : P (nat_find).
   exact: proj1 (proj2_sig nat_findX).
