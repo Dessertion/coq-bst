@@ -11,3 +11,4 @@ tmp/
 *.vosk
 *.glob
 *.aux
+*.cache
