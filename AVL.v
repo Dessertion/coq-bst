@@ -1227,11 +1227,11 @@ Module AVL (OT : UsualOrderedType').
     Qed.
 
 
-     Fixpoint perfect_tree x (h : nat) :=
-      match h with
-      | 0 => Nil
-      | S h => Node x (perfect_tree x h) (perfect_tree x h)
-      end.
+    Fixpoint perfect_tree x (h : nat) :=
+    match h with
+    | 0 => Nil
+    | S h => Node x (perfect_tree x h) (perfect_tree x h)
+    end.
 
     Lemma perfect_tree_height x h :
       height (perfect_tree x h) = h.
@@ -1625,6 +1625,19 @@ Module AVL (OT : UsualOrderedType').
       transitivity (f m); auto using IHm.
     Qed.
 
+    Lemma min_size_add_strict_mono nonempty n m :
+      (0 < m → min_size_of_height nonempty n < min_size_of_height nonempty (m + n))%nat.
+    Proof.
+      have := min_size_strict_mono0; have := add_increasing_of_succ_gt; by auto.
+    Qed.
+
+    Lemma min_size_add_mono nonempty n m :
+      (0 ≤ m → min_size_of_height nonempty n ≤ min_size_of_height nonempty (m + n))%nat.
+    Proof.
+      destruct (Nat.eq_dec m 0); [by subst|].
+      have := min_size_add_strict_mono; by crush.
+    Qed.
+
     Lemma min_size_strict_mono (nonempty : inhabited A) {h1 h2} :
       (h1 < h2)%nat → (min_size_of_height nonempty h1 < min_size_of_height nonempty h2)%nat.
     Proof.
@@ -1656,7 +1669,7 @@ Module AVL (OT : UsualOrderedType').
       destruct bad as [l_nil r_nil]; subst.
       simpl in t_size.
       have one_size := min_size_1 nonempty.
-      have := min_size_strict_increasing nonempty h_nonzero.
+      have := min_size_strict_mono nonempty h_nonzero.
       lia.
     Qed.
 
@@ -1673,7 +1686,7 @@ Module AVL (OT : UsualOrderedType').
         simpl in bad.
         have [_ [t_size _]] := t_spec.
         rewrite (height_eq_zero_nil _ (Nat.eq_sym bad))/= in t_size.
-        have := min_size_strict_increasing nonempty h_gt_0.
+        have := min_size_strict_mono nonempty h_gt_0.
         have := min_size_1 nonempty.
         lia.
       }
@@ -1770,7 +1783,113 @@ Module AVL (OT : UsualOrderedType').
         rewrite -t_size -l_size -r_size /size -/size; lia.
     Qed.
 
+    Fixpoint min_size' n :=
+      match n with
+      | 0 => 0
+      | 1 => 1
+      | S (S n as p) => S (min_size' p + min_size' n)
+      end.
 
+    Lemma min_size_eq_min_size' (nonempty : inhabited A) n :
+      min_size_of_height nonempty n = min_size' n.
+    Proof.
+      induction n using lt_wf_ind.
+      do 2 (destruct n; auto).
+      rewrite min_size_eqn.
+      by do 2 (rewrite H; auto).
+    Qed.
+
+    Lemma min_size'_eqn n :
+      min_size' (S (S n)) = S (min_size' (S n) + min_size' n).
+    Proof.
+      reflexivity.
+    Qed.
+
+    Lemma min_size_bound (nonempty : inhabited A) n m :
+      m ≤ 1 + n →
+      min_size_of_height nonempty (1 +  m) ≤ 1 + min_size_of_height nonempty n + min_size_of_height nonempty m.
+    Proof.
+      move => Hle.
+      destruct m as [|[|m]].
+      - simpl; rewrite min_size_0 min_size_1; lia.
+      - simpl; rewrite min_size_eqn !min_size_1 min_size_0; lia.
+      - rewrite min_size_eqn.
+        suff : (min_size_of_height nonempty (1 + m) ≤ min_size_of_height nonempty n)%nat.
+        move => H; ring_simplify; apply Nat.add_le_mono; lia.
+        apply min_size_mono; lia.
+    Qed.
+
+    Lemma min_size_twice (nonempty : inhabited A) n :
+      (2 * n < min_size_of_height nonempty (2 + n))%nat.
+    Proof.
+      induction n as [n IH] using lt_wf_ind.
+      do 2 (destruct n; [simpl; rewrite ?min_size_eqn ?min_size_1 ?min_size0; lia|]).
+      change (2 + S (S n)) with (S (S (2 + n))).
+      rewrite 2!min_size_eqn.
+      have := IH (S n); have := IH n; simpl; lia.
+    Qed.
+
+    Lemma min_size_even nonempty n :
+      n ≠ 0 -> 2 ^ n ≤ min_size_of_height nonempty (2 * n).
+    Proof.
+      induction n; [by crush|].
+      move => _.
+      destruct (Nat.eq_dec n 0).
+      - subst; simplify.
+        rewrite min_size_eqn; by autorewrite with core.
+      - transitivity (2 * min_size_of_height nonempty (2 * n)).
+        crush.
+        replace (2 * S n) with (S (S (2 * n))) by lia.
+        rewrite min_size_eqn.
+        suff : min_size_of_height nonempty (2 * n) ≤ min_size_of_height nonempty (1 + 2 * n) by lia.
+        have := min_size_mono; by auto.
+    Qed.
+
+    Lemma min_size_odd nonempty n :
+      2 ^ n ≤ min_size_of_height nonempty (2 * n + 1).
+    Proof.
+      destruct (Nat.eq_dec n 0);
+        [subst; by autorewrite with core|].
+      have := min_size_even; by crush.
+    Qed.
+
+    Lemma min_size_log nonempty n :
+      n ≤ 2 * Nat.log2 (min_size_of_height nonempty n) + 1.
+    Proof.
+      rewrite (Nat.div2_odd n).
+      set (m := Nat.div2 n); clearbody m.
+      destruct (Nat.odd n); simpl Nat.b2n; rewrite ?Nat.add_0_r; clear n.
+      - suff : m ≤ Nat.log2 (min_size_of_height nonempty (2 * m + 1)) by lia.
+        apply Nat.log2_le_pow2.
+        + rewrite -{1}min_size_0.
+          apply min_size_strict_mono; lia.
+        + by apply min_size_odd.
+      - suff : m ≤ Nat.log2 (min_size_of_height nonempty (2 * m)) by lia.
+        destruct (Nat.eq_dec m 0); [lia|].
+        apply Nat.log2_le_pow2.
+        + rewrite -{1}min_size_0.
+          apply min_size_strict_mono; lia.
+        + by apply min_size_even.
+    Qed.
+
+    Lemma height_upperbound0 (nonempty : inhabited A) t :
+      Balanced t → height t ≤ 2 * Nat.log2 (size t) + 1.
+    Proof.
+      move => t_bal.
+      transitivity (2 * Nat.log2 (min_size_of_height nonempty (height t)) + 1).
+      by apply min_size_log.
+      suff : Nat.log2 (min_size_of_height nonempty (height t)) ≤ Nat.log2 (size t) by lia.
+      apply Nat.log2_le_mono.
+      by apply min_size_minimal.
+    Qed.
+
+    Lemma height_upperbound t :
+      Balanced t → height t ≤ 2 * Nat.log2 (size t) + 1.
+    Proof.
+      destruct t; [by crush|].
+      have nonempty : inhabited A by constructor.
+      by apply height_upperbound0.
+    Qed.
 
     Fixpoint mincard n :=
       match n with
