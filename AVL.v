@@ -1070,31 +1070,6 @@ Module AVL (OT : UsualOrderedType').
           rewrite (Nat.max_l _ _ (Nat.lt_le_incl _ _ H))
       end : core.
 
-    Lemma size_lt_height t :
-      (size t < 2 ^ (height t))%nat.
-    Proof.
-      induction t.
-      { by crush. }
-      rewrite /size -/size.
-      rewrite /height -/height.
-      have one_lt_two : (1 < 2)%nat by lia.
-      suff :
-        ∀ t1 t2, (size t1 < 2 ^ height t1)%nat → (size t2 < 2 ^ height t2)%nat → (height t1 < height t2)%nat →
-                 (1 + size t1 + size t2 < 2 ^ (1 + Nat.max (height t1) (height t2)))%nat.
-      { move => winner.
-        destruct (Nat.lt_trichotomy (height t1) (height t2)) as [h|[h|h]].
-        - by apply winner.
-        - destruct h; by crush.
-        -
-          rewrite Nat.max_comm.
-          replace (1 + size t1 + size t2) with (1 + size t2 + size t1) by ring.
-          by apply winner.
-      }
-      clear v t1 t2 IHt1 IHt2.
-      move=>t1 t2 IHt1 IHt2 h.
-      have : (size t1 < 2^height t2)%nat by have H := Nat.pow_lt_mono_r _ _ _ one_lt_two h; lia.
-      by crush.
-    Qed.
 
     Lemma insert_height_le x t : height (insert x t) ≤ 1 + height t.
     Proof.
@@ -1143,8 +1118,7 @@ Module AVL (OT : UsualOrderedType').
         + by constructor.
         + apply balance_right_preserves_Balanced; by repeat constructor.
         + apply balance_left_preserves_Balanced; by repeat constructor.
-      -  crush; match_compare.
-        + Abort.
+      - Abort.
       (* - by crush. *)
       (* - repeat split. *)
       (*   + rewrite /insert -/insert; match_compare; [by constructor| |] . *)
@@ -1188,28 +1162,22 @@ Module AVL (OT : UsualOrderedType').
         Abort.
 
 
-      - functional induction (insert x (Node v l r)); crush.
-      functional induction (insert x t); [by crush| lia| | ]; move => t_bal.
-      - invert t_bal.
-        + .
-
-
     Lemma insert_preserves_Balanced x t : Balanced t → Balanced (insert x t).
     Proof.
-      move=>Hbal.
-      functional induction (insert x t); [by constructor| assumption| |].
-      - apply balance_right_preserves_Balanced.
-        invert Hbal; simplify.
-        +
-        constructor.
-      -
-      induction t; try by constructor.
-      rewrite /insert -/insert.
-      have {}IHt1 := IHt1 (invert_Balanced_left Hbal).
-      have {}IHt2 := IHt2 (invert_Balanced_right Hbal).
-      elim_compare v x; simplify.
-      - assumption.
-      - invert Hbal.
+      (* move=>Hbal. *)
+      (* functional induction (insert x t); [by constructor| assumption| |]. *)
+      (* - apply balance_right_preserves_Balanced. *)
+      (*   invert Hbal; simplify. *)
+      (*   + *)
+      (* -  *)
+      (* induction t; try by constructor. *)
+      (* rewrite /insert -/insert. *)
+      (* have {}IHt1 := IHt1 (invert_Balanced_left Hbal). *)
+      (* have {}IHt2 := IHt2 (invert_Balanced_right Hbal). *)
+      (* elim_compare v x; simplify. *)
+      (* - assumption. *)
+      (* - invert Hbal. *)
+
         Admitted.
 
 
@@ -1222,7 +1190,44 @@ Module AVL (OT : UsualOrderedType').
 
   Section MaxHeight.
 
-    Fixpoint perfect_tree x (h : nat) :=
+    Lemma size_lt_height t :
+      (size t < 2 ^ (height t))%nat.
+    Proof.
+      induction t.
+      { by crush. }
+      rewrite /size -/size.
+      rewrite /height -/height.
+      have one_lt_two : (1 < 2)%nat by lia.
+      suff :
+        ∀ t1 t2, (size t1 < 2 ^ height t1)%nat → (size t2 < 2 ^ height t2)%nat → (height t1 < height t2)%nat →
+                 (1 + size t1 + size t2 < 2 ^ (1 + Nat.max (height t1) (height t2)))%nat.
+      { move => winner.
+        destruct (Nat.lt_trichotomy (height t1) (height t2)) as [h|[h|h]].
+        - by apply winner.
+        - destruct h; by crush.
+        -
+          rewrite Nat.max_comm.
+          replace (1 + size t1 + size t2) with (1 + size t2 + size t1) by ring.
+          by apply winner.
+      }
+      clear v t1 t2 IHt1 IHt2.
+      move=>t1 t2 IHt1 IHt2 h.
+      have : (size t1 < 2^height t2)%nat by have H := Nat.pow_lt_mono_r _ _ _ one_lt_two h; lia.
+      by crush.
+    Qed.
+
+    Lemma log2_size_lt_height t :
+      t ≠ Nil →
+      (Nat.log2 (size t) < height t)%nat.
+    Proof.
+      move => t_nonnil.
+      rewrite -Nat.log2_lt_pow2.
+      destruct t; crush.
+      apply size_lt_height.
+    Qed.
+
+
+     Fixpoint perfect_tree x (h : nat) :=
       match h with
       | 0 => Nil
       | S h => Node x (perfect_tree x h) (perfect_tree x h)
@@ -1613,11 +1618,11 @@ Module AVL (OT : UsualOrderedType').
     Lemma strict_increasing_of_succ_gt (f : nat → nat) :
       (∀ n, f n < f (S n))%nat → ∀ n m, (n < m)%nat → (f n < f m)%nat.
     Proof.
-      move => succ_inc n m Hlt.
-      have [p [p_eq _]] := Nat.le_exists_sub n m (Nat.lt_le_incl _ _ Hlt).
-      destruct p; [lia|].
-      rewrite p_eq.
-      apply add_increasing_of_succ_gt; [assumption | lia].
+      move => succ_inc + m.
+      induction m; [lia|].
+      move => n Hlt.
+      invert Hlt; [auto using succ_inc|].
+      transitivity (f m); auto using IHm.
     Qed.
 
     Lemma min_size_strict_increasing (nonempty : inhabited A) {h1 h2} :
@@ -1673,6 +1678,218 @@ Module AVL (OT : UsualOrderedType').
       lia.
     Qed.
 
+    Lemma child_of_min_size_is_min_size_l (nonempty : inhabited A) (h : nat) {v l r} :
+      is_tree_of_height_size h (min_size_of_height nonempty h) (Node v l r) →
+      size l = min_size_of_height nonempty (height l).
+    Proof.
+      move => t_spec.
+      have [t_bal [t_height t_size]] := t_spec.
+      apply Nat.le_antisymm.
+      2: apply min_size_minimal; by invert t_bal.
+      rewrite Nat.le_ngt => Hlt.
+      have [l' l'_spec] := exists_tree_of_height_of_min_size nonempty (height l).
+      (* consider now the smaller tree, Node v l' r *)
+      have solver := min_size_minimal' nonempty.
+      apply (solver h (Node v l' r)).
+      -
+        rewrite /is_tree_of_height_size in l'_spec.
+        invert t_bal; by crush.
+      -
+        rewrite -t_height /height -/height .
+        rewrite /is_tree_of_height_size in l'_spec.
+        lia.
+      -
+        rewrite -t_size.
+        rewrite /size -/size.
+        suff : (size l' < size l)%nat by lia.
+        have [_ [_ l'_size]] := l'_spec.
+        by rewrite l'_size.
+    Qed.
+
+    Lemma child_of_min_size_is_min_size_r (nonempty : inhabited A) (h : nat) {v l r} :
+      is_tree_of_height_size h (min_size_of_height nonempty h) (Node v l r) →
+      size r = min_size_of_height nonempty (height r).
+    Proof.
+      move => t_spec.
+      have [t_bal [t_height t_size]] := t_spec.
+      apply Nat.le_antisymm.
+      2: apply min_size_minimal; by invert t_bal.
+      rewrite Nat.le_ngt => Hlt.
+      have [r' r'_spec] := exists_tree_of_height_of_min_size nonempty (height r).
+      (* consider now the smaller tree, Node v l' r *)
+      have solver := min_size_minimal' nonempty.
+      apply (solver h (Node v l r')).
+      -
+        rewrite /is_tree_of_height_size in r'_spec.
+        invert t_bal; by crush.
+      -
+        rewrite -t_height /height -/height .
+        rewrite /is_tree_of_height_size in r'_spec.
+        lia.
+      -
+        rewrite -t_size.
+        rewrite /size -/size.
+        suff : (size r' < size r)%nat by lia.
+        have [_ [_ r'_size]] := r'_spec.
+        by rewrite r'_size.
+    Qed.
+
+    Fixpoint mincard n :=
+      match n with
+      | 0 => 0
+      | 1 => 1
+      | 2 => 2
+      | S (S (S n) as p) => S (mincard n + mincard p)
+      end.
+
+    Lemma mincard_eqn n :
+ mincard (S (S (S n))) = S (mincard n + mincard (2+n)).
+Proof.
+ reflexivity.
+Qed.
+
+Lemma mincard_incr n : (mincard n < mincard (S n))%nat.
+Proof.
+ induction n using lt_wf_ind.
+ do 3 (destruct n; auto).
+ rewrite 2! mincard_eqn.
+ apply -> Nat.succ_lt_mono.
+ apply Nat.add_lt_mono; eauto.
+Qed.
+
+Lemma mincard_lt_mono n m : (n < m -> mincard n < mincard m)%nat.
+Proof.
+ induction m; inversion_clear 1.
+ - apply mincard_incr.
+ - transitivity (mincard m); auto using mincard_incr.
+Qed.
+
+Lemma mincard_le_mono n m : n <= m -> mincard n <= mincard m.
+Proof.
+ induction 1; auto.
+ transitivity (mincard m); auto using mincard_incr with arith.
+Qed.
+
+Lemma mincard_bound n m : m <= 2+n ->
+ mincard (S m) <= S (mincard n + mincard m).
+Proof.
+ intros H.
+ destruct m as [|[|m]].
+ - simpl. auto with arith.
+ - simpl. auto with arith.
+ - rewrite mincard_eqn.
+   apply -> Nat.succ_le_mono.
+   apply Nat.add_le_mono; eauto.
+   apply mincard_le_mono; lia.
+Qed.
+
+(** [mincard] has an exponential behavior *)
+
+Lemma mincard_twice n : (2 * mincard n < mincard (2+n))%nat.
+Proof.
+ induction n as [n IH] using lt_wf_ind.
+ do 3 (destruct n; [simpl; auto with arith|]).
+ change (2 + S (S (S n))) with (S (S (S (2+n)))).
+ rewrite 2! mincard_eqn.
+ generalize (IH n) (IH (2+n)). lia.
+Qed.
+
+Lemma mincard_even n : n<>0 -> 2^n <= mincard (2*n).
+Proof.
+ induction n.
+ - now destruct 1.
+ - intros _.
+   destruct (Nat.eq_dec n 0).
+   * subst; simpl; auto.
+   * rewrite Nat.pow_succ_r' Nat.mul_succ_r Nat.add_comm.
+     transitivity (2 * mincard (2*n)).
+     + apply Nat.mul_le_mono_l; auto.
+     + apply Nat.lt_le_incl. apply mincard_twice.
+Qed.
+
+Lemma mincard_odd n : 2^n <= mincard (2*n+1).
+Proof.
+ destruct (Nat.eq_dec n 0).
+ - subst; auto.
+ - transitivity (mincard (2*n)).
+   * now apply mincard_even.
+   * apply mincard_le_mono. lia.
+Qed.
+
+Lemma mincard_log n : n <= 2 * Nat.log2 (mincard n) + 1.
+Proof.
+ rewrite (Nat.div2_odd n).
+ set (m := Nat.div2 n); clearbody m.
+ destruct (Nat.odd n); simpl Nat.b2n; rewrite ?Nat.add_0_r; clear n.
+ + apply Nat.add_le_mono_r, Nat.mul_le_mono_l.
+   apply Nat.log2_le_pow2.
+   apply (mincard_lt_mono (n := 0)); auto with arith.
+   apply mincard_odd.
+ + destruct (Nat.eq_dec m 0); [subst; simpl; auto|].
+   transitivity (2*Nat.log2 (mincard (2*m))); [|lia].
+   apply Nat.mul_le_mono_l.
+   apply Nat.log2_le_pow2.
+   apply (mincard_lt_mono (n := 0)); lia.
+   now apply mincard_even.
+Qed.
+
+Lemma mincard_le_size t :
+  Balanced t → mincard (height t) ≤ size t.
+  Proof.
+    induction 1.
+    - done.
+    - rewrite /height -/height.
+      destruct (Nat.max_spec (height l) (height r)) as [(U, ->)|(U, ->)].
+      + rewrite -> mincard_bound.
+        apply -> Nat.succ_le_mono.
+        apply Nat.add_le_mono; eauto.
+        lia.
+      + rewrite -> mincard_bound.
+        apply -> Nat.succ_le_mono.
+        apply Nat.add_le_mono; eauto.
+        fold size.
+        by rewrite H1.
+        lia.
+    - rewrite /height -/height.
+      destruct (Nat.max_spec (height l) (height r)) as [(U, ->)|(U, ->)].
+      + rewrite -> mincard_bound.
+        apply -> Nat.succ_le_mono.
+        apply Nat.add_le_mono; eauto.
+        lia.
+      +
+        rewrite -> mincard_bound.
+        rewrite Nat.add_comm.
+        apply -> Nat.succ_le_mono.
+        apply Nat.add_le_mono; eauto.
+        lia.
+    - rewrite /height -/height; destruct (Nat.max_spec (height l) (height r)) as [(U, ->)|(U, ->)].
+      +
+        rewrite -> mincard_bound.
+        apply -> Nat.succ_le_mono.
+        apply Nat.add_le_mono; eauto.
+        lia.
+      + rewrite -> mincard_bound.
+        apply -> Nat.succ_le_mono.
+        apply Nat.add_le_mono; eauto.
+        lia.
+        lia.
+    Qed.
+
+  Lemma height_upperbound t :
+    Balanced t → height t ≤ 2 * Nat.log2 (size t) + 1.
+  Proof.
+    intros.
+    transitivity  (2 * Nat.log2 (mincard (height t)) + 1).
+    apply mincard_log.
+    apply Nat.add_le_mono_r, Nat.mul_le_mono_l, Nat.log2_le_mono.
+    now apply mincard_le_size.
+  Qed.
+
+  Lemma height_lowerbound s : s<>Nil ->
+  (Nat.log2 (size s) < height s)%nat.
+  Proof.
+  apply log2_size_lt_height.
+  Qed.
 
   End MaxHeight.
 
