@@ -1,9 +1,10 @@
-Require Import ssreflect Utf8 CpdtTactics Util.
+Require Import ssreflect Utf8 CpdtTactics Util FunInd.
 Require Import Arith Orders OrdersTac OrdersFacts.
 Require Import DecidableClass.
 Require Import ssrbool.
 Require Import FrapWithoutSets.
 Require Import Psatz.
+From Coq.micromega Require Import RingMicromega QMicromega EnvRing Tauto Zify.
 Require Import Classical ClassicalDescription IndefiniteDescription.
 
 Set Implicit Arguments.
@@ -421,6 +422,8 @@ Module AVL (OT : UsualOrderedType').
         Node v l r.
 
   End Rotations.
+  Functional Scheme balance_left_ind := Induction for balance_left Sort Prop.
+  Functional Scheme balance_right_ind := Induction for balance_right Sort Prop.
 
   Section InsertDelete.
 
@@ -495,6 +498,9 @@ Module AVL (OT : UsualOrderedType').
     end.
   Definition get_path x t : tree * path := get_path' x t Path_root.
   End InsertDelete.
+  Functional Scheme insert_ind := Induction for insert Sort Prop.
+  Functional Scheme del_root_ind := Induction for insert Sort Prop.
+  Functional Scheme delete_ind := Induction for insert Sort Prop.
   Hint Constructors path : core.
 
   Section OfToList.
@@ -574,7 +580,8 @@ Module AVL (OT : UsualOrderedType').
 
   Ltac ltb_to_lt :=
     match goal with
-    | [ H : (?a <? ?b)%nat = true |- _ ] => rewrite Nat.ltb_lt
+    | [ H : (?a <? ?b)%nat = true |- _ ] => rewrite Nat.ltb_lt in H
+    | [ H : (?a <? ?b)%nat = false |- _ ] => rewrite Nat.ltb_ge in H
     end.
   Hint Rewrite Nat.ltb_lt Nat.ltb_ge : core.
 
@@ -822,18 +829,32 @@ Module AVL (OT : UsualOrderedType').
       move=>H; by invert H.
     Qed.
 
-    Lemma rotate_left_height_change_at_most_one v l r :
+    Lemma rotate_left_height_le v l r :
       height (rotate_left v l r) ≤ 1 + height (Node v l r).
     Proof.
       destruct r; by crush.
     Qed.
 
-    Lemma rotate_right_height_change_at_most_one v l r :
+    Lemma rotate_right_height_le v l r :
       height (rotate_right v l r) ≤ 1 + height (Node v l r).
     Proof.
       destruct l; by crush.
     Qed.
 
+    Lemma rotate_left_height_ge v l r :
+      l ≠ Nil →
+      height (Node v l r) ≤ 1 + height (rotate_left v l r).
+    Proof.
+      destruct r; by crush.
+    Qed.
+
+    Lemma rotate_right_height_ge v l r :
+      r ≠ Nil →
+      height (Node v l r) ≤ 1 + height (rotate_right v l r).
+    Proof.
+      destruct l; by crush.
+    Qed.
+    
     Lemma rotate_left_height_change v l r :
       (height (rotate_left v l r) = height (Node v l r))
       ∨ (height (rotate_left v l r) = 1 + height (Node v l r))
@@ -1015,6 +1036,31 @@ Module AVL (OT : UsualOrderedType').
       destruct r1; by crush.
     Qed.
 
+    Lemma balance_left_height_ge v l r :
+      height (Node v l r) ≤ 2 + height (balance_left v l r).
+    Proof.
+      functional induction (balance_left v l r).
+      - by crush.
+      - by crush.
+      - repeat ltb_to_lt.
+        destruct (rotate_left_height_change lv ll lr) as [|[|]],
+            (rotate_right_height_change v (rotate_left lv ll lr) r) as [|[|]]; by crush.
+      - ltb_to_lt.
+        by crush.
+    Qed.
+
+    Lemma balance_right_height_ge v l r :
+      height (Node v l r) ≤ 2 + height (balance_right v l r).
+    Proof.
+      functional induction (balance_right v l r).
+      - by crush.
+      - by crush.
+      - destruct (rotate_right_height_change rv rl rr) as [|[|]],
+            (rotate_left_height_change v l (rotate_right rv rl rr)) as [|[|]]; by crush.
+      - by crush.
+    Qed.
+
+
     Search Nat.max le.
     Hint Extern 0 =>
       match goal with
@@ -1050,9 +1096,113 @@ Module AVL (OT : UsualOrderedType').
       by crush.
     Qed.
 
+    Lemma insert_height_le x t : height (insert x t) ≤ 1 + height t.
+    Proof.
+      functional induction (insert x t); [by crush| lia | | ].
+      - transitivity (height (Node v l (insert x r))); [apply balance_right_height_le|].
+        rewrite /height -/height.
+        lia.
+      - transitivity (height (Node v (insert x l) r)); [apply balance_left_height_le|].
+        rewrite /height -/height; lia.
+    Qed.
+
+    Lemma eq_or_succ_cases {a b} : a ≤ b → b ≤ 1 + a → b = a ∨ b = 1 + a.
+    Proof.
+      lia.
+    Qed.
+
+    Lemma hmmm x t :
+      Balanced t →
+      Balanced (insert x t) ∧ height t ≤ height (insert x t).
+    Proof.
+      induction t; [by crush|].
+      move => bal.
+      split.
+      - rewrite /insert -/insert; match_compare; [by crush| | ].
+        + apply balance_right_preserves_Balanced.
+          have Hle := insert_height_le x t2.
+          invert bal.
+          * have [bal Hle2] := IHt2 H4.
+            destruct (eq_or_succ_cases Hle2 Hle); crush.
+          * have [bal Hle2] := IHt2 H4.
+            destruct (eq_or_succ_cases Hle2 Hle); crush.
+          * have [bal Hle2] := IHt2 H4.
+            destruct (eq_or_succ_cases Hle2 Hle); [crush|].
+            Abort.
+      
+
+    Lemma hmmm x v l r :
+      Balanced (Node v l r) →
+      Balanced (insert x (Node v l r)) ∧
+        height (Node v l r) ≤ height (insert x (Node v l r)) ∧
+        height (Node v l r) ≤ height (balance_left v (insert x l) r) ∧
+        height (Node v l r) ≤ height (balance_right v l (insert x r)).
+    Proof.
+      induction l, r.
+      - crush; match_compare.
+        + by constructor.
+        + apply balance_right_preserves_Balanced; by repeat constructor.
+        + apply balance_left_preserves_Balanced; by repeat constructor.
+      -  crush; match_compare.
+        + Abort.
+      (* - by crush. *)
+      (* - repeat split. *)
+      (*   + rewrite /insert -/insert; match_compare; [by constructor| |] . *)
+      (*     * apply balance_right_preserves_Balanced. *)
+      (*       have {}[ins_bal [Hle _]] := IHBalanced2. *)
+      (*       have Hle2 := insert_height_le x r0. *)
+      (*       destruct (eq_or_succ_cases Hle Hle2); [constructor; by crush|]. *)
+      (*       apply Balanced_right_heavy; by crush. *)
+      (*     * apply balance_left_preserves_Balanced. *)
+      (*       have {}[ins_bal [Hle _]] := IHBalanced1. *)
+      (*       have Hle2 := insert_height_le x l0. *)
+      (*       destruct (eq_or_succ_cases Hle Hle2); [constructor; by crush|]. *)
+      (*       apply Balanced_left_heavy; by crush. *)
+      (*   + rewrite /insert -/insert; match_compare; [lia | |].  *)
+      (*     * Abort. *)
+      
+
+    Lemma insert_height_ge x t :
+      Balanced t →
+      Balanced (insert x t) ∧ height t ≤ height (insert x t) .
+    Proof.
+      induction 1.
+      - by crush.
+      - have ans1 : Balanced (insert x (Node v l r)).
+        {
+        rewrite /insert -/insert; match_compare; [by constructor| |].
+        * apply balance_right_preserves_Balanced.
+          clear IHBalanced1.
+          have {}[ins_bal Hle] := IHBalanced2.
+          have Hle2 := insert_height_le x r.
+          destruct (eq_or_succ_cases Hle Hle2); [constructor; by crush|].
+          apply Balanced_right_heavy; by crush.
+        * apply balance_left_preserves_Balanced.
+          have {}[ins_bal Hle] := IHBalanced1.
+          have Hle2 := insert_height_le x l.
+          destruct (eq_or_succ_cases Hle Hle2); [constructor; by crush|].
+          apply Balanced_left_heavy; by crush.
+        }
+        split; [assumption|].
+        rewrite /insert -/insert in ans1 |- *; match_compare; [lia | |]. 
+        Abort.
+
+
+      - functional induction (insert x (Node v l r)); crush.
+      functional induction (insert x t); [by crush| lia| | ]; move => t_bal.
+      - invert t_bal.
+        + .
+
+
     Lemma insert_preserves_Balanced x t : Balanced t → Balanced (insert x t).
     Proof.
       move=>Hbal.
+      functional induction (insert x t); [by constructor| assumption| |].
+      - apply balance_right_preserves_Balanced.
+        invert Hbal; simplify.
+        +
+        constructor.
+      -
       induction t; try by constructor.
       rewrite /insert -/insert.
       have {}IHt1 := IHt1 (invert_Balanced_left Hbal).
@@ -1071,8 +1221,6 @@ Module AVL (OT : UsualOrderedType').
 
 
   Section MaxHeight.
-
-
 
     Fixpoint perfect_tree x (h : nat) :=
       match h with
@@ -1143,7 +1291,7 @@ Module AVL (OT : UsualOrderedType').
     Lemma exists_min_size_of_height (nonempty : inhabited A) (h : nat) :
       ∃ s : nat,
         ((∃ t, is_tree_of_height_size h s t) ∧
-        ∀ t', Balanced t' ∧ height t' = h → s ≤ size t').
+        ∀ t', Balanced t' → height t' = h → s ≤ size t').
     Proof.
       pose foundX := nat_findX
                       (fun s => ∃ t, is_tree_of_height_size h s t)
@@ -1153,7 +1301,7 @@ Module AVL (OT : UsualOrderedType').
       have [t t_spec] := (proj1 (proj2_sig foundX)).
       exists s; split.
       - exists t; assumption.
-      - move => t' [t'_bal t'_height].
+      - move => t' t'_bal t'_height.
         have solver := nat_find_min'
                       (fun s => ∃ t, is_tree_of_height_size h s t)
                       classical_dec_pred
@@ -1183,6 +1331,21 @@ Module AVL (OT : UsualOrderedType').
       replace (min_size_of_height nonempty h) with (proj1_sig found) by reflexivity.
       have t_ex := proj2_sig found.
       by crush.
+    Qed.
+
+    Lemma min_size_minimal (nonempty : inhabited A) (h : nat) :
+      ∀ t, Balanced t → height t = h → min_size_of_height nonempty h ≤ size t.
+    Proof.
+      have [solver] :=
+      nat_find_spec _ classical_dec_pred (exists_min_size_of_height nonempty h).
+      done.
+    Qed.
+
+    Lemma min_size_minimal' (nonempty : inhabited A) (h : nat) :
+      ∀ t, Balanced t → height t = h → ¬ (size t < min_size_of_height nonempty h)%nat.
+    Proof.
+      setoid_rewrite Nat.nlt_ge.
+      exact: min_size_minimal.
     Qed.
 
     Lemma min_size_0 (nonempty : inhabited A) :
@@ -1236,7 +1399,7 @@ Module AVL (OT : UsualOrderedType').
       have [v] := nonempty.
       repeat (split; auto).
       - exists (perfect_tree v 1); by crush.
-      - move => t [_ t_height].
+      - move => t _ t_height.
         have [t' t'_eq] := height_eq_one_singleton _ t_height.
         by rewrite t'_eq.
       - move => n n_zero [bad_ex _].
@@ -1248,16 +1411,267 @@ Module AVL (OT : UsualOrderedType').
     Qed.
 
 
-    Lemma nonzero_height_nonzero_subtree (nonempty : inhabited A) (h : nat) {v l r}:
-      (0 < h)%nat → size (Node v l r) = proj1_sig (min_size_of_height' nonempty h) →
+    Lemma node_neq_nil {v l r} : Node v l r ≠ Nil.
+      by crush.
+    Qed.
+
+    Lemma nil_neq_node {v l r} : Nil ≠ Node v l r.
+      by crush.
+    Qed.
+
+    Fixpoint prune_longest t :=
+      match t with
+      | Nil => Nil
+      | Node _ Nil Nil => Nil
+      | Node v l r =>
+          if height l <? height r then
+            Node v l (prune_longest r)
+          else
+            Node v (prune_longest l) r
+      end.
+
+    Lemma prune_longest_case_lt v l r :
+      (height l < height r)%nat →
+      prune_longest (Node v l r) = Node v l (prune_longest r).
+    Proof.
+      move => hlt.
+      destruct l, r.
+      1,2,3:by crush.
+      rewrite {1}/prune_longest; split_ifs; rewrite -/prune_longest.
+      2: by crush.
+      reflexivity.
+    Qed.
+
+    Lemma prune_longest_case_gt v l r :
+      (height r < height l)%nat →
+      prune_longest (Node v l r) = Node v (prune_longest l) r.
+    Proof.
+      move => hlt.
+      destruct l, r.
+      1,2,3:by crush.
+      rewrite {1}/prune_longest; split_ifs; rewrite -/prune_longest.
+      1: by crush.
+      reflexivity.
+    Qed.
+
+    Lemma prune_longest_case_eq v l r :
+      height l = height r → l ≠ Nil → r ≠ Nil →
+      prune_longest (Node v l r) = Node v (prune_longest l) r.
+    Proof.
+      move => hlt.
+      destruct l, r.
+      1,2,3:by crush.
+      rewrite {1}/prune_longest; split_ifs; rewrite -/prune_longest.
+      1: by crush.
+      reflexivity.
+    Qed.
+
+
+    Lemma prune_longest_size {t} :
+      t ≠ Nil → 1 + size (prune_longest t) = size t.
+    Proof.
+      induction t.
+      - by crush.
+      - move => _.
+        destruct t1, t2.
+        + reflexivity.
+        + by crush.
+        + by crush.
+        + have {}IHt1 := IHt1 node_neq_nil.
+          have {}IHt2 := IHt2 node_neq_nil.
+          rewrite /prune_longest; split_ifs; rewrite -/prune_longest.
+          * by crush.
+          * change (1 + size (Node v (prune_longest (Node v0 t1_1 t1_2)) (Node v1 t2_1 t2_2))
+                   = size (Node v (Node v0 t1_1 t1_2) (Node v1 t2_1 t2_2))).
+            rewrite /size -/size.
+            rewrite IHt1.
+            replace (size (Node v0 t1_1 t1_2)) with (1 + size t1_1 + size t1_2) by reflexivity.
+            ring.
+      Qed.
+
+    Lemma prune_longest_height_le t :
+      height (prune_longest t) ≤ height t.
+    Proof.
+      induction t.
+      1: by crush.
+      destruct t1, t2.
+      + simplify; lia.
+      + by crush.
+      + by crush.
+      + rewrite /prune_longest; split_ifs; rewrite -/prune_longest; by crush.
+    Qed.
+
+    Lemma prune_longest_height_ge t :
+      height t ≤ 1 + height (prune_longest t).
+    Proof.
+      induction t.
+      1: by crush.
+      destruct t1, t2.
+      + simplify; lia.
+      + by crush.
+      + by crush.
+      + rewrite /prune_longest; split_ifs; rewrite -/prune_longest.
+        * change (height (Node v (Node v0 t1_1 t1_2) (Node v1 t2_1 t2_2)) ≤
+                    1 + height (Node v (Node v0 t1_1 t1_2) (prune_longest (Node v1 t2_1 t2_2)))).
+          rewrite /height -/height in IHt1, IHt2 *.
+          lia.
+        * change (height (Node v (Node v0 t1_1 t1_2) (Node v1 t2_1 t2_2)) ≤
+                    1 + height (Node v (prune_longest (Node v0 t1_1 t1_2)) (Node v1 t2_1 t2_2))).
+          rewrite /height -/height in IHt1, IHt2 *.
+          lia.
+    Qed.
+
+    Lemma prune_longest_height_cases t :
+      height (prune_longest t) = height t ∨
+      1 + height (prune_longest t) = height t.
+    Proof.
+      have := prune_longest_height_le t.
+      have := prune_longest_height_ge t.
+      lia.
+    Qed.
+
+    Lemma prune_longest_balanced t :
+      Balanced t → Balanced (prune_longest t).
+    Proof.
+      move => bal.
+      induction bal.
+      - by crush.
+      - destruct l, r.
+        1,2,3: by crush.
+        rewrite (prune_longest_case_eq v H).
+        1,2: by crush.
+        destruct (prune_longest_height_cases (Node v0 l1 l2)) as [h|h].
+        + apply Balanced_equal; by crush.
+        + apply Balanced_right_heavy; by crush.
+      - have Hgt : (height r < height l)%nat by lia.
+        rewrite (prune_longest_case_gt _ _ _ Hgt).
+        destruct (prune_longest_height_cases l).
+        + apply Balanced_left_heavy; by crush.
+        + apply Balanced_equal; by crush.
+      - have Hlt : (height l < height r)%nat by lia.
+        rewrite (prune_longest_case_lt _ _ _ Hlt).
+        destruct (prune_longest_height_cases r).
+        + apply Balanced_right_heavy; by crush.
+        + apply Balanced_equal; by crush.
+    Qed.
+
+    Lemma prune_longest_height_eq (nonempty : inhabited A) t h :
+      t ≠ Nil →
+      is_tree_of_height_size h (min_size_of_height nonempty h) t →
+      1 + height (prune_longest t) = height t.
+    Proof.
+      move => t_nonnil t_spec.
+      destruct (prune_longest_height_cases t) as [height_eq|].
+      2: by crush.
+      exfalso.
+      have prune_size : 1 + size (prune_longest t) = size t :=
+        prune_longest_size t_nonnil.
+      have prune_balanced : Balanced (prune_longest t) by
+        apply prune_longest_balanced; crush.
+      have prune_height : height (prune_longest t) = h by crush.
+      have [_ killer] := nat_find_spec _ classical_dec_pred (exists_min_size_of_height nonempty h).
+      have {}killer := killer (prune_longest t) prune_balanced prune_height.
+      change (min_size_of_height nonempty h ≤ size (prune_longest t)) in killer.
+      have t_size : size t = min_size_of_height nonempty h by crush.
+      lia.
+    Qed.
+
+    Lemma min_size_strict_increasing0 (nonempty : inhabited A) h :
+      (min_size_of_height nonempty h < min_size_of_height nonempty (1 + h))%nat.
+    Proof.
+      rewrite Nat.lt_nge => bad.
+      have [t t_spec] := exists_tree_of_height_of_min_size nonempty (1 + h).
+      (* if we prune_longest t, then it will still have height h, but a _smaller_ size than
+         min_size_of_height h! *)
+      have t_nonnil : t ≠ Nil.
+      { have [_ [t_height _]] := t_spec.
+        move => heq; subst.
+        by crush.
+      }
+      set t' := prune_longest t.
+      have t'_height := prune_longest_height_eq nonempty t_nonnil t_spec.
+      have t'_size : 1 + size t' = size t := prune_longest_size t_nonnil.
+      have t'_balanced : Balanced t' by apply prune_longest_balanced; crush.
+      apply (min_size_minimal' nonempty (t := t') (h := h)).
+      - by crush.
+      - unfold t'; crush.
+      - have [_ [_ t_size]] := t_spec.
+        lia.
+    Qed.
+
+    Lemma add_increasing_of_succ_gt (f : nat → nat) :
+      (∀ n, f n < f (S n))%nat → ∀ n m, (0 < m)%nat → (f n < f (m + n))%nat.
+    Proof.
+      move => succ_inc.
+      move => + m; induction m; [lia|].
+      move => n _.
+      destruct m; [exact: succ_inc|].
+      transitivity (f (S m + n)); [|exact: succ_inc].
+      apply IHm; lia.
+    Qed.
+
+    Lemma strict_increasing_of_succ_gt (f : nat → nat) :
+      (∀ n, f n < f (S n))%nat → ∀ n m, (n < m)%nat → (f n < f m)%nat.
+    Proof.
+      move => succ_inc n m Hlt.
+      have [p [p_eq _]] := Nat.le_exists_sub n m (Nat.lt_le_incl _ _ Hlt).
+      destruct p; [lia|].
+      rewrite p_eq.
+      apply add_increasing_of_succ_gt; [assumption | lia].
+    Qed.
+
+    Lemma min_size_strict_increasing (nonempty : inhabited A) {h1 h2} :
+      (h1 < h2)%nat → (min_size_of_height nonempty h1 < min_size_of_height nonempty h2)%nat.
+    Proof.
+      apply strict_increasing_of_succ_gt.
+      by apply min_size_strict_increasing0.
+    Qed.
+    Hint Rewrite min_size_0 min_size_1 : core.
+    Hint Resolve min_size_0 min_size_1 : core.
+    Hint Resolve min_size_strict_increasing0 min_size_strict_increasing : core.
+
+    Lemma height_gt_one_nonzero_subtree (nonempty : inhabited A) (h : nat) {v l r}:
+      (1 < h)%nat → size (Node v l r) = min_size_of_height nonempty h →
       l ≠ Nil ∨ r ≠ Nil.
+    Proof.
+      move => h_nonzero t_size.
+      apply not_and_or => bad.
+      destruct bad as [l_nil r_nil]; subst.
+      simpl in t_size.
+      have one_size := min_size_1 nonempty.
+      have := min_size_strict_increasing nonempty h_nonzero.
+      lia.
+    Qed.
 
     Lemma balanced_uneven (nonempty : inhabited A) (h : nat) {v l r} :
-      (0 < h)%nat → size (Node v l r) = proj1_sig (min_size_of_height' nonempty h) →
+      (1 < h)%nat →
+      is_tree_of_height_size h (min_size_of_height nonempty h) (Node v l r) →
       height l ≠ height r.
     Proof.
-      move => h_gt_0 is_minimal bad.
-
+      move => h_gt_0 t_spec bad.
+      (* then we can prune either subtree and still get a tree of the same height *)
+      have t_nonnil : (Node v l r) ≠ Nil by crush.
+      have l_nonnil : l ≠ Nil.
+      { move => l_nil; subst.
+        simpl in bad.
+        have [_ [t_size _]] := t_spec.
+        rewrite (height_eq_zero_nil _ (Nat.eq_sym bad))/= in t_size.
+        have := min_size_strict_increasing nonempty h_gt_0.
+        have := min_size_1 nonempty.
+        lia.
+      }
+      have r_nonnil : r ≠ Nil.
+      {
+        move => r_nil; subst.
+        simpl in bad.
+        by have := height_eq_zero_nil _ bad.
+      }
+      have prune_height := prune_longest_height_eq nonempty t_nonnil t_spec.
+      have prune_eq := prune_longest_case_eq v bad l_nonnil r_nonnil.
+      rewrite prune_eq in prune_height.
+      rewrite /height -/height in prune_height.
+      lia.
+    Qed.
 
 
   End MaxHeight.
