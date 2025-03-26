@@ -1581,7 +1581,7 @@ Module AVL (OT : UsualOrderedType').
       lia.
     Qed.
 
-    Lemma min_size_strict_increasing0 (nonempty : inhabited A) h :
+    Lemma min_size_strict_mono0 (nonempty : inhabited A) h :
       (min_size_of_height nonempty h < min_size_of_height nonempty (1 + h))%nat.
     Proof.
       rewrite Nat.lt_nge => bad.
@@ -1625,15 +1625,27 @@ Module AVL (OT : UsualOrderedType').
       transitivity (f m); auto using IHm.
     Qed.
 
-    Lemma min_size_strict_increasing (nonempty : inhabited A) {h1 h2} :
+    Lemma min_size_strict_mono (nonempty : inhabited A) {h1 h2} :
       (h1 < h2)%nat → (min_size_of_height nonempty h1 < min_size_of_height nonempty h2)%nat.
     Proof.
       apply strict_increasing_of_succ_gt.
-      by apply min_size_strict_increasing0.
+      by apply min_size_strict_mono0.
     Qed.
     Hint Rewrite min_size_0 min_size_1 : core.
     Hint Resolve min_size_0 min_size_1 : core.
-    Hint Resolve min_size_strict_increasing0 min_size_strict_increasing : core.
+    Hint Resolve min_size_strict_mono0 min_size_strict_mono : core.
+
+    Lemma min_size_mono (nonempty : inhabited A) {h1 h2} :
+      (h1 ≤ h2) → (min_size_of_height nonempty h1 ≤ min_size_of_height nonempty h2).
+    Proof.
+      move => Hle.
+      Search "le" "lt" "eq" nat.
+      About Nat.le_lteq.
+      rewrite Nat.le_lteq in Hle.
+      destruct Hle as [Hlt|]; [|by subst].
+      apply Nat.lt_le_incl.
+      by apply: min_size_strict_mono.
+    Qed.
 
     Lemma height_gt_one_nonzero_subtree (nonempty : inhabited A) (h : nat) {v l r}:
       (1 < h)%nat → size (Node v l r) = min_size_of_height nonempty h →
@@ -1733,6 +1745,32 @@ Module AVL (OT : UsualOrderedType').
         have [_ [_ r'_size]] := r'_spec.
         by rewrite r'_size.
     Qed.
+
+    Lemma min_size_eqn (nonempty : inhabited A) (h : nat) :
+      min_size_of_height nonempty (2 + h) =
+        1 + min_size_of_height nonempty (1 + h)
+          + min_size_of_height nonempty h.
+    Proof.
+      have one_lt : (1 < 2 + h)%nat by lia.
+      have [t t_spec] := exists_tree_of_height_of_min_size nonempty (2 + h).
+      destruct t as [|v l r]; [invert t_spec; crush|].
+      have l_size := child_of_min_size_is_min_size_l nonempty t_spec.
+      have r_size := child_of_min_size_is_min_size_r nonempty t_spec.
+      have [t_bal [t_height t_size]] := t_spec.
+      invert t_bal.
+      - exfalso.
+        by have := balanced_uneven nonempty one_lt t_spec.
+      - have l_height : height l = 1 + h by rewrite /height -/height in t_height; lia.
+        have r_height : height r = h by lia.
+        rewrite -{1}l_height -{2}r_height.
+        by rewrite -t_size -l_size -r_size.
+      - have r_height : height r = 1 + h by rewrite /height -/height in t_height; lia.
+        have l_height : height l = h by lia.
+        rewrite -{1}r_height -{2}l_height.
+        rewrite -t_size -l_size -r_size /size -/size; lia.
+    Qed.
+
+
 
     Fixpoint mincard n :=
       match n with
