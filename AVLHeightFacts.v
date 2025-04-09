@@ -186,40 +186,6 @@ Module AVLHeightFacts (OT : UsualOrderedType').
     - lia.
   Qed.
 
-  Lemma height_eq_zero_nil t : height t = 0 → t = Nil.
-  Proof.
-    by destruct t.
-  Qed.
-
-  Lemma height_eq_one_singleton t : height t = 1 → ∃ v, t = Node v Nil Nil.
-  Proof.
-    move => t_height.
-    destruct t.
-    - by crush.
-    - exists v.
-      invert t_height.
-      have t1_zero : (height t1) = 0 by lia.
-      have t2_zero : (height t2) = 0 by lia.
-      by rewrite (height_eq_zero_nil _ t1_zero) (height_eq_zero_nil _ t2_zero).
-  Qed.
-
-  Lemma size_eq_zero_nil t : size t = 0 → t = Nil.
-  Proof.
-    by destruct t.
-  Qed.
-
-  Lemma size_eq_one_singleton t : size t = 1 → ∃ v, t = Node v Nil Nil.
-  Proof.
-    move => t_size.
-    destruct t.
-    - by crush.
-    - exists v.
-      invert t_size.
-      have t1_zero : size t1 = 0 by lia.
-      have t2_zero : size t2 = 0 by lia.
-      by rewrite (size_eq_zero_nil _ t1_zero) (size_eq_zero_nil _ t2_zero).
-  Qed.
-
   Lemma min_size_1 (nonempty : inhabited A) :
     min_size_of_height nonempty 1 = 1.
   Proof.
@@ -236,15 +202,6 @@ Module AVLHeightFacts (OT : UsualOrderedType').
       destruct bad_ex as [t [_ [t_height t_size]]].
       rewrite (size_eq_zero_nil _ t_size) in t_height.
       by invert t_height.
-  Qed.
-
-
-  Lemma node_neq_nil {v l r} : Node v l r ≠ Nil.
-    by crush.
-  Qed.
-
-  Lemma nil_neq_node {v l r} : Nil ≠ Node v l r.
-    by crush.
   Qed.
 
   Fixpoint prune_longest t :=

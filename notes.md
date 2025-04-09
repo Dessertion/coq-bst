@@ -17,5 +17,19 @@ Lemma balance_right_preserves_Balanced v l r : Balanced (Node v l r) → Balance
 ```
 
 the line `split_ifs; invert Hbal; by crush` took 3.211 secs:
+```
+Tactic call ran for 3.211 secs (3.197u,0.013s) (success)
+```
 
-  Tactic call ran for 3.211 secs (3.197u,0.013s) (success)
+This was replaced by the following proof:
+```coq
+  Lemma balance_right_preserves_Balanced v l r : Balanced (Node v l r) → Balanced (balance_right v l r).
+    Proof.
+      move => Hbal.
+      functional induction (balance_right v l r); simplify; eauto; invert Hbal; by crush.
+    Qed.
+```
+In particular, the second line --- the bulk of the proof -- took only 0.316 secs to run:
+```
+Tactic call ran for 0.316 secs (0.312u,0.003s) (success)
+```
