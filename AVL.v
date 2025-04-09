@@ -422,6 +422,8 @@ Module AVL (OT : UsualOrderedType').
         Node v l r.
 
   End Rotations.
+  Functional Scheme rotate_left_ind := Induction for rotate_left Sort Prop.
+  Functional Scheme rotate_right_ind := Induction for rotate_right Sort Prop.
   Functional Scheme balance_left_ind := Induction for balance_left Sort Prop.
   Functional Scheme balance_right_ind := Induction for balance_right Sort Prop.
 
@@ -499,8 +501,9 @@ Module AVL (OT : UsualOrderedType').
   Definition get_path x t : tree * path := get_path' x t Path_root.
   End InsertDelete.
   Functional Scheme insert_ind := Induction for insert Sort Prop.
-  Functional Scheme del_root_ind := Induction for insert Sort Prop.
-  Functional Scheme delete_ind := Induction for insert Sort Prop.
+  Functional Scheme del_root_ind := Induction for del_root Sort Prop.
+  Functional Scheme shrink_max_ind := Induction for shrink_max Sort Prop.
+  Functional Scheme delete_ind := Induction for delete Sort Prop.
   Hint Constructors path : core.
 
   Section OfToList.
@@ -811,6 +814,156 @@ Module AVL (OT : UsualOrderedType').
         done.
     Qed.
 
+    Lemma In_singleton x y : In y (Node x Nil Nil) → y = x.
+    Proof.
+      crush.
+    Qed.
+
+    Lemma rotate_left_In_complete x v l r : In x (Node v l r) → In x (rotate_left v l r).
+    Proof.
+      move => H_In.
+      destruct r; simpl;
+      by repeat match goal with
+      | [ H : In _ (Node _ _ _) |- _ ] => destruct H; subst; eauto
+      | [ H : _ ∨ _ |- _] => destruct H; subst; eauto
+      end.
+    Qed.
+
+    Lemma rotate_right_In_complete x v l r : In x (Node v l r) → In x (rotate_right v l r).
+    Proof.
+      move => H_In.
+      destruct l; simpl;
+      by repeat match goal with
+      | [ H : In _ (Node _ _ _) |- _ ] => destruct H; subst; eauto
+      | [ H : _ ∨ _ |- _] => destruct H; subst; eauto
+      end.
+    Qed.
+
+    Lemma rotate_left_In_correct x v l r : In x (rotate_left v l r) → In x (Node v l r).
+    Proof.
+      destruct r; simpl; tauto.
+    Qed.
+
+    Lemma rotate_right_In_correct x v l r : In x (rotate_right v l r) → In x (Node v l r).
+    Proof.
+      destruct l; simpl; tauto.
+    Qed.
+
+    Lemma rotate_left_In_iff x v l r : In x (rotate_left v l r) <-> In x (Node v l r).
+    Proof.
+      split; by eauto using rotate_left_In_correct, rotate_left_In_complete.
+    Qed.
+
+    Lemma rotate_right_In_iff x v l r : In x (rotate_right v l r) <-> In x (Node v l r).
+      split; by eauto using rotate_right_In_correct, rotate_right_In_complete.
+    Qed.
+
+    Hint Extern 1 (In _ (rotate_left _ _ _)) => eapply rotate_left_In_complete : core.
+    Hint Extern 1 (In _ (rotate_right _ _ _)) => eapply rotate_right_In_complete : core.
+    Hint Rewrite rotate_left_In_iff rotate_right_In_iff : core.
+
+    Lemma rotate_left_In_tac1 x v lv ll lr r : In x (Node v (Node lv ll lr) r) → In x (Node v (rotate_left lv ll lr) r).
+    Proof.
+      move => H.
+      destruct H as [H | [ H | H ]]; subst.
+      all: try by (rewrite /In; propositional).
+      right; left; by rewrite rotate_left_In_iff.
+    Qed.
+
+    Lemma rotate_left_In_tac2 x v l rv rl rr : In x (Node v l (Node rv rl rr)) → In x (Node v l (rotate_left rv rl rr)).
+    Proof.
+      move => H.
+      destruct H as [H | [H | H]]; subst; try by (rewrite /In; propositional).
+      right; right; by rewrite rotate_left_In_iff.
+    Qed.
+
+    Lemma rotate_right_In_tac1 x v lv ll lr r : In x (Node v (Node lv ll lr) r) → In x (Node v (rotate_right lv ll lr) r).
+    Proof.
+      move => H.
+      destruct H as [H | [ H | H ]]; subst.
+      all: try by (rewrite /In; propositional).
+      right; left; by rewrite rotate_right_In_iff.
+    Qed.
+
+    Lemma rotate_right_In_tac2 x v l rv rl rr : In x (Node v l (Node rv rl rr)) → In x (Node v l (rotate_right rv rl rr)).
+    Proof.
+      move => H.
+      destruct H as [H | [H | H]]; subst; try by (rewrite /In; propositional).
+      right; right; by rewrite rotate_right_In_iff.
+    Qed.
+
+    (* this is awful, we should really be using proof search instead *)
+    Ltac solve_In :=
+      match goal with
+      | [ H : In _ (Node _ _ _) |- _ ] => destruct H; simplify; subst; eauto
+      | [ H : _ ∨ _ |- _] => destruct H; subst; eauto
+      | [ H : In _ (rotate_left _ _ _) |- _ ] => rewrite rotate_left_In_iff in H
+      | [ H : In _ (rotate_right _ _ _) |- _ ] => rewrite rotate_right_In_iff in H
+      | [ |- In _ (rotate_left _ _ _) ] => rewrite rotate_left_In_iff
+      | [ |- In _ (rotate_right _ _ _) ] => rewrite rotate_right_In_iff
+      | [ |- In ?x (Node ?x _ _) ] => rewrite /In; propositional
+      | [ _ : In ?x ?t |- In ?x (Node _ ?t _) ] => rewrite /In; propositional
+      | [ _ : In ?x ?t |- In ?x (Node _ _ ?t) ] => rewrite /In; propositional
+      | [ |- In _ (Node _ (rotate_left _ _ _) _) ] => apply rotate_left_In_tac1
+      | [ |- In _ (Node _ _ (rotate_left _ _ _)) ] => apply rotate_left_In_tac2
+      | [ |- In _ (Node _ (rotate_right _ _ _) _) ] => apply rotate_right_In_tac1
+      | [ |- In _ (Node _ _ (rotate_right _ _ _)) ] => apply rotate_right_In_tac2
+      end.
+
+    Lemma balance_left_In_complete x v l r : In x (Node v l r) → In x (balance_left v l r).
+    Proof.
+      functional induction (balance_left v l r); simplify; repeat solve_In.
+    Qed.
+
+    Lemma balance_right_In_complete x v l r : In x (Node v l r) → In x (balance_right v l r).
+    Proof.
+      functional induction (balance_right v l r); simplify; repeat solve_In.
+    Qed.
+
+    Lemma balance_left_In_correct x v l r : In x (balance_left v l r) → In x (Node v l r).
+    Proof.
+      functional induction (balance_left v l r); simplify; tauto || (repeat solve_In).
+    Qed.
+
+    Lemma balance_right_In_correct x v l r : In x (balance_right v l r) → In x (Node v l r).
+    Proof.
+      functional induction (balance_right v l r); simplify; tauto || (repeat solve_In).
+    Qed.
+
+    Lemma balance_left_In_iff x v l r : In x (balance_left v l r) <-> In x (Node v l r).
+    Proof.
+      split; by eauto using balance_left_In_correct, balance_left_In_complete.
+    Qed.
+
+    Lemma balance_right_In_iff x v l r : In x (balance_right v l r) <-> In x (Node v l r).
+    Proof.
+      split; by eauto using balance_right_In_correct, balance_right_In_complete.
+    Qed.
+
+    Hint Extern 1 (In _ (balance_left _ _ _)) => apply balance_left_In_complete : core.
+    Hint Extern 1 (In _ (balance_right _ _ _)) => apply balance_right_In_complete : core.
+    Hint Rewrite balance_left_In_iff balance_right_In_iff : core.
+
+    Lemma insert_In_complete1 x y t : In x t → In x (insert y t).
+    Proof.
+      move => hyp.
+      functional induction (insert y t); simplify; try by eauto; repeat solve_In.
+    Qed.
+
+    Lemma insert_In_complete2 x t : In x (insert x t).
+    Proof.
+      functional induction (insert x t); simplify; by eauto.
+    Qed.
+
+    Lemma insert_In_correct x y t : In x (insert y t) → x = y ∨ In x t.
+    Proof.
+      functional induction (insert y t); simplify; eauto; repeat solve_In.
+    - apply IHt0 in H; by repeat solve_In.
+    - apply IHt0 in H; by repeat solve_In.
+    Qed.
+
+    (* note, insert is only idempotent if it is already balanced *)
+
     Search "<?" true.
     Search "<?" false.
     Search (S ?a = S ?b).
@@ -920,18 +1073,14 @@ Module AVL (OT : UsualOrderedType').
       destruct l; by crush.
     Qed.
 
-
-
     Lemma balance_left_preserves_Balanced v l r : Balanced (Node v l r) → Balanced (balance_left v l r).
     Proof.
-      move=> Hbal.
-      rewrite /balance_left.
-      split_ifs.
-      - destruct l.
-        + by crush.
-        + split_ifs; invert Hbal; by crush.
-      - assumption.
+      move => Hbal.
+      functional induction (balance_left v l r); simplify; eauto.
+      - invert Hbal; by crush.
+      - invert Hbal; by crush.
     Qed.
+
 
     Lemma balance_right_preserves_Balanced v l r : Balanced (Node v l r) → Balanced (balance_right v l r).
     Proof.
@@ -940,7 +1089,7 @@ Module AVL (OT : UsualOrderedType').
       split_ifs.
       - destruct r.
         + by crush.
-        + split_ifs; invert Hbal; by crush.
+        + time (split_ifs; invert Hbal; by crush).
       - assumption.
     Qed.
 
