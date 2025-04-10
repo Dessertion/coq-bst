@@ -859,6 +859,12 @@ Module AVL (OT : UsualOrderedType').
         done.
     Qed.
 
+    Lemma insert_preserves_Ordered x t : Ordered t → Ordered (insert x t).
+    Proof.
+      rewrite !Ordered_iff_Ordered'.
+      exact: insert_preserves_Ordered'.
+    Qed.
+
     Lemma In_singleton x y : In y (Node x Nil Nil) → y = x.
     Proof.
       crush.
@@ -1008,6 +1014,29 @@ Module AVL (OT : UsualOrderedType').
     - apply IHt0 in H; by repeat solve_In.
     Qed.
 
+    Lemma rotate_left_preserves_size v l r : size (rotate_left v l r) = size (Node v l r).
+    Proof.
+      functional induction (rotate_left v l r); simplify; lia.
+    Qed.
+
+    Lemma rotate_right_preserves_size v l r : size (rotate_right v l r) = size (Node v l r).
+    Proof.
+      functional induction (rotate_right v l r); simplify; lia.
+    Qed.
+
+    Hint Rewrite rotate_left_preserves_size rotate_right_preserves_size : core.
+
+    Lemma balance_left_preserves_size v l r : size (balance_left v l r) = size (Node v l r).
+    Proof.
+      functional induction (balance_left v l r); simplify; lia.
+    Qed.
+
+    Lemma balance_right_preserves_size v l r : size (balance_right v l r) = size (Node v l r).
+    Proof.
+      functional induction (balance_right v l r); simplify; lia.
+    Qed.
+
+    Hint Rewrite rotate_left_preserves_size rotate_right_preserves_size : core.
     (* note, insert is only idempotent if it is already balanced *)
 
     Search "<?" true.
@@ -1327,20 +1356,6 @@ Module AVL (OT : UsualOrderedType').
 
     Hint Unfold left_child right_child : core.
 
-    Lemma aaaa x t :
-      t ≠ Nil →
-      Balanced t → 1 + height t = height (insert x t) →
-      height (left_child (insert x t)) ≠ height (right_child (insert x t)).
-    Proof.
-      functional induction (insert x t);
-        move => t_nonnil t_bal height_eq.
-      - by exfalso.
-      - exfalso; lia.
-      - functional induction (balance_right v l (insert x r)); simplify.
-        + exfalso; lia.
-        + linear_arithmetic'; try lia.
-        Abort.
-
     Lemma insert_preserves_Balanced0 x t :
       Balanced t →
       Balanced (insert x t) ∧
@@ -1505,12 +1520,62 @@ Module AVL (OT : UsualOrderedType').
     Qed.
 
     (* insert is idempotent if the tree was balanced *)
-    Theorem insert_idempotent x t : Balanced t → insert x (insert x t) = insert x t.
+    Theorem insert_idempotent x t : Balanced t → Contains x t → insert x t = t.
     Proof.
-      move=> Hbal.
-      functional induction (insert x t); simplify; eauto.
-      -
+      functional induction (insert x t); move => t_bal x_in; eauto.
+      - by invert x_in.
+      - have x_in_r : Contains x r by
+          rewrite /Contains in x_in; case_compare v x.
+        have r_bal : Balanced r by invert t_bal.
+        have {}IHt0 := IHt0 r_bal x_in_r.
+        rewrite IHt0.
+        by apply balance_right_Balanced_same.
+      - have x_in_l : Contains x l by
+          rewrite /Contains in x_in; case_compare' v x.
+        have l_bal : Balanced l by invert t_bal.
+        have {}IHt0 := IHt0 l_bal x_in_l.
+        rewrite IHt0.
+        by apply balance_left_Balanced_same.
+    Qed.
 
+    Theorem insert_idempotent' x t : Balanced t → Ordered t → insert x (insert x t) = insert x t.
+    Proof.
+      move => t_bal t_ord.
+      apply insert_idempotent.
+      - exact: insert_preserves_Balanced.
+      - apply Ordered_In_Contains.
+        + exact: insert_preserves_Ordered.
+        + exact: insert_In_complete2.
+    Qed.
+
+    Lemma insert_not_Contains_size x t : ¬ Contains x t → size (insert x t) = 1 + size t.
+    Proof.
+      functional induction (insert x t); move => not_in; eauto.
+      - exfalso; apply: not_in.
+        by rewrite /Contains e0.
+      - have not_in_r : ¬ Contains x r by
+          move => not_in_r; apply: not_in; by rewrite /Contains e0.
+        have {not_in_r}IHt0 := IHt0 not_in_r.
+        rewrite balance_right_preserves_size; simplify; lia.
+      - have not_in_l : ¬ Contains x l by
+          move => not_in_l; apply: not_in; by rewrite /Contains e0.
+        have {not_in_l}IHt0 := IHt0 not_in_l.
+        rewrite balance_left_preserves_size; simplify; lia.
+    Qed.
+
+    Lemma insert_Contains_size x t : Contains x t → size (insert x t) = size t.
+    Proof.
+      functional induction (insert x t); move => x_in; eauto.
+      - exfalso; by invert x_in.
+      - have x_in_r : Contains x r by
+          by rewrite /Contains e0 in x_in.
+        have {x_in_r}IHt0 := IHt0 x_in_r.
+        rewrite balance_right_preserves_size; simplify; lia.
+      - have x_in_l : Contains x l by
+          by rewrite /Contains e0 in x_in.
+        have {x_in_l}IHt0 := IHt0 x_in_l.
+        rewrite balance_left_preserves_size; simplify; lia.
+    Qed.
 
 
   (* End Facts. *)
