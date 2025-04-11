@@ -66,6 +66,36 @@ Module AVL (OT : UsualOrderedType').
   * as a consequence, all operations are far slower than they actually could be.
   * the trade-off is that we have less to juggle. *)
 
+  Lemma Node_inj v1 l1 r1 v2 l2 r2 :
+    Node v1 l1 r1 = Node v2 l2 r2 →
+    v1 = v2 ∧ l1 = l2 ∧ r1 = r2.
+  Proof.
+    move => h.
+    by invert h.
+  Qed.
+
+  Lemma Node_inj_val v1 l1 r1 v2 l2 r2 :
+    Node v1 l1 r1 = Node v2 l2 r2 → v1 = v2.
+  Proof.
+    move => h; by invert h.
+  Qed.
+
+  Lemma Node_inj_left v1 l1 r1 v2 l2 r2 :
+    Node v1 l1 r1 = Node v2 l2 r2 → l1 = l2.
+  Proof.
+    move => h; by invert h.
+  Qed.
+
+  Lemma Node_inj_right v1 l1 r1 v2 l2 r2 :
+    Node v1 l1 r1 = Node v2 l2 r2 → r1 = r2.
+  Proof.
+    move => h; by invert h.
+  Qed.
+  Hint Rewrite Node_inj_val Node_inj_left Node_inj_right : core.
+
+  Infix "∘" := ssrfun.comp (at level 60, right associativity).
+
+
   Definition singleton x : tree := Node x Nil Nil.
 
   (* get the height of a tree  *)
@@ -80,6 +110,42 @@ Module AVL (OT : UsualOrderedType').
     | Nil => 0
     | Node _ l r => 1 + (size l) + (size r)
     end.
+
+  Ltac linear_arithmetic' := intros;
+    repeat match goal with
+    | [ |- S _ ≤ S _ ] =>
+        apply le_n_S
+    | [ H : (S _ < S _)%nat |- _ ] => rewrite -Nat.succ_lt_mono in H
+    | [ H : S _ = S _ |- _ ] => apply Nat.succ_inj in H
+    | [ H : S _ ≤ S _ |- _ ] => apply le_S_n in H
+    | [ |- context[Nat.max ?a ?b] ] =>
+      let Heq := fresh "Heq" in destruct (Nat.max_spec a b) as [[? Heq] | [? Heq]];
+        rewrite -> Heq in *; clear Heq
+    | [ _ : context[Nat.max ?a ?b] |- _ ] =>
+      let Heq := fresh "Heq" in destruct (Nat.max_spec a b) as [[? Heq] | [? Heq]];
+        rewrite -> Heq in *; clear Heq
+    | [ |- context[min ?a ?b] ] =>
+      let Heq := fresh "Heq" in destruct (Nat.min_spec a b) as [[? Heq] | [? Heq]];
+        rewrite -> Heq in *; clear Heq
+    | [ _ : context[min ?a ?b] |- _ ] =>
+      let Heq := fresh "Heq" in destruct (Nat.min_spec a b) as [[? Heq] | [? Heq]];
+        rewrite -> Heq in *; clear Heq
+    end.
+
+  Lemma wf_lt_height : well_founded (fun t1 t2 => (height t1 < height t2)%nat).
+  Proof.
+    move => t.
+    induction t; [constructor; simplify; lia|].
+    destruct IHt1 as [IHt1].
+    destruct IHt2 as [IHt2].
+    constructor.
+    move => y y_rel.
+    destruct y as [|yv yl yr]; [constructor; simplify; lia|].
+    constructor.
+    move => z z_rel.
+    have : ((height z) < Nat.max (height t1) (height t2))%nat by simplify; lia.
+    linear_arithmetic'; eauto.
+  Qed.
 
   Section Contains_In.
 
@@ -391,24 +457,47 @@ Module AVL (OT : UsualOrderedType').
         right; by crush.
     Defined.
 
+    Lemma All_subset P t1 t2 :
+      All P t2 → (∀ x, In x t1 → In x t2) → All P t1.
+    Proof.
+      rewrite !All_iff_forall.
+      by eauto.
+    Qed.
+
+    Lemma All_subset' P t1 t2 :
+      All P t2 → (∀ x, In' x t1 → In' x t2) → All P t1.
+    Proof.
+      rewrite !All_iff_forall'; by eauto.
+    Qed.
+
   End AnyAll.
   Hint Resolve All_dec Any_dec : core.
   Hint Rewrite Allb_iff_All Anyb_iff_Any Any_iff_exists' : core.
   (* Hint Rewrite All_iff_forall' Any_iff_exists' Allb_iff_All Anyb_iff_Any : core. *)
 
-  Section Rotations.
+    (* taking a page out of the stdlib's book *)
+    Definition assert_false v l r := Node v l r.
+    Opaque assert_false.
+
+    Ltac kill_stupid :=
+      try match goal with
+      | [ |- context[assert_false _ _ _] ] => exfalso; simplify; lia
+      | [ H : context[assert_false _ _ _] |- _] => exfalso; simplify; lia
+      end.
+    Hint Extern 1 => kill_stupid : core.
+
     (* rotate root towards left *)
     Definition rotate_left v l r : tree :=
       match r with
       | Node rv rl rr => Node rv (Node v l rl) rr
-      | r => Node v l r
+      | Nil => assert_false v l r
       end.
 
     (* rotate root towards right *)
     Definition rotate_right (v : A) (l r : tree) : tree :=
       match l with
       | Node lv ll lr => Node lv ll (Node v lr r)
-      | l => Node v l r
+      | Nil => assert_false v l r
       end.
 
     (* left heavy *)
@@ -416,10 +505,10 @@ Module AVL (OT : UsualOrderedType').
       if (1 + height r) <? (height l) then
         match l with
         (* this is never true in a well-formed AVL tree *)
-        | Nil => Node v l r
+        | Nil => assert_false v l r
         (* rather, we will always be in this case *)
         | Node lv ll lr as l =>
-            if height lr <? height ll then
+            if (height lr <=? height ll)%nat then
               (* left-left, one rotation *)
               rotate_right v l r
             else
@@ -433,9 +522,9 @@ Module AVL (OT : UsualOrderedType').
     Definition balance_right (v : A) (l r : tree) : tree :=
       if 1 + height l <? height r then
         match r with
-        | Nil => Node v l r
+        | Nil => assert_false v l r
         | Node rv rl rr as r =>
-            if height rl <? height rr then
+            if (height rl <=? height rr)%nat then
               (* right-right, one rotation *)
               rotate_left v l r
             else
@@ -445,7 +534,6 @@ Module AVL (OT : UsualOrderedType').
       else
         Node v l r.
 
-  End Rotations.
   Functional Scheme rotate_left_ind := Induction for rotate_left Sort Prop.
   Functional Scheme rotate_right_ind := Induction for rotate_right Sort Prop.
   Functional Scheme balance_left_ind := Induction for balance_left Sort Prop.
@@ -498,11 +586,11 @@ Module AVL (OT : UsualOrderedType').
         end
     end.
 
-  (* del_root l r deletes the root, t = (Node _ l r).
+  (* merge l r deletes the root, t = (Node _ l r).
   * it accomplishes this by swapping the root node's value with the max element of its left subtree,
   * then deleting the max element instead.
   *)
-  Definition del_root (l r : tree) : tree :=
+  Definition merge (l r : tree) : tree :=
     match shrink_max l with
     | (None, _) => r
     | (Some x, l') => balance_right x l' r
@@ -513,7 +601,7 @@ Module AVL (OT : UsualOrderedType').
     | Nil => Nil
     | Node v l r =>
         match (v ?= x) with
-        | Eq => del_root l r
+        | Eq => merge l r
         | Lt => balance_left  v l (delete x r)
         | Gt => balance_right v (delete x l) r
         end
@@ -537,7 +625,7 @@ Module AVL (OT : UsualOrderedType').
   Definition get_path x t : tree * path := get_path' x t Path_root.
   End InsertDelete.
   Functional Scheme insert_ind := Induction for insert Sort Prop.
-  Functional Scheme del_root_ind := Induction for del_root Sort Prop.
+  Functional Scheme merge_ind := Induction for merge Sort Prop.
   Functional Scheme shrink_max_ind := Induction for shrink_max Sort Prop.
   Functional Scheme delete_ind := Induction for delete Sort Prop.
   Hint Constructors path : core.
@@ -606,6 +694,45 @@ Module AVL (OT : UsualOrderedType').
     repeat match goal with
     | [ H : Ordered' (Node _ _ _) |- _ ] => invert H
     end.
+    (* TODO: MOVE UP *)
+    Lemma Ordered_unique_val v l r :
+      Ordered (Node v l r) → ¬ In v l ∧ ¬ In v r.
+    Proof.
+      intros [[all_l l_ord] [all_r r_ord]].
+      rewrite !All_iff_forall in all_l all_r.
+      split; move => bad; (suff : v < v by order); by eauto.
+    Qed.
+
+  Lemma Ordered_unique_In_left x v l r :
+    Ordered (Node v l r) → In x l → x ≠ v ∧ ¬ In x r.
+  Proof.
+    intros [[all_l l_ord] [all_r r_ord]] x_in_l.
+    split.
+    - move => bad; invert bad.
+      suff : v < v by order.
+      rewrite All_iff_forall in all_l.
+      by eauto.
+    - move => bad.
+      rewrite !All_iff_forall in all_l all_r.
+      suff : x < x by order.
+      transitivity v; by eauto.
+  Qed.
+
+  Lemma Ordered_unique_In_right x v l r :
+    Ordered (Node v l r) → In x r → x ≠ v ∧ ¬ In x l.
+  Proof.
+    intros [[all_l l_ord] [all_r r_ord]] x_in_r.
+    split.
+    - move => bad; invert bad.
+      suff : v < v by order.
+      rewrite All_iff_forall in all_r.
+      by eauto.
+    - move => bad.
+      rewrite !All_iff_forall in all_l all_r.
+      suff : x < x by order.
+      transitivity v; by eauto.
+  Qed.
+
 
   Tactic Notation "split_ifs" ident(h) :=
     match goal with
@@ -621,8 +748,10 @@ Module AVL (OT : UsualOrderedType').
     match goal with
     | [ H : (?a <? ?b)%nat = true |- _ ] => rewrite Nat.ltb_lt in H
     | [ H : (?a <? ?b)%nat = false |- _ ] => rewrite Nat.ltb_ge in H
+    | [ H : (?a <=? ?b)%nat = true |- _ ] => rewrite Nat.leb_le in H
+    | [ H : (?a <=? ?b)%nat = false |- _ ] => rewrite Nat.leb_gt in H
     end.
-  Hint Rewrite Nat.ltb_lt Nat.ltb_ge : core.
+  Hint Rewrite Nat.ltb_lt Nat.ltb_ge Nat.leb_le Nat.leb_gt : core.
 
   Ltac match_compare :=
     rewrite_match_compare ||
@@ -809,6 +938,11 @@ Module AVL (OT : UsualOrderedType').
     (* Hint Resolve rotate_left_preserves_Ordered' rotate_right_preserves_Ordered' : core. *)
     (* Hint Resolve rotate_left_preserves_All rotate_right_preserves_All : core. *)
 
+    Ltac bal_invert :=
+      match goal with
+      | [ H : Balanced (Node _ _ _) |- _]  => invert H
+      end.
+
     Lemma balance_left_preserves_Ordered v l r : Ordered (Node v l r) → Ordered (balance_left v l r).
     Proof.
       move => H_order.
@@ -927,7 +1061,7 @@ Module AVL (OT : UsualOrderedType').
     Lemma rotate_left_In_complete x v l r : In x (Node v l r) → In x (rotate_left v l r).
     Proof.
       move => H_In.
-      destruct r; simpl;
+      destruct r; simpl; try done.
       by repeat match goal with
       | [ H : In _ (Node _ _ _) |- _ ] => destruct H; subst; eauto
       | [ H : _ ∨ _ |- _] => destruct H; subst; eauto
@@ -937,7 +1071,7 @@ Module AVL (OT : UsualOrderedType').
     Lemma rotate_right_In_complete x v l r : In x (Node v l r) → In x (rotate_right v l r).
     Proof.
       move => H_In.
-      destruct l; simpl;
+      destruct l; simpl; try done.
       by repeat match goal with
       | [ H : In _ (Node _ _ _) |- _ ] => destruct H; subst; eauto
       | [ H : _ ∨ _ |- _] => destruct H; subst; eauto
@@ -1070,24 +1204,24 @@ Module AVL (OT : UsualOrderedType').
 
     Lemma rotate_left_preserves_size v l r : size (rotate_left v l r) = size (Node v l r).
     Proof.
-      functional induction (rotate_left v l r); simplify; lia.
+      functional induction (rotate_left v l r); simplify; by try lia.
     Qed.
 
     Lemma rotate_right_preserves_size v l r : size (rotate_right v l r) = size (Node v l r).
     Proof.
-      functional induction (rotate_right v l r); simplify; lia.
+      functional induction (rotate_right v l r); simplify; by try lia.
     Qed.
 
     Hint Rewrite rotate_left_preserves_size rotate_right_preserves_size : core.
 
     Lemma balance_left_preserves_size v l r : size (balance_left v l r) = size (Node v l r).
     Proof.
-      functional induction (balance_left v l r); simplify; lia.
+      functional induction (balance_left v l r); simplify; by try lia.
     Qed.
 
     Lemma balance_right_preserves_size v l r : size (balance_right v l r) = size (Node v l r).
     Proof.
-      functional induction (balance_right v l r); simplify; lia.
+      functional induction (balance_right v l r); simplify; by try lia.
     Qed.
 
     Hint Rewrite rotate_left_preserves_size rotate_right_preserves_size : core.
@@ -1206,7 +1340,7 @@ Module AVL (OT : UsualOrderedType').
     Lemma balance_left_preserves_Balanced v l r : Balanced (Node v l r) → Balanced (balance_left v l r).
     Proof.
       move => Hbal.
-      functional induction (balance_left v l r); simplify; eauto.
+      functional induction (balance_left v l r); simplify => //.
       - invert Hbal; by crush.
       - invert Hbal; by crush.
     Qed.
@@ -1214,19 +1348,19 @@ Module AVL (OT : UsualOrderedType').
     Lemma balance_right_preserves_Balanced v l r : Balanced (Node v l r) → Balanced (balance_right v l r).
     Proof.
       move => Hbal.
-      functional induction (balance_right v l r); simplify; eauto; invert Hbal; by crush.
+      functional induction (balance_right v l r); simplify => //; invert Hbal; by crush.
     Qed.
 
     Lemma balance_left_Balanced_same v l r : Balanced (Node v l r) → balance_left v l r = Node v l r.
     Proof.
       move=> Hbal.
-      functional induction (balance_left v l r); simplify; eauto; invert Hbal; by crush.
+      functional induction (balance_left v l r); simplify => //; invert Hbal; by crush.
     Qed.
 
     Lemma balance_right_Balanced_same v l r : Balanced (Node v l r) → balance_right v l r = Node v l r.
     Proof.
       move=>Hbal.
-      functional induction (balance_right v l r); simplify; eauto; invert Hbal; by crush.
+      functional induction (balance_right v l r); simplify => //; invert Hbal; by crush.
     Qed.
 
     Lemma rotate_left_not_Nil v l r : rotate_left v l r = Nil → False.
@@ -1246,7 +1380,7 @@ Module AVL (OT : UsualOrderedType').
       | [ H : rotate_left _ _ _ = Nil |- _ ] => exfalso; exact: rotate_left_not_Nil _ _ _ H
       | [ H : rotate_right _ _ _ = Nil |- _ ] => exfalso; exact: rotate_right_not_Nil _ _ _ H
       end.
-    Hint Extern 0 => rotate_not_nil : core.
+    Hint Extern 1 => rotate_not_nil : core.
 
     Lemma balance_left_not_Nil v l r : balance_left v l r = Nil → False.
     Proof.
@@ -1265,7 +1399,7 @@ Module AVL (OT : UsualOrderedType').
       | [ H : balance_left _ _ _ = Nil |- _ ] => exfalso; exact: balance_left_not_Nil _ _ _ H
       | [ H : balance_right _ _ _  = Nil |- _ ] => exfalso; exact: balance_right_not_Nil _ _ _ H
       end.
-    Hint Extern 0 => balance_not_nil : core.
+    Hint Extern 1 => balance_not_nil : core.
 
     Lemma insert_not_Nil x t : insert x t ≠ Nil.
     Proof.
@@ -1276,7 +1410,7 @@ Module AVL (OT : UsualOrderedType').
         elim_compare v x; rewrite -/insert in bad; by crush.
     Qed.
 
-    Hint Extern 0 =>
+    Hint Extern 1 =>
       match goal with
       | [ H : insert _ _ = Nil |- _ ] => exfalso; exact: insert_not_Nil _ _ H
       end : core.
@@ -1287,21 +1421,21 @@ Module AVL (OT : UsualOrderedType').
       move eq : exp => e;
       destruct e.
 
-    Lemma balance_left_height_le v l r :
+    Lemma balance_left_height_upper_bound v l r :
       height (balance_left v l r) ≤ height (Node v l r).
     Proof.
-      functional induction (balance_left v l r); simplify; eauto; crush.
+      functional induction (balance_left v l r); simplify => //; crush.
       destruct lr; by crush.
     Qed.
 
-    Lemma balance_right_height_le v l r :
+    Lemma balance_right_height_upper_bound v l r :
       height (balance_right v l r) ≤ height (Node v l r).
     Proof.
-      functional induction (balance_right v l r); simplify; eauto; crush.
+      functional induction (balance_right v l r); simplify => //; crush.
       destruct rl; by crush.
     Qed.
 
-    Lemma balance_left_height_ge v l r :
+    Lemma balance_left_height_lower_bound v l r :
       height (Node v l r) ≤ 2 + height (balance_left v l r).
     Proof.
       functional induction (balance_left v l r).
@@ -1314,7 +1448,7 @@ Module AVL (OT : UsualOrderedType').
         by crush.
     Qed.
 
-    Lemma balance_right_height_ge v l r :
+    Lemma balance_right_height_lower_bound v l r :
       height (Node v l r) ≤ 2 + height (balance_right v l r).
     Proof.
       functional induction (balance_right v l r).
@@ -1339,10 +1473,10 @@ Module AVL (OT : UsualOrderedType').
     Lemma insert_height_upper_bound x t : height (insert x t) ≤ 1 + height t.
     Proof.
       functional induction (insert x t); [by crush| lia | | ].
-      - transitivity (height (Node v l (insert x r))); [apply balance_right_height_le|].
+      - transitivity (height (Node v l (insert x r))); [apply balance_right_height_upper_bound|].
         rewrite /height -/height.
         lia.
-      - transitivity (height (Node v (insert x l) r)); [apply balance_left_height_le|].
+      - transitivity (height (Node v (insert x l) r)); [apply balance_left_height_upper_bound|].
         rewrite /height -/height; lia.
     Qed.
 
@@ -1355,26 +1489,6 @@ Module AVL (OT : UsualOrderedType').
     Search (S _ ≤ S _).
     Search S Nat.max.
     Search (S _ < S _)%nat.
-    Ltac linear_arithmetic' := intros;
-      repeat match goal with
-      | [ |- S _ ≤ S _ ] =>
-          apply le_n_S
-      | [ H : (S _ < S _)%nat |- _ ] => rewrite -Nat.succ_lt_mono in H
-      | [ H : S _ = S _ |- _ ] => apply Nat.succ_inj in H
-      | [ |- context[Nat.max ?a ?b] ] =>
-        let Heq := fresh "Heq" in destruct (Nat.max_spec a b) as [[? Heq] | [? Heq]];
-          rewrite -> Heq in *; clear Heq
-      | [ _ : context[Nat.max ?a ?b] |- _ ] =>
-        let Heq := fresh "Heq" in destruct (Nat.max_spec a b) as [[? Heq] | [? Heq]];
-          rewrite -> Heq in *; clear Heq
-      | [ |- context[min ?a ?b] ] =>
-        let Heq := fresh "Heq" in destruct (Nat.min_spec a b) as [[? Heq] | [? Heq]];
-          rewrite -> Heq in *; clear Heq
-      | [ _ : context[min ?a ?b] |- _ ] =>
-        let Heq := fresh "Heq" in destruct (Nat.min_spec a b) as [[? Heq] | [? Heq]];
-          rewrite -> Heq in *; clear Heq
-      end.
-
     Lemma invert_insert x t : ∃ v l r, insert x t = Node v l r.
     Proof.
       functional induction (insert x t); eauto.
@@ -1390,12 +1504,146 @@ Module AVL (OT : UsualOrderedType').
     Qed.
 
     (* this is in general, NOT TRUE!! *)
-    Lemma hmmm v l r :
+    Lemma balance_left_rebal2 v l r :
+      Balanced l → Balanced r → 2 + height r = height l →
+      Balanced (balance_left v l r).
+    Proof.
+      move => l_bal r_bal height_diff.
+      functional induction (balance_left v l r); simplify => //; try lia.
+      - linear_arithmetic'; bal_invert; try lia.
+        + apply Balanced_right_heavy; crush.
+        + apply Balanced_equal; crush.
+      - linear_arithmetic'; bal_invert; try lia.
+        destruct lr; simplify => //.
+        linear_arithmetic'; bal_invert; try lia; apply Balanced_equal; crush.
+    Qed.
+
+    Lemma balance_right_rebal2 v l r :
       Balanced l → Balanced r → 2 + height l = height r →
       Balanced (balance_right v l r).
     Proof.
-    Abort.
-    (* AVL trees work specifically because you can only ever have at most 1 broken invariant, not 2 *)
+      move => l_bal r_bal height_diff.
+      functional induction (balance_right v l r); simplify; try lia.
+      - linear_arithmetic'; invert r_bal; try lia.
+        apply Balanced_equal; crush.
+        apply Balanced_left_heavy; crush.
+      - linear_arithmetic'; invert r_bal; try lia.
+        destruct rl; [simplify; lia|].
+        linear_arithmetic'; invert H3; try lia; apply Balanced_equal; crush.
+    Qed.
+
+    Lemma balance_left_rebal v l r :
+      Balanced l → Balanced r → height r <= 1 + height l <= 3 + height r →
+      Balanced (balance_left v l r).
+    Proof.
+      move => l_bal r_bal [min_height max_height].
+      have height_cases : 1 + height l = height r ∨ height l = height r ∨ height l = 1 + height r ∨ height l = 2 + height r by lia.
+      destruct height_cases as [|[|[|]]].
+      - rewrite balance_left_Balanced_same; apply Balanced_right_heavy; crush.
+      - rewrite balance_left_Balanced_same; apply Balanced_equal; crush.
+      - rewrite balance_left_Balanced_same; apply Balanced_left_heavy; crush.
+      - by apply balance_left_rebal2.
+    Qed.
+
+    Lemma balance_right_rebal v l r :
+      Balanced l → Balanced r → height l <= 1 + height r <= 3 + height l →
+      Balanced (balance_right v l r).
+    Proof.
+      move => l_bal r_bal [min_height max_height].
+      have height_cases : 1 + height r = height l ∨ height r = height l ∨ height r = 1 + height l ∨ height r = 2 + height l
+        by lia.
+      destruct height_cases as [|[|[|]]].
+      - rewrite balance_right_Balanced_same; apply Balanced_left_heavy; crush.
+      - rewrite balance_right_Balanced_same; apply Balanced_equal; crush.
+      - rewrite balance_right_Balanced_same; apply Balanced_right_heavy; crush.
+      - by apply balance_right_rebal2.
+    Qed.
+
+    (*TODO: MOVE*)
+    Search (S _ ≤ S _)%nat.
+    Ltac clear_zero_height :=
+      repeat (match goal with
+      | [ H : height ?t = 0 |- _ ] =>
+          let h := fresh in
+          have h := (height_eq_zero_nil _ H);
+          clear H;
+          symmetry in h; destruct h
+      | [ H : 0 = height ?t |- _ ] =>
+          symmetry in H;
+          let h := fresh in
+          have h := (height_eq_zero_nil _ H);
+          clear H;
+          symmetry in h; destruct h
+      | [ H : (_ < 1)%nat |- _ ] =>
+          rewrite Nat.lt_1_r in H
+      | [ H : _ ≤ 0 |- _] =>
+          rewrite Nat.le_0_r in H
+      | [ H : (S _ < S _)%nat |- _ ] => rewrite -Nat.succ_lt_mono in H
+      | [ H : S _ = S _ |- _ ] => apply Nat.succ_inj in H
+      | [ H : S _ ≤ S _ |- _ ] => apply le_S_n in H
+      | [ H : height ?t = 1 |- _ ] => destruct t; linear_arithmetic'
+      | [ H : 1 = height ?t |- _ ] => destruct t; linear_arithmetic'
+      | [ H : height ?t ≤ 1 |- _ ] => destruct t; linear_arithmetic'
+      | [ H : context[Nat.max _ _] |- _ ] => linear_arithmetic'
+      | [ H : context[Nat.min _ _] |- _ ] => linear_arithmetic'
+      end; simplify).
+
+    Ltac clear_useless :=
+      repeat match goal with
+      | [ H : True |- _ ] => clear H
+      | [ H : ?x = ?x |- _] => clear H
+      | [ H : Balanced Nil |- _ ] => clear H
+      | [ H : Ordered Nil |- _ ] => clear H
+      | [ H : 0 ≤ _ |- _ ] => clear H
+      | [ H : ?x ≤ ?x |- _ ] => clear H
+      end.
+    Hint Extern 5 => clear_zero_height : core.
+    Hint Resolve height_eq_zero_nil : core.
+
+    Lemma insert_preserves_Balanced0 x t :
+      Balanced t →
+      Balanced (insert x t) ∧ height t ≤ height (insert x t).
+    Proof.
+      move => t_bal.
+      functional induction (insert x t); repeat split; simplify => //; try lia; try by constructor.
+      - have r_bal : Balanced r by invert t_bal.
+        have {r_bal IHt0}[r'_bal r'_height_lower] :=
+          IHt0 r_bal.
+        have r'_height_upper := insert_height_upper_bound x r.
+        invert t_bal; simplify.
+        + (* equal heights *)
+          apply balance_right_rebal; by try lia.
+        + (* left heavy *)
+          apply balance_right_rebal; by try lia.
+        + (* right heavy *)
+          apply balance_right_rebal; by try lia.
+      - have r_bal : Balanced r by invert t_bal.
+        have {r_bal IHt0}[r'_bal r'_height_lower] := IHt0 r_bal.
+        have r'_height_upper := insert_height_upper_bound x r.
+        functional induction (balance_right v l (insert x r)); simplify => //; try lia; try by constructor.
+        + repeat bal_invert; linear_arithmetic'; try lia.
+        + repeat bal_invert; linear_arithmetic'; try lia.
+          destruct rl; repeat bal_invert; simplify; clear_zero_height; try lia.
+      - (* symmetric cases *)
+        have l_bal : Balanced l by invert t_bal.
+        have {l_bal IHt0}[l'_bal l'_height_lower] :=
+          IHt0 l_bal.
+        have l'_height_upper := insert_height_upper_bound x l.
+        invert t_bal; simplify.
+        + (* equal heights *)
+          apply balance_left_rebal; by try lia.
+        + (* left heavy *)
+          apply balance_left_rebal; by try lia.
+        + (* right heavy *)
+          apply balance_left_rebal; by try lia.
+      - have l_bal : Balanced l by invert t_bal.
+        have {l_bal IHt0}[l'_bal l'_height_lower] := IHt0 l_bal.
+        have l'_height_upper := insert_height_upper_bound x l.
+        functional induction (balance_left v (insert x l) r); simplify => //; try lia; try by constructor.
+        + repeat bal_invert; linear_arithmetic'; try lia.
+        + repeat bal_invert; linear_arithmetic'; try lia.
+          destruct lr; repeat bal_invert; simplify; clear_zero_height; try lia.
+    Qed.
 
     Definition left_child t :=
       match t with
@@ -1410,156 +1658,6 @@ Module AVL (OT : UsualOrderedType').
       end.
 
     Hint Unfold left_child right_child : core.
-
-    Lemma insert_preserves_Balanced0 x t :
-      Balanced t →
-      Balanced (insert x t) ∧
-        height t ≤ height (insert x t) ∧
-        (t ≠ Nil → 1 + height t = height (insert x t) → height (left_child (insert x t)) ≠ height (right_child (insert x t))).
-    Proof.
-      functional induction (insert x t); move => t_bal; repeat split; simplify; eauto.
-      - exfalso; lia.
-      - have r_bal : Balanced r by invert t_bal.
-        have {r_bal}IHt0 := IHt0 r_bal.
-        destruct IHt0 as [insert_bal [IH_height IH_unbal]].
-        have r_height_lower := insert_height_upper_bound x r.
-        invert t_bal; simplify.
-        + (* equal heights *)
-          apply balance_right_preserves_Balanced.
-          destruct (eq_or_succ_cases IH_height r_height_lower) as [H|H].
-          * apply Balanced_equal; by crush.
-          * apply Balanced_right_heavy; by crush.
-        + (* left heavy *)
-          apply balance_right_preserves_Balanced.
-          destruct (eq_or_succ_cases IH_height r_height_lower).
-          * apply Balanced_left_heavy; by crush.
-          * apply Balanced_equal; by crush.
-        + (* right heavy *)
-          destruct (eq_or_succ_cases IH_height r_height_lower) as [H|H];
-            [apply balance_right_preserves_Balanced, Balanced_right_heavy; by crush|].
-          (* now we have a +2 height diff, so balance_right must kick in. *)
-          destruct r; [crush|].
-          have r_nonnil : Node v0 r1 r2 ≠ Nil by done.
-          symmetry in H.
-          have {r_nonnil}IH_unbal := IH_unbal r_nonnil H.
-          functional induction (balance_right v l (insert x (Node v0 r1 r2))); simplify; eauto; try lia.
-          * invert insert_bal; try lia.
-            linear_arithmetic'; invert H3; try lia; apply Balanced_equal; crush.
-          * have {e2 IH_unbal} IH_unbal : 1 + height rr = height rl by (invert insert_bal; lia).
-            destruct rl; [simplify; lia|].
-            simplify.
-            invert insert_bal; invert H3; linear_arithmetic'; simplify; try lia;
-              invert H6; try lia; apply Balanced_equal; crush.
-      - have r_bal : Balanced r by invert t_bal.
-        have {r_bal IHt0}[insert_bal [height_le unbal]] := IHt0 r_bal.
-        Search (height _ = 0).
-        have r_height_lower := insert_height_upper_bound x r.
-        destruct r.
-        { invert t_bal; simplify; try lia.
-          rewrite (height_eq_zero_nil l H4); simplify; crush.
-          destruct l; [simplify; lia|simplify].
-          have l1_nil : height l1 = 0 by lia.
-          have l2_nil : height l2 = 0 by lia.
-          rewrite (height_eq_zero_nil l1 l1_nil) (height_eq_zero_nil l2 l2_nil); simplify; crush.
-        }
-        have {}unbal := unbal node_neq_nil.
-        destruct (eq_or_succ_cases height_le r_height_lower) as [H|H].
-        {
-          functional induction (balance_right v l (insert x (Node v0 r1 r2)));
-            invert t_bal;
-            simplify; try lia.
-        }
-        functional induction (balance_right v l (insert x (Node v0 r1 r2))); invert t_bal; simplify; try lia.
-        destruct rl; [simplify; lia|].
-        invert insert_bal; simplify; try lia.
-      - have r_bal : Balanced r by invert t_bal.
-        have {r_bal IHt0}[insert_bal [height_ge unbal]] := IHt0 r_bal.
-        have r_height_lower := insert_height_upper_bound x r.
-        destruct r.
-        {
-          clear unbal height_ge insert_bal H r_height_lower.
-          simplify.
-          invert t_bal; [| |simplify; try lia].
-          -
-            rewrite (height_eq_zero_nil l H5) /balance_right; simplify; lia.
-          - exfalso.
-            rewrite /balance_right in H0; simplify; lia.
-        }
-        have l_bal_diff : (1 + height l < height (balance_right v l (insert x (Node v0 r1 r2))))%nat by lia.
-        functional induction (balance_right v l (insert x (Node v0 r1 r2))); simplify; try lia.
-        destruct rl; [simplify; lia|].
-        invert insert_bal; simplify; lia.
-      - (* all cases from here on are symmetric. *)
-        have l_bal : Balanced l by invert t_bal.
-        have {l_bal}IHt0 := IHt0 l_bal.
-        destruct IHt0 as [insert_bal [IH_height IH_unbal]].
-        have l_height_lower := insert_height_upper_bound x l.
-        invert t_bal; simplify.
-        + (* equal heights *)
-          apply balance_left_preserves_Balanced.
-          destruct (eq_or_succ_cases IH_height l_height_lower) as [H|H].
-          * apply Balanced_equal; by crush.
-          * apply Balanced_left_heavy; by crush.
-        + (* left heavy *)
-          destruct (eq_or_succ_cases IH_height l_height_lower) as [H|H];
-            [apply balance_left_preserves_Balanced, Balanced_left_heavy; by crush|].
-          (* now we have a +2 height diff, so balance_left must kick in *)
-          destruct l; [crush|].
-          symmetry in H.
-          have {}IH_unbal := IH_unbal node_neq_nil H.
-          functional induction (balance_left v (insert x (Node v0 l1 l2)) r); simplify; eauto; try lia.
-          * invert insert_bal; try lia.
-            linear_arithmetic'; invert H2; try lia; apply Balanced_equal; crush.
-          * have {e2 IH_unbal}IH_unbal : 1 + height ll = height lr by (invert insert_bal; lia).
-            destruct lr; [simplify; lia|].
-            invert insert_bal; invert H2; invert H7; simplify; try lia; apply Balanced_equal; crush.
-        + (* right heavy *)
-          apply balance_left_preserves_Balanced.
-          destruct (eq_or_succ_cases IH_height l_height_lower).
-          * apply Balanced_right_heavy; by crush.
-          * apply Balanced_equal; by crush.
-      - have l_bal : Balanced l by invert t_bal.
-        have {l_bal}IHt0 := IHt0 l_bal.
-        have l_height_lower := insert_height_upper_bound x l.
-        destruct IHt0 as [insert_bal [insert_height_ge unbal]].
-        destruct l.
-        {
-          invert t_bal; simplify; try lia.
-          symmetry in H4.
-          rewrite (height_eq_zero_nil r H4); simplify; crush.
-          destruct r; [simplify; lia| simplify].
-          have r1_nil : height r1 = 0 by lia.
-          have r2_nil : height r2 = 0 by lia.
-          rewrite (height_eq_zero_nil _ r1_nil) (height_eq_zero_nil _ r2_nil); simplify; crush.
-        }
-        have {}unbal := unbal node_neq_nil.
-        destruct (eq_or_succ_cases insert_height_ge l_height_lower) as [H|H].
-        {
-          functional induction (balance_left v (insert x (Node v0 l1 l2)) r);
-            invert t_bal; simplify; lia.
-        }
-        functional induction (balance_left v (insert x (Node v0 l1 l2)) r); invert t_bal; simplify; try lia.
-        destruct lr; [simplify; lia|].
-        invert insert_bal; simplify; lia.
-      - have l_bal : Balanced l by invert t_bal.
-        have {l_bal IHt0}[insert_bal [insert_height_ge unbal]] := IHt0 l_bal.
-        have l_height_lower := insert_height_upper_bound x l.
-        destruct l.
-        {
-          clear unbal insert_height_ge insert_bal H.
-          simplify.
-          invert t_bal; [| simplify; try lia|].
-          - symmetry in H5.
-            rewrite (height_eq_zero_nil r H5) /balance_left; simplify; lia.
-          - exfalso.
-            rewrite /balance_left in H0; simplify; lia.
-        }
-        have r_bal_diff : (1 + height r < height (balance_left v (insert x (Node v0 l1 l2)) r))%nat by lia.
-        functional induction (balance_left v (insert x (Node v0 l1 l2)) r); simplify; try lia.
-        destruct lr; [simplify; lia|].
-        invert insert_bal; simplify; lia.
-    Qed.
-
 
     (* INSERT PRESERVES BALANCE! *)
     Theorem insert_preserves_Balanced x t : Balanced t → Balanced (insert x t).
@@ -1632,36 +1730,6 @@ Module AVL (OT : UsualOrderedType').
         rewrite balance_left_preserves_size; simplify; lia.
     Qed.
 
-    (* TODO: move up *)
-    Lemma Node_inj v1 l1 r1 v2 l2 r2 :
-      Node v1 l1 r1 = Node v2 l2 r2 →
-      v1 = v2 ∧ l1 = l2 ∧ r1 = r2.
-    Proof.
-      move => h.
-      by invert h.
-    Qed.
-
-    Lemma Node_inj_val v1 l1 r1 v2 l2 r2 :
-      Node v1 l1 r1 = Node v2 l2 r2 → v1 = v2.
-    Proof.
-      move => h; by invert h.
-    Qed.
-
-    Lemma Node_inj_left v1 l1 r1 v2 l2 r2 :
-      Node v1 l1 r1 = Node v2 l2 r2 → l1 = l2.
-    Proof.
-      move => h; by invert h.
-    Qed.
-
-    Lemma Node_inj_right v1 l1 r1 v2 l2 r2 :
-      Node v1 l1 r1 = Node v2 l2 r2 → r1 = r2.
-    Proof.
-      move => h; by invert h.
-    Qed.
-    Hint Rewrite Node_inj_val Node_inj_left Node_inj_right : core.
-
-    Infix "∘" := ssrfun.comp (at level 60, right associativity).
-
     Local Notation shrink_max2 := (snd ∘ shrink_max).
 
     Lemma Some_neq_None X (x : X) : Some x ≠ None.
@@ -1675,7 +1743,7 @@ Module AVL (OT : UsualOrderedType').
     Qed.
 
     Hint Resolve Some_neq_None None_neq_Some : core.
-    Hint Extern 0 =>
+    Hint Extern 1 =>
       match goal with
       | [ H : Some _ = Some _ |- _ ] => invert H
       | [ H : Some _ = None |- _] => by invert H
@@ -1784,61 +1852,6 @@ Module AVL (OT : UsualOrderedType').
         + apply IHr; by eauto.
     Qed.
 
-    (* TODO: MOVE UP *)
-    Lemma All_subset P t1 t2 :
-      All P t2 → (∀ x, In x t1 → In x t2) → All P t1.
-    Proof.
-      rewrite !All_iff_forall.
-      by eauto.
-    Qed.
-
-    (* TODO: MOVE UP *)
-    Lemma All_subset' P t1 t2 :
-      All P t2 → (∀ x, In' x t1 → In' x t2) → All P t1.
-    Proof.
-      rewrite !All_iff_forall'; by eauto.
-    Qed.
-
-    (* TODO: MOVE UP *)
-    Lemma Ordered_unique_val v l r :
-      Ordered (Node v l r) → ¬ In v l ∧ ¬ In v r.
-    Proof.
-      intros [[all_l l_ord] [all_r r_ord]].
-      rewrite !All_iff_forall in all_l all_r.
-      split; move => bad; (suff : v < v by order); by eauto.
-    Qed.
-
-    (* TODO: MOVE UP *)
-    Lemma Ordered_unique_In_left x v l r :
-      Ordered (Node v l r) → In x l → x ≠ v ∧ ¬ In x r.
-    Proof.
-      intros [[all_l l_ord] [all_r r_ord]] x_in_l.
-      split.
-      - move => bad; invert bad.
-        suff : v < v by order.
-        rewrite All_iff_forall in all_l.
-        by eauto.
-      - move => bad.
-        rewrite !All_iff_forall in all_l all_r.
-        suff : x < x by order.
-        transitivity v; by eauto.
-    Qed.
-
-    (* TODO: MOVE UP *)
-    Lemma Ordered_unique_In_right x v l r :
-      Ordered (Node v l r) → In x r → x ≠ v ∧ ¬ In x l.
-    Proof.
-      intros [[all_l l_ord] [all_r r_ord]] x_in_r.
-      split.
-      - move => bad; invert bad.
-        suff : v < v by order.
-        rewrite All_iff_forall in all_r.
-        by eauto.
-      - move => bad.
-        rewrite !All_iff_forall in all_l all_r.
-        suff : x < x by order.
-        transitivity v; by eauto.
-    Qed.
 
     Lemma prune_max_preserves_All P t :
       All P t → All P (prune_max t).
@@ -1921,78 +1934,14 @@ Module AVL (OT : UsualOrderedType').
         simplify; lia.
     Qed.
 
-
     Lemma prune_max_height_upper_bound t :
       height (prune_max t) ≤ height t.
     Proof.
       functional induction (prune_max t); simplify; try lia.
       Search balance_left height.
-      transitivity (height (Node v l (prune_max r))); [apply balance_left_height_le|].
+      transitivity (height (Node v l (prune_max r))); [apply balance_left_height_upper_bound|].
       simplify; lia.
     Qed.
-
-
-    (* TODO: MOVE *)
-    Lemma wf_lt_height : well_founded (fun t1 t2 => (height t1 < height t2)%nat).
-    Proof.
-      move => t.
-      induction t; [constructor; simplify; lia|].
-      destruct IHt1 as [IHt1].
-      destruct IHt2 as [IHt2].
-      constructor.
-      move => y y_rel.
-      destruct y as [|yv yl yr]; [constructor; simplify; lia|].
-      constructor.
-      move => z z_rel.
-      have : ((height z) < Nat.max (height t1) (height t2))%nat by simplify; lia.
-      linear_arithmetic'; eauto.
-    Qed.
-
-    (*TODO: MOVE*)
-    Search (S _ ≤ S _)%nat.
-    Ltac clear_zero_height :=
-      repeat (match goal with
-      | [ H : height ?t = 0 |- _ ] =>
-          let h := fresh in
-          have h := (height_eq_zero_nil _ H);
-          clear H;
-          symmetry in h; destruct h
-      | [ H : 0 = height ?t |- _ ] =>
-          symmetry in H;
-          let h := fresh in
-          have h := (height_eq_zero_nil _ H);
-          clear H;
-          symmetry in h; destruct h
-      | [ H : (_ < 1)%nat |- _ ] =>
-          rewrite Nat.lt_1_r in H
-      | [ H : _ ≤ 0 |- _] =>
-          rewrite Nat.le_0_r in H
-      | [ H : (S _ < S _)%nat |- _ ] => rewrite -Nat.succ_lt_mono in H
-      | [ H : S _ = S _ |- _ ] => apply Nat.succ_inj in H
-      | [ H : S _ ≤ S _ |- _ ] => apply le_S_n in H
-      | [ H : height ?t = 1 |- _ ] => destruct t; linear_arithmetic'
-      | [ H : 1 = height ?t |- _ ] => destruct t; linear_arithmetic'
-      | [ H : height ?t ≤ 1 |- _ ] => destruct t; linear_arithmetic'
-      | [ H : context[Nat.max _ _] |- _ ] => linear_arithmetic'
-      | [ H : context[Nat.min _ _] |- _ ] => linear_arithmetic'
-      end; simplify).
-
-    Ltac clear_useless :=
-      repeat match goal with
-      | [ H : True |- _ ] => clear H
-      | [ H : ?x = ?x |- _] => clear H
-      | [ H : Balanced Nil |- _ ] => clear H
-      | [ H : Ordered Nil |- _ ] => clear H
-      | [ H : 0 ≤ _ |- _ ] => clear H
-      | [ H : ?x ≤ ?x |- _ ] => clear H
-      end.
-    Hint Extern 1 => clear_zero_height : core.
-    Hint Resolve height_eq_zero_nil : core.
-
-    Ltac bal_invert :=
-      match goal with
-      | [ H : Balanced (Node _ _ _) |- _]  => invert H
-      end.
 
     Function bal v l r : tree :=
       if (1 + height r <? height l) then
@@ -2032,8 +1981,8 @@ Module AVL (OT : UsualOrderedType').
       height (bal v l r) ≤ height (Node v l r).
     Proof.
       functional induction (bal v l r); simplify; try lia; try done.
-      - by apply balance_left_height_le.
-      - by apply balance_right_height_le.
+      - by apply balance_left_height_upper_bound.
+      - by apply balance_right_height_upper_bound.
     Qed.
 
     Lemma del_max_height_upper_bound t :
@@ -2071,7 +2020,7 @@ Module AVL (OT : UsualOrderedType').
       -
         functional induction (bal v l (del_max r)).
         + functional induction (balance_left v l (del_max r)); simplify; try lia.
-
+          Abort.
 
     Lemma prune_max_eq_Nil v l r :
       prune_max (Node v l r) = Nil → l = Nil ∧ r = Nil.
@@ -2089,274 +2038,37 @@ Module AVL (OT : UsualOrderedType').
       destruct t'; [tauto|eauto].
     Qed.
 
-    Lemma prune_max_preserves_Balanced t :
+    (* PRUNE_MAX PRESERVES BALANCED! *)
+    Lemma prune_max_preserves_Balanced0 t :
       Balanced t →
-      Balanced (prune_max t) ∧
-        height t ≤ 1 + height (prune_max t) ∧
-        (prune_max t ≠ Nil → height t = 1 + height (prune_max t) →
-           1 + height (left_child t) = height (right_child t) ∧
-           height (left_child (prune_max t)) = height (right_child (prune_max t))).
+      Balanced (prune_max t) ∧ height t ≤ 1 + height (prune_max t).
     Proof.
-      induction t as [|v l _ r IHr]; [eauto|].
       move => t_bal.
-      repeat split.
-      - destruct r as [|rv rl rr]; [simplify; by invert t_bal|].
-        rewrite prune_max_descendents; [eauto|].
-        have r_bal : Balanced (Node rv rl rr) by invert t_bal.
-        have {r_bal IHr}[r'_bal [r'_height_lower unbal]] := IHr r_bal.
-        have r'_height_upper := prune_max_height_upper_bound (Node rv rl rr).
-        destruct (eq_or_succ_cases r'_height_upper r'_height_lower).
-        {
-        invert t_bal; apply balance_left_preserves_Balanced.
-          * apply Balanced_equal; eauto; lia.
-          * apply Balanced_left_heavy; eauto; lia.
-          * apply Balanced_right_heavy; eauto; lia.
-        }
-        invert t_bal.
-        1: apply balance_left_preserves_Balanced, Balanced_left_heavy; eauto; lia.
-        2: apply balance_left_preserves_Balanced, Balanced_equal; eauto; lia.
-        (* +2 diff *)
-        destruct (tree_eq_dec (prune_max (Node rv rl rr)) Nil) as [heq|heq].
-        { rewrite heq.
-          have [rl_nil rr_nil] := prune_max_eq_Nil _ _ _ heq.
-          subst.
-          simplify.
-          destruct l; simplify; try lia.
-          linear_arithmetic'; simplify; clear_zero_height; try lia;
-            clear_useless;
-            rewrite /balance_left; split_ifs; simplify; try lia;
-            constructor; by eauto.
-        }
-        have {unbal}[unbal1 unbal2] := unbal heq H.
-        simpl in unbal1.
-        destruct (prune_max_exists _ heq) as [rv' [rl' [rr' r'_spec]]].
-        symmetry in r'_spec; destruct r'_spec.
-        rewrite /balance_left; split_ifs; [ltb_to_lt|simplify; lia].
-        destruct l as [|lv ll lr].
-        { repeat bal_invert; simplify; clear_zero_height; try lia. }
-        split_ifs; ltb_to_lt.
-        simplify; repeat bal_invert; clear_zero_height; try lia.
-        apply Balanced_equal; crush.
-        apply Balanced_equal; crush.
-        destruct lr as [|lrv lrl lrr]; simplify.
-        {
-          clear_zero_height; try lia.
-        }
-        clear_zero_height; try lia.
-        {
-        repeat bal_invert; simplify; clear_zero_height; try lia.
-        apply Balanced_equal; crush.
-        apply Balanced_equal; crush.
-        }
-        {
-        repeat bal_invert; simplify; clear_zero_height; try lia.
-        apply Balanced_equal; crush.
-        apply Balanced_equal; crush.
-        apply Balanced_equal; crush.
-        apply Balanced_right_heavy; crush.
-        }
-        {
-          repeat bal_invert; simplify; clear_zero_height; try lia.
-          apply Balanced_equal.
-          apply Balanced_left_heavy; try assumption; try lia.
-          lia.
-        }
-
-
-        invert H3; simplify; clear_zero_height; try lia.
-
-        functional induction (balance_left v l (Node rv' rl' rr')).
-
-        Search prune_max .
-        destruct l.
-        { repeat bal_invert; simplify; clear_zero_height; try lia. }
-        split_ifs; ltb_to_lt.
-        + invert r'_bal;
-          repeat bal_invert; clear_zero_height; try lia;
-          apply Balanced_equal; crush.
-
-
-        move heq2 : (prune_max (Node rv rl rr)) => r'.
-        functional induction (balance_left v l r'); try lia.
-        + simplify; try lia.
-        + repeat ltb_to_lt.
-          invert r'_bal; simplify; clear_zero_height; try lia.
-          simpl.
-
-
-        functional induction (balance_left v l (prune_max (Node rv rl rr))); simplify; try lia; clear_zero_height; try lia.
-        + repeat bal_invert; simplify; clear_zero_height; try lia.
-          apply Balanced_equal; crush.
-        + repeat bal_invert; simplify; clear_zero_height; try lia.
-          destruct lr; [simplify; lia|].
-          simplify.
-          repeat bal_invert; clear_zero_height; try lia;
-            apply Balanced_equal; crush.
-        + repeat bal_invert; simplify; clear_zero_height; try lia.
-          destruct lr; simplify; [lia|].
-          clear_zero_height; try lia.
-          2: repeat bal_invert; clear_zero_height; try lia; apply Balanced_left_heavy; by crush.
-
-          repeat bal_invert; clear_zero_height; try lia;
-            try (apply Balanced_left_heavy; by crush).
-          apply Balanced_equal; crush.
-
-          have : height ll = height lr1 ∨ S (height ll) = height lr1 ∨ height ll = S (height lr1).
-          destruct (eq_or_succ_cases )
-          apply Balanced_left_heavy; crush.
-          clear_zero_height; try lia.
-          repeat
-          apply Balanced_; crush.
-
-
-        destruct rl as [|rlv rl1 rl2], rr as [|rrv rr1 rr2].
-        { simplify.
-          move heq: Nil => r.
-          functional induction (balance_left v l r); simplify; try lia.
-          - linear_arithmetic'; try lia.
-            have h : height lr = 0 by lia.
-            clear_zero_height.
-            clear_useless.
-            apply Balanced_equal; simplify; try lia.
-            clear_useless.
-            linear_arithmetic'; clear_zero_height; try lia.
-            repeat bal_invert; simplify; linear_arithmetic'; simplify; clear_zero_height; try lia.
-            constructor; by eauto.
-          - clear_useless.
-            invert H3; linear_arithmetic'; clear_zero_height; try lia.
-            + simplify; linear_arithmetic'; clear_zero_height; try lia.
-              linear_arithmetic'; clear_zero_height; try lia.
-              constructor; by eauto.
-            + linear_arithmetic'; clear_zero_height; try lia.
-              constructor; by eauto.
-        }
-        {
-          rewrite prune_max_descendents; [eauto|].
-
-        }
-
-              have h : (height ll1 = 0) by lia.
-              symmetry in h; destruct h.
-              (have h : height ll2 = 0 by lia); symmetry in h; destruct h.
-              simplify
-              linear_arithmetic'; clear_zero_height; try lia.
-
-            { destruct ll, lr; linear_arithmetic'; simplify; try lia.
-              clear_zero_height; linear_arithmetic'; try lia.
-              clear_zero_height.
-              invert H2; invert H6; linear_arithmetic'; simplify; clear_zero_height; try lia.
-              crush.
-              eauto.
-            }
-            clear_zero_height.
-            +
-              destruct ll; simplify; try lia.
-            destruct ll; simplify; try lia.
-
-          destruct l; simplify; [lia|].
-
-        }
-
-
-        destruct
-        invert t_bal.
-        + apply balance_left_preserves_Balanced.
-          apply Balanced_equal; .
-
-        destruct rr as [|rrv rrl rrr]; simplify.
-        {  }
-        rewrite /prune_max -/prune_max.
-        destruct l as [|lv ll lr]; [simplify|].
-        move heq : (Node v l r) => t.
-        functional induction (prune_max t); simplify.
-        + by eauto.
-        + invert heq; by invert t_bal.
-        + symmetry in heq; invert heq.
-          clear IHt0.
-          destruct r as [|rv rl rr]; [simplify; by exfalso|].
-          clear_useless.
-          have r_bal : Balanced (Node rv rl rr) by invert t_bal.
-          have {r_bal IHr}[r'_bal [r'_height_lower unbal]] := IHr r_bal.
-          have r'_height_upper := prune_max_height_upper_bound (Node rv rl rr).
-          destruct (eq_or_succ_cases r'_height_upper r'_height_lower).
-          * apply balance_left_preserves_Balanced.
-             invert t_bal.
-             -- apply Balanced_equal; eauto; try lia.
-             -- apply Balanced_left_heavy; eauto; try lia.
-             -- apply Balanced_right_heavy; eauto; try lia.
-          *
-
-
-          clear
-
-        destruct r as [|rv rl rr]; [invert t_bal; simplify; eauto|].
-        have r_bal : Balanced (Node rv rl rr) by invert t_bal.
-        have {r_bal IHr}[r'_bal [r'_height_lower unbal]] := IHr r_bal.
-        destruct rr
-
-        { invert t_bal; simplify; eauto. }
-
-      functional induction (prune_max t); repeat split; simplify; try lia; eauto.
-      -
-        invert t_bal; simplify; clear_zero_height; simplify; try lia.
-        by destruct H.
-        destruct l; simplify; clear_zero_height; simplify; try lia.
+      functional induction (prune_max t); simplify => //; split; eauto.
+      - invert t_bal; simplify; clear_zero_height; lia.
       - have r_bal : Balanced r by invert t_bal.
-        have {r_bal IHt0}[r'_bal [r'_height_lower unbal]] := IHt0 r_bal.
-        have r'_height_upper := prune_max_height_upper_bound r.
-        destruct (eq_or_succ_cases r'_height_upper r'_height_lower) as [H|H].
-        + apply balance_left_preserves_Balanced.
-          invert t_bal.
-          * apply Balanced_equal; eauto; try lia.
-          * apply Balanced_left_heavy; eauto; try lia.
-          * apply Balanced_right_heavy; eauto; try lia.
-        + invert t_bal;
-            [apply balance_left_preserves_Balanced, Balanced_left_heavy; eauto; lia|
-            |
-            apply balance_left_preserves_Balanced, Balanced_equal; eauto; lia].
-          (* there's now a +2 diff, balance_left kicks in *)
-          clear r'_height_lower r'_height_upper.
-          have {}unbal := unbal H.
-          destruct r as [|rv rl rr]; [crush|].
-          functional induction (balance_left v l (prune_max (Node rv rl rr))); simplify; try lia.
-          * do 2 bal_invert; linear_arithmetic'; try lia;
-              apply Balanced_equal; by crush.
-          * destruct lr; simplify; [lia|].
-            repeat bal_invert; simplify; linear_arithmetic'; simplify; clear_zero_height; try lia.
-            3: { lia. }
-            3: have : S (height ll) = height lr1 ∨ height ll = S (height lr1) ∨ height ll = height lr1 by
-              (left; lia) || (right; left; lia) || (right; right; lia).
-            all: have : Balanced (Node v lr2 r) by crush.
+        have {r_bal IHt0}[r'_bal r'_height_lower] := IHt0 r_bal.
+        have  r'_height_upper := prune_max_height_upper_bound r.
+        invert t_bal; apply balance_left_rebal; eauto; try lia.
+      - have r_bal : Balanced r by invert t_bal.
+        have {r_bal IHt0}[r'_bal r'_height_lower] := IHt0 r_bal.
+        have  r'_height_upper := prune_max_height_upper_bound r.
+        functional induction (balance_left v l (prune_max r)); simplify => //; try lia.
+        repeat bal_invert; simplify; clear_zero_height; try lia.
+        destruct lr; repeat bal_invert; simplify; clear_zero_height; try lia.
+    Qed.
 
-            destruct ll, lr; simplify; [lia| | lia| ].
-            {
-              repeat bal_invert; simplify; linear_arithmetic'; simplify; clear_zero_height; try lia.
-              apply Balanced_equal; by crush.
-            }
+    Theorem prune_max_preserves_Balanced t :
+      Balanced t → Balanced (prune_max t).
+    Proof.
+      by apply prune_max_preserves_Balanced0.
+    Qed.
 
-            invert H3; invert H7; invert H4; simplify; linear_arithmetic'; try lia.
-            apply Balanced_left_heavy; crush.
-            apply Balanced_left_heavy; crush.
-          
-            repeat bal_invert; simplify; linear_arithmetic'; try lia.
-            destruct r'_bal; linear_arithmetic'; simplify; clear_zero_height; try lia.
-            simplify; clear_zero_height.
-            invert H4; linear_arithmetic'; try lia.
-            simplify.
-            apply Balanced_left_heavy; crush.
-            apply Balanced_left_heavy; crush.
-            apply Balanced_left_heavy; crush.
-            apply Balanced_; crush.
-            linear_arithmetic'; simplify.
-
-
-            bal_invert.
-
-            apply Balanced_equal; crush.
-            apply Balanced_equal; crush.
-            apply Balanced_equal; crush.
-          simpl in unbal.
-
+    Lemma prune_max_height_lower_bound t :
+      Balanced t → height t ≤ 1 + height (prune_max t).
+    Proof.
+      by apply prune_max_preserves_Balanced0.
+    Qed.
 
     Lemma shrink_max_eq_None t : fst (shrink_max t) = None → t = Nil.
     Proof.
@@ -2490,48 +2202,155 @@ Module AVL (OT : UsualOrderedType').
       by rewrite shrink_max_eq.
     Qed.
 
-    Lemma rotate_left_preserves_shrink_max v l r :
-      shrink_max (rotate_left v l r) = shrink_max (Node v l r).
-      Abort.
-
-
     Lemma shrink_max_extracts x t :
       Ordered t →
       fst (shrink_max t) = Some x →
       ¬ Contains x (snd (shrink_max t)).
     Proof.
-      functional induction (shrink_max t); move => t_ord max_def; eauto.
-      Abort.
+      rewrite shrink_max_eq_fst shrink_max_eq_snd.
+      by apply prune_max_extracts.
+    Qed.
 
     Lemma shrink_max_is_max x t :
       Ordered t →
       fst (shrink_max t) = Some x →
       All (fun v => v = x ∨ v < x) t.
     Proof.
-      rewrite Ordered_iff_Ordered'.
-      revert x.
-      functional induction (shrink_max t); move => x0 t_ord max_def; repeat split; simplify; eauto.
-      - symmetry in max_def; invert max_def.
-        Abort.
-
-    Lemma shrink_max_height_upper_bound t : height (snd (shrink_max t)) ≤ height t.
-    Proof.
-      functional induction (shrink_max t); simplify; eauto.
-      - transitivity (height (Node v l (snd (shrink_max r)))); [by apply balance_left_height_le |].
-        simplify; lia.
-      - lia.
+      rewrite shrink_max_eq_fst.
+      by apply find_max_is_max.
     Qed.
-
-    Lemma shrink_max_height_lower_bound t : Balanced t → height t ≤ 1 + height (snd (shrink_max t)).
-    Proof.
-      functional induction (shrink_max t); move => t_bal; simplify; eauto.
-      - Abort.
 
     Lemma shrink_max_preserves_Balanced t : Balanced t → Balanced (snd (shrink_max t)).
     Proof.
-      functional induction (shrink_max t); move => t_bal; simplify; eauto; [| by invert t_bal].
-      Abort.
+      rewrite shrink_max_eq_snd.
+      by apply prune_max_preserves_Balanced.
+    Qed.
 
+    Function merge' l r :=
+      match find_max l with
+      | None => r
+      | Some x => balance_right x (prune_max l) r
+      end.
+
+    Lemma merge_eq_merge' l r :
+      merge l r = merge' l r.
+    Proof.
+      rewrite /merge /merge'.
+      have heq := shrink_max_eq l.
+      by rewrite heq.
+    Qed.
+
+    Lemma merge'_height_upper_bound l r :
+      height (merge' l r) ≤ 1 + Nat.max (height l) (height r).
+    Proof.
+      functional induction (merge' l r); simplify; try lia.
+      transitivity (height (Node x (prune_max l) r)); [apply balance_right_height_upper_bound |].
+      simplify.
+      linear_arithmetic'; try lia.
+      - transitivity (height l); [|lia].
+        by apply prune_max_height_upper_bound.
+      - by apply prune_max_height_upper_bound.
+    Qed.
+
+    Lemma merge'_preserves_Balanced v l r :
+      Balanced (Node v l r) →
+      Balanced (merge' l r).
+    Proof.
+      move => t_bal.
+      functional induction (merge' l r); simplify; try lia.
+      - by invert t_bal.
+      - have l_bal : Balanced l by invert t_bal.
+        have l'_height_lower := prune_max_height_lower_bound l_bal.
+        have l'_height_upper := prune_max_height_upper_bound l.
+        have l'_bal : Balanced (prune_max l) := prune_max_preserves_Balanced l_bal.
+        invert t_bal; apply balance_right_rebal; by try lia.
+    Qed.
+
+    Ltac lia' := simplify; try lia.
+
+    Lemma merge'_height_lower_bound v l r :
+      Balanced (Node v l r) → height (Node v l r) ≤ 1 + height (merge' l r).
+    Proof.
+      move => t_bal.
+      functional induction (merge' l r); simplify; try lia.
+      - rewrite find_max_None_iff in e; subst.
+        by lia'.
+      - apply le_n_S.
+        have l_bal : Balanced l by bal_invert.
+        have l'_height_upper := prune_max_height_upper_bound l.
+        have l'_height_lower := prune_max_height_lower_bound l_bal.
+        functional induction (balance_right x (prune_max l) r); simplify => //; lia'.
+        repeat bal_invert; simplify; clear_zero_height; lia'.
+        destruct rl;
+        repeat bal_invert; simplify; clear_zero_height; lia'.
+    Qed.
+
+    Lemma merge_preserves_Balanced v l r :
+      Balanced (Node v l r) → Balanced (merge l r).
+    Proof.
+      rewrite merge_eq_merge'.
+      by apply merge'_preserves_Balanced.
+    Qed.
+
+    Lemma delete_height_upper_bound x t :
+      height (delete x t) ≤ height t.
+    Proof.
+      functional induction (delete x t); simplify => //; eauto.
+      - rewrite merge_eq_merge'.
+        transitivity (height (Node v l r)); [|lia'].
+        by apply merge'_height_upper_bound.
+      - transitivity (height (Node v l (delete x r))); [|lia'].
+        by apply balance_left_height_upper_bound.
+      - transitivity (height (Node v (delete x l) r)); [|lia'].
+        by apply balance_right_height_upper_bound.
+    Qed.
+
+    Lemma delete_preserves_Balanced0 x t :
+      Balanced t →
+      Balanced (delete x t) ∧ height t ≤ 1 + height (delete x t).
+    Proof.
+      move => t_bal.
+      functional induction (delete x t); split; simplify => //; lia'.
+      - eapply merge_preserves_Balanced; eassumption.
+      - rewrite merge_eq_merge'.
+        eapply merge'_height_lower_bound; eassumption.
+      - have r_bal : Balanced r by invert t_bal.
+        have {r_bal IHt0}[r'_bal r'_height_lower] := IHt0 r_bal.
+        have r'_height_upper := delete_height_upper_bound x r.
+        invert t_bal; apply balance_left_rebal; lia'; eauto.
+      - have r_bal : Balanced r by invert t_bal.
+        have {r_bal IHt0}[r'_bal r'_height_lower] := IHt0 r_bal.
+        have r'_height_upper := delete_height_upper_bound x r.
+        functional induction (balance_left v l (delete x r)); simplify => //; lia'.
+        simplify; clear_zero_height; lia'.
+        repeat bal_invert; simplify; clear_zero_height; lia'.
+        destruct lr; repeat bal_invert; simplify; clear_zero_height; lia'.
+      - (* symmetric cases *)
+        have l_bal : Balanced l by invert t_bal.
+        have {l_bal IHt0}[l'_bal l'_height_lower] := IHt0 l_bal.
+        have l'_height_upper := delete_height_upper_bound x l.
+        invert t_bal; apply balance_right_rebal; lia'; eauto.
+      - have l_bal : Balanced l by invert t_bal.
+        have {l_bal IHt0}[l'_bal l'_height_lower] := IHt0 l_bal.
+        have l'_height_upper := delete_height_upper_bound x r.
+        functional induction (balance_right v (delete x l) r); simplify => //; lia'.
+        simplify; clear_zero_height; lia'.
+        repeat bal_invert; simplify; clear_zero_height; lia'.
+        destruct rl; repeat bal_invert; simplify; clear_zero_height; lia'.
+    Qed.
+
+    (* delete preserves balanced!! *)
+    Theorem delete_preserves_Balanced x t :
+      Balanced t → Balanced (delete x t).
+    Proof.
+      by apply delete_preserves_Balanced0.
+    Qed.
+
+    Lemma delete_height_lower_bound x t :
+      Balanced t → height t ≤ 1 + height (delete x t).
+    Proof.
+      by apply delete_preserves_Balanced0.
+    Qed.
 
   (* End Facts. *)
 End AVL.
