@@ -77,3 +77,8 @@ If we hedge our bets with `try lia` instead, we see that the proof is left in th
 But our previous two lemmas should be exactly sufficient to solve this!
 Thus, simply adding `Hint Rewrite rotate_left_preserves_size rotate_right_preserves_size : core` lets `simplify`, well, simplify enough for `lia` to do the rest.
 
+We may or may not have had a major bug with our balancing rotation _this entire time_; 
+in fact, this "bugged" balance _still provably maintains balance_ for `insert`s.
+
+However, it fails to balance properly during deletes.
+
