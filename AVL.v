@@ -765,7 +765,6 @@ Module AVL (OT : UsualOrderedType').
 
   Hint Rewrite Nat.max_id : core.
 
-
   Lemma height_eq_zero_nil t : height t = 0 → t = Nil.
   Proof.
     by destruct t.
@@ -942,6 +941,20 @@ Module AVL (OT : UsualOrderedType').
       match goal with
       | [ H : Balanced (Node _ _ _) |- _]  => invert H
       end.
+
+    Lemma balance_lemma v l r :
+      Balanced l → Balanced r →
+      (height r <= height l <= 1 + height r) ∨
+      (height l <= height r <= 1 + height l) →
+      Balanced (Node v l r).
+    Proof.
+      move => l_bal r_bal [[lb ub]|[lb ub]];
+      destruct (eq_or_succ_cases lb ub).
+      - apply Balanced_equal; lia'; eauto.
+      - apply Balanced_left_heavy; lia'; eauto.
+      - apply Balanced_equal; lia'; eauto.
+      - apply Balanced_right_heavy; lia'; eauto.
+    Qed.
 
     Lemma balance_left_preserves_Ordered v l r : Ordered (Node v l r) → Ordered (balance_left v l r).
     Proof.
@@ -1480,11 +1493,6 @@ Module AVL (OT : UsualOrderedType').
         rewrite /height -/height; lia.
     Qed.
 
-    Lemma eq_or_succ_cases {a b} : a ≤ b → b ≤ 1 + a → b = a ∨ b = 1 + a.
-    Proof.
-      lia.
-    Qed.
-
 
     Search (S _ ≤ S _).
     Search S Nat.max.
@@ -1597,7 +1605,7 @@ Module AVL (OT : UsualOrderedType').
       | [ H : 0 ≤ _ |- _ ] => clear H
       | [ H : ?x ≤ ?x |- _ ] => clear H
       end.
-    Hint Extern 5 => clear_zero_height : core.
+    (* Hint Extern 5 => clear_zero_height : core. *)
     Hint Resolve height_eq_zero_nil : core.
 
     Lemma insert_preserves_Balanced0 x t :
@@ -2005,23 +2013,6 @@ Module AVL (OT : UsualOrderedType').
       move: is_nil; (repeat split_ifs) => is_nil; eauto.
     Qed.
 
-    Lemma del_max_preserves_Balanced t :
-      Balanced t →
-      Balanced (del_max t) ∧
-        height t ≤ 1 + height (del_max t) ∧
-        (del_max t ≠ Nil → height t = 1 + height (del_max t) →
-           1 + height (left_child t) = height (right_child t)).
-    Proof.
-      functional induction (del_max t); [eauto|].
-      move => t_bal.
-      have r_bal : Balanced r by invert t_bal.
-      have {IHt0}[r'_bal [r'_height_lower unbal]] := IHt0 r_bal.
-      repeat split.
-      -
-        functional induction (bal v l (del_max r)).
-        + functional induction (balance_left v l (del_max r)); simplify; try lia.
-          Abort.
-
     Lemma prune_max_eq_Nil v l r :
       prune_max (Node v l r) = Nil → l = Nil ∧ r = Nil.
     Proof.
@@ -2265,8 +2256,6 @@ Module AVL (OT : UsualOrderedType').
         have l'_bal : Balanced (prune_max l) := prune_max_preserves_Balanced l_bal.
         invert t_bal; apply balance_right_rebal; by try lia.
     Qed.
-
-    Ltac lia' := simplify; try lia.
 
     Lemma merge'_height_lower_bound v l r :
       Balanced (Node v l r) → height (Node v l r) ≤ 1 + height (merge' l r).

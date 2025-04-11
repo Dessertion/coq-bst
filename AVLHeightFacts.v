@@ -27,7 +27,7 @@ Module AVLHeightFacts (OT : UsualOrderedType').
     { move => winner.
       destruct (Nat.lt_trichotomy (height t1) (height t2)) as [h|[h|h]].
       - by apply winner.
-      - destruct h; by crush.
+      - destruct h; lia'.
       -
         rewrite Nat.max_comm.
         replace (1 + size t1 + size t2) with (1 + size t2 + size t1) by ring.
@@ -180,10 +180,10 @@ Module AVLHeightFacts (OT : UsualOrderedType').
     min_size_of_height nonempty 0 = 0.
   Proof.
     rewrite nat_find_eq_iff.
-    repeat (split; auto).
+    repeat (split; auto 2).
     - by exists Nil.
     - by crush.
-    - lia.
+    - by crush.
   Qed.
 
   Lemma min_size_1 (nonempty : inhabited A) :
@@ -191,7 +191,7 @@ Module AVLHeightFacts (OT : UsualOrderedType').
   Proof.
     rewrite nat_find_eq_iff.
     have [v] := nonempty.
-    repeat (split; auto).
+    repeat (split; auto 1).
     - exists (perfect_tree v 1); by crush.
     - move => t _ t_height.
       have [t' t'_eq] := height_eq_one_singleton _ t_height.
@@ -204,7 +204,7 @@ Module AVLHeightFacts (OT : UsualOrderedType').
       by invert t_height.
   Qed.
 
-  Fixpoint prune_longest t :=
+  Function prune_longest t :=
     match t with
     | Nil => Nil
     | Node _ Nil Nil => Nil
@@ -221,9 +221,9 @@ Module AVLHeightFacts (OT : UsualOrderedType').
   Proof.
     move => hlt.
     destruct l, r.
-    1,2,3:by crush.
+    1,2,3: by lia'.
     rewrite {1}/prune_longest; split_ifs; rewrite -/prune_longest.
-    2: by crush.
+    2: by lia'.
     reflexivity.
   Qed.
 
@@ -233,9 +233,9 @@ Module AVLHeightFacts (OT : UsualOrderedType').
   Proof.
     move => hlt.
     destruct l, r.
-    1,2,3:by crush.
+    1,2,3:by lia'.
     rewrite {1}/prune_longest; split_ifs; rewrite -/prune_longest.
-    1: by crush.
+    1: by lia'.
     reflexivity.
   Qed.
 
@@ -245,9 +245,9 @@ Module AVLHeightFacts (OT : UsualOrderedType').
   Proof.
     move => hlt.
     destruct l, r.
-    1,2,3:by crush.
+    1,2,3:by eauto 1.
     rewrite {1}/prune_longest; split_ifs; rewrite -/prune_longest.
-    1: by crush.
+    1: by lia'.
     reflexivity.
   Qed.
 
@@ -255,24 +255,16 @@ Module AVLHeightFacts (OT : UsualOrderedType').
   Lemma prune_longest_size {t} :
     t ≠ Nil → 1 + size (prune_longest t) = size t.
   Proof.
-    induction t.
-    - by crush.
-    - move => _.
-      destruct t1, t2.
-      + reflexivity.
-      + by crush.
-      + by crush.
-      + have {}IHt1 := IHt1 node_neq_nil.
-        have {}IHt2 := IHt2 node_neq_nil.
-        rewrite /prune_longest; split_ifs; rewrite -/prune_longest.
-        * by crush.
-        * change (1 + size (Node v (prune_longest (Node v0 t1_1 t1_2)) (Node v1 t2_1 t2_2))
-                  = size (Node v (Node v0 t1_1 t1_2) (Node v1 t2_1 t2_2))).
-          rewrite /size -/size.
-          rewrite IHt1.
-          replace (size (Node v0 t1_1 t1_2)) with (1 + size t1_1 + size t1_2) by reflexivity.
-          ring.
-    Qed.
+    functional induction (prune_longest t); simplify => //; lia'.
+    - destruct l, r; try (by lia').
+      + have {}IHt0 := IHt0 node_neq_nil.
+        lia.
+      + have {}IHt0 := IHt0 node_neq_nil.
+        lia.
+    - destruct l, r; try (by lia');
+        (have {} IHt0 := IHt0 node_neq_nil);
+        lia.
+  Qed.
 
   Lemma prune_longest_height_le t :
     height (prune_longest t) ≤ height t.
@@ -281,9 +273,9 @@ Module AVLHeightFacts (OT : UsualOrderedType').
     1: by crush.
     destruct t1, t2.
     + simplify; lia.
-    + by crush.
-    + by crush.
-    + rewrite /prune_longest; split_ifs; rewrite -/prune_longest; by crush.
+    + by lia'.
+    + by lia'.
+    + rewrite /prune_longest; split_ifs; rewrite -/prune_longest; by lia'.
   Qed.
 
   Lemma prune_longest_height_ge t :
@@ -293,8 +285,8 @@ Module AVLHeightFacts (OT : UsualOrderedType').
     1: by crush.
     destruct t1, t2.
     + simplify; lia.
-    + by crush.
-    + by crush.
+    + by lia'.
+    + by lia'.
     + rewrite /prune_longest; split_ifs; rewrite -/prune_longest.
       * change (height (Node v (Node v0 t1_1 t1_2) (Node v1 t2_1 t2_2)) ≤
                   1 + height (Node v (Node v0 t1_1 t1_2) (prune_longest (Node v1 t2_1 t2_2)))).
@@ -322,22 +314,19 @@ Module AVLHeightFacts (OT : UsualOrderedType').
     induction bal.
     - by crush.
     - destruct l, r.
-      1,2,3: by crush.
+      1,2,3: by lia'.
       rewrite (prune_longest_case_eq v H).
-      1,2: by crush.
-      destruct (prune_longest_height_cases (Node v0 l1 l2)) as [h|h].
-      + apply Balanced_equal; by crush.
-      + apply Balanced_right_heavy; by crush.
+      1,2: by lia'.
+      destruct (prune_longest_height_cases (Node v0 l1 l2)) as [h|h];
+        apply balance_lemma; eauto 1; by lia'.
     - have Hgt : (height r < height l)%nat by lia.
       rewrite (prune_longest_case_gt _ _ _ Hgt).
-      destruct (prune_longest_height_cases l).
-      + apply Balanced_left_heavy; by crush.
-      + apply Balanced_equal; by crush.
+      destruct (prune_longest_height_cases l);
+        apply balance_lemma; eauto 1; by lia'.
     - have Hlt : (height l < height r)%nat by lia.
       rewrite (prune_longest_case_lt _ _ _ Hlt).
-      destruct (prune_longest_height_cases r).
-      + apply Balanced_right_heavy; by crush.
-      + apply Balanced_equal; by crush.
+      destruct (prune_longest_height_cases r);
+        apply balance_lemma; eauto 1; by lia'.
   Qed.
 
   Lemma prune_longest_height_eq (nonempty : inhabited A) t h :

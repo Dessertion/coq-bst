@@ -1,4 +1,4 @@
-Require Import ssreflect Utf8 CpdtTactics ZArith Psatz.
+Require Import ssreflect Utf8 CpdtTactics ZArith Psatz FrapWithoutSets.
 
 Require Import Classical.
 Require Export ConstructiveEpsilon.
@@ -99,3 +99,9 @@ Qed.
 
 End find.
 
+Lemma eq_or_succ_cases {a b} : a ≤ b → b ≤ 1 + a → b = a ∨ b = 1 + a.
+Proof.
+  lia.
+Qed.
+
+Ltac lia' := simplify; try lia.
