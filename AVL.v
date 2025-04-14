@@ -29,20 +29,24 @@ Module AVL (OT : UsualOrderedType').
   Local Notation Lt := Datatypes.Lt.
   Local Notation Gt := Datatypes.Gt.
 
-  Hint Rewrite compare_eq_iff compare_lt_iff compare_gt_iff : core.
+  Hint Rewrite compare_refl compare_eq_iff compare_lt_iff compare_gt_iff : core.
   Hint Extern 1 => order : core.
   (* Hint Rewrite compare_refl : core. *)
 
   (* if we're trying to match a compare in the goal,
   then we automatically simplify it depending on the assumptions present.  *)
   Ltac rewrite_match_compare :=
-    match goal with
+    repeat match goal with
     | [ |- context[match compare ?x ?x with | _ => _ end] ] =>
         rewrite compare_refl
     | [ H : ?x < ?y |- context[match compare ?x ?y with | _ => _ end] ] =>
         rewrite (proj2 (compare_lt_iff x y) H)
     | [ H : ?y < ?x |- context[match compare ?x ?y with | _ => _ end] ] =>
         rewrite (proj2 (compare_gt_iff x y) H)
+    | [ H : ?x < ?y, H2 : context[match compare ?x ?y with | _ => _ end] |- _] =>
+        rewrite (proj2 (compare_lt_iff x y) H) in H2
+    | [ H : ?y < ?x, H2 : context[match compare ?x ?y with | _ => _ end] |- _] =>
+        rewrite (proj2 (compare_gt_iff x y) H) in H2
     end.
   Hint Extern 1 => rewrite_match_compare : core.
 
@@ -221,6 +225,7 @@ Module AVL (OT : UsualOrderedType').
       | Node v l r =>
           v = x ∨ In x l ∨ In x r
       end.
+    Functional Scheme In_ind := Induction for In Sort Prop.
 
     (* As an inductive proposition instead. *)
     Inductive In'  (x : A) : tree → Prop :=
@@ -486,14 +491,14 @@ Module AVL (OT : UsualOrderedType').
     Definition rotate_left v l r : tree :=
       match r with
       | Node rv rl rr => Node rv (Node v l rl) rr
-      | Nil => assert_false v l r
+      | Nil => Node v l r
       end.
 
     (* rotate root towards right *)
     Definition rotate_right (v : A) (l r : tree) : tree :=
       match l with
       | Node lv ll lr => Node lv ll (Node v lr r)
-      | Nil => assert_false v l r
+      | Nil => Node v l r
       end.
 
     (* left heavy *)
@@ -713,7 +718,7 @@ Module AVL (OT : UsualOrderedType').
   Tactic Notation "split_ifs" := split_ifs Hb.
 
   Ltac ltb_to_lt :=
-    match goal with
+    repeat match goal with
     | [ H : (?a <? ?b)%nat = true |- _ ] => rewrite Nat.ltb_lt in H
     | [ H : (?a <? ?b)%nat = false |- _ ] => rewrite Nat.ltb_ge in H
     | [ H : (?a <=? ?b)%nat = true |- _ ] => rewrite Nat.leb_le in H
@@ -811,7 +816,7 @@ Module AVL (OT : UsualOrderedType').
       - move=>Ordered_t.
         induction Ordered_t; by crush.
     Qed.
-    Hint Rewrite Ordered_iff_Ordered' : core.
+    (* Hint Rewrite Ordered_iff_Ordered' : core. *)
 
     (* Contains behaves exactly like In when the tree is Ordered. *)
     Lemma Ordered_In_Contains x t : Ordered t → In x t → Contains x t.
@@ -844,6 +849,58 @@ Module AVL (OT : UsualOrderedType').
       - by apply: Contains_In.
     Qed.
 
+    Lemma Ordered_left_Ordered v l r :
+      Ordered (Node v l r) → Ordered l.
+    Proof.
+      by crush.
+    Qed.
+
+    Lemma Ordered_right_Ordered v l r :
+      Ordered (Node v l r) → Ordered r.
+    Proof.
+      by crush.
+    Qed.
+
+    Lemma Ordered_left_All_lt v l r :
+      Ordered (Node v l r) → All (fun x => x < v) l.
+    Proof.
+      by crush.
+    Qed.
+
+    Lemma Ordered_right_All_gt v l r :
+      Ordered (Node v l r) → All (fun x => v < x) r.
+    Proof.
+      by crush.
+    Qed.
+
+    Hint Resolve Ordered_left_Ordered Ordered_right_Ordered Ordered_left_All_lt Ordered_right_All_gt : core.
+
+    Lemma Ordered'_left_Ordered' v l r :
+      Ordered' (Node v l r) → Ordered' l.
+    Proof.
+      move => h; by invert h.
+    Qed.
+
+    Lemma Ordered'_right_Ordered' v l r :
+      Ordered' (Node v l r) → Ordered' r.
+    Proof.
+      move => h; by invert h.
+    Qed.
+
+    Lemma Ordered'_left_All_lt v l r :
+      Ordered' (Node v l r) → All (fun x => x < v) l.
+    Proof.
+      move => h; by invert h.
+    Qed.
+
+    Lemma Ordered'_right_All_gt v l r :
+      Ordered' (Node v l r) → All (fun x => v < x) r.
+    Proof.
+      move => h; by invert h.
+    Qed.
+
+    Hint Resolve Ordered'_left_Ordered' Ordered'_right_Ordered' Ordered'_left_All_lt Ordered'_right_All_gt : core.
+
     Lemma rotate_left_preserves_Ordered v l r : Ordered (Node v l r) → Ordered (rotate_left v l r).
     Proof.
       rewrite !Ordered_iff_Ordered' /rotate_left.
@@ -875,6 +932,71 @@ Module AVL (OT : UsualOrderedType').
       exact: rotate_right_preserves_Ordered.
     Qed.
 
+    Ltac simpl' :=
+      repeat progress
+        (simpl in *
+        || autorewrite with core in *
+        || subst
+        || match goal with
+            | [H : Ordered (Node _ _ _) |- _] => invert H
+            | [H : Ordered' (Node _ _ _) |- _] => invert H
+            | [H : All _ (Node _ _ _) |- _] => invert H
+            | [H : _ ∧ _ |- _] => destruct H
+            end).
+
+    Lemma rotate_left_Ordered_imp v l r :
+      Ordered (rotate_left v l r) → Ordered (Node v l r).
+    Proof.
+      destruct r as [|rv rl rr]; eauto.
+      rewrite !Ordered_iff_Ordered'.
+      move => t'_ord.
+      simpl'.
+      repeat constructor; eauto.
+      apply All_imp with (p := fun x => rv < x); eauto.
+    Qed.
+
+    Lemma rotate_right_Ordered_imp v l r :
+      Ordered (rotate_right v l r) → Ordered (Node v l r).
+    Proof.
+      destruct l as [|lv ll lr]; eauto.
+      rewrite !Ordered_iff_Ordered'.
+      move => t'_ord.
+      simpl'.
+      repeat constructor; eauto.
+      apply All_imp with (p := fun x => x < lv); eauto.
+    Qed.
+
+    Lemma rotate_left_Ordered_iff v l r :
+      Ordered (rotate_left v l r) ↔ Ordered (Node v l r).
+    Proof.
+      split; eauto using rotate_left_preserves_Ordered, rotate_left_Ordered_imp.
+    Qed.
+
+    Lemma rotate_right_Ordered_iff v l r :
+      Ordered (rotate_right v l r) ↔ Ordered (Node v l r).
+    Proof.
+      split; eauto using rotate_right_preserves_Ordered, rotate_right_Ordered_imp.
+    Qed.
+
+    Lemma rotate_left_Ordered'_iff v l r :
+      Ordered' (rotate_left v l r) ↔ Ordered' (Node v l r).
+    Proof.
+      rewrite -!Ordered_iff_Ordered'.
+      exact: rotate_left_Ordered_iff.
+    Qed.
+
+    Lemma rotate_right_Ordered'_iff v l r :
+      Ordered' (rotate_right v l r) ↔ Ordered' (Node v l r).
+    Proof.
+      rewrite -!Ordered_iff_Ordered'.
+      exact: rotate_right_Ordered_iff.
+    Qed.
+
+    Hint Rewrite
+      rotate_left_Ordered_iff
+      rotate_left_Ordered'_iff
+      rotate_right_Ordered_iff
+      rotate_right_Ordered'_iff : core.
 
     (* Tactic Notation "split_ifs" := let h := fresh in split_ifs h. *)
       (* repeat match goal with *)
@@ -887,17 +1009,80 @@ Module AVL (OT : UsualOrderedType').
 
     Lemma rotate_left_preserves_All P v l r : (All P (Node v l r)) → All P (rotate_left v l r).
     Proof.
-      Transparent assert_false.
       destruct r; by crush.
-      Opaque assert_false.
     Qed.
 
     Lemma rotate_right_preserves_All P v l r : All P (Node v l r) → All P (rotate_right v l r).
     Proof.
-      Transparent assert_false.
       destruct l; by crush.
-      Opaque assert_false.
     Qed.
+
+    Lemma rotate_left_All_imp P v l r :
+      All P (rotate_left v l r) → All P (Node v l r).
+    Proof.
+      destruct r; simpl'; by crush.
+    Qed.
+
+    Lemma rotate_right_All_imp P v l r :
+      All P (rotate_right v l r) → All P (Node v l r).
+    Proof.
+      destruct l; simpl'; by crush.
+    Qed.
+
+    Lemma rotate_left_All_iff P v l r :
+      All P (rotate_left v l r) ↔ All P (Node v l r).
+    Proof.
+      split; by eauto using rotate_left_preserves_All, rotate_left_All_imp.
+    Qed.
+
+    Lemma rotate_right_All_iff P v l r :
+      All P (rotate_right v l r) ↔ All P (Node v l r).
+    Proof.
+      split; by eauto using rotate_right_preserves_All, rotate_right_All_imp.
+    Qed.
+
+    Hint Rewrite rotate_left_All_iff rotate_right_All_iff : core.
+
+    Lemma rotate_left_In_complete x v l r : In x (Node v l r) → In x (rotate_left v l r).
+    Proof.
+      move => H_In.
+      destruct r; simpl; try done.
+      by repeat match goal with
+      | [ H : In _ (Node _ _ _) |- _ ] => destruct H; subst; eauto
+      | [ H : _ ∨ _ |- _] => destruct H; subst; eauto
+      end.
+    Qed.
+
+    Lemma rotate_right_In_complete x v l r : In x (Node v l r) → In x (rotate_right v l r).
+    Proof.
+      move => H_In.
+      destruct l; simpl; try done.
+      by repeat match goal with
+      | [ H : In _ (Node _ _ _) |- _ ] => destruct H; subst; eauto
+      | [ H : _ ∨ _ |- _] => destruct H; subst; eauto
+      end.
+    Qed.
+
+    Lemma rotate_left_In_correct x v l r : In x (rotate_left v l r) → In x (Node v l r).
+    Proof.
+      destruct r; simpl; tauto.
+    Qed.
+
+    Lemma rotate_right_In_correct x v l r : In x (rotate_right v l r) → In x (Node v l r).
+    Proof.
+      destruct l; simpl; tauto.
+    Qed.
+
+    Lemma rotate_left_In_iff x v l r : In x (rotate_left v l r) <-> In x (Node v l r).
+    Proof.
+      split; by eauto using rotate_left_In_correct, rotate_left_In_complete.
+    Qed.
+
+    Lemma rotate_right_In_iff x v l r : In x (rotate_right v l r) <-> In x (Node v l r).
+      split; by eauto using rotate_right_In_correct, rotate_right_In_complete.
+    Qed.
+
+    Hint Rewrite rotate_left_In_iff rotate_right_In_iff : core.
 
     Ltac unrotate :=
       match goal with
@@ -905,6 +1090,10 @@ Module AVL (OT : UsualOrderedType').
       | [ |- All _ (rotate_right _ _ _) ] => eapply rotate_right_preserves_All
       | [ |- Ordered' (rotate_left _ _ _) ] => eapply rotate_left_preserves_Ordered'
       | [ |- Ordered' (rotate_right _ _ _) ] => eapply rotate_right_preserves_Ordered'
+      | [ |- Ordered (rotate_left _ _ _) ] => eapply rotate_left_preserves_Ordered
+      | [ |- Ordered (rotate_right _ _ _) ] => eapply rotate_right_preserves_Ordered
+      | [ |- In (rotate_left _ _ _) ] => eapply rotate_left_In_complete
+      | [ |- In (rotate_right _ _ _) ] => eapply rotate_right_In_complete
       end.
     Hint Extern 1 => unrotate : core.
 
@@ -963,8 +1152,7 @@ Module AVL (OT : UsualOrderedType').
       - destruct r; try repeat constructor; crush.
         split_ifs; repeat constructor; eauto.
         + apply (All_imp (fun x => x < v)); by crush.
-        + unrotate; repeat constructor; eauto; lia'.
-          unrotate; by crush.
+        + unrotate; repeat constructor; eauto; lia'; crush.
       - destruct r; repeat constructor; eauto; lia'; by crush.
     Qed.
 
@@ -987,6 +1175,93 @@ Module AVL (OT : UsualOrderedType').
       balance_right_preserves_Ordered'
       : core.
 
+    Lemma balance_left_Ordered_iff v l r :
+      Ordered (balance_left v l r) ↔ Ordered (Node v l r).
+    Proof.
+      split; eauto using balance_left_preserves_Ordered.
+      move => t'_ord.
+      functional induction (balance_left v l r); try by lia'.
+      autorewrite with core in *.
+      done.
+    Qed.
+
+    Lemma balance_right_Ordered_iff v l r :
+      Ordered (balance_right v l r) ↔ Ordered (Node v l r).
+    Proof.
+      split; eauto using balance_right_preserves_Ordered.
+      move => t'_ord.
+      functional induction (balance_right v l r); try by lia'; simpl'.
+      autorewrite with core in *.
+      done.
+    Qed.
+
+    Lemma balance_left_Ordered'_iff v l r :
+      Ordered' (balance_left v l r) ↔ Ordered' (Node v l r).
+    Proof.
+      rewrite -!Ordered_iff_Ordered'.
+      exact: balance_left_Ordered_iff.
+    Qed.
+
+    Lemma balance_right_Ordered'_iff v l r :
+      Ordered' (balance_right v l r) ↔ Ordered' (Node v l r).
+    Proof.
+      rewrite -!Ordered_iff_Ordered'.
+      exact: balance_right_Ordered_iff.
+    Qed.
+
+    Hint Rewrite
+      balance_left_Ordered_iff
+      balance_right_Ordered_iff
+      balance_left_Ordered'_iff
+      balance_right_Ordered'_iff
+      : core.
+
+    Lemma In_singleton x y : In y (Node x Nil Nil) → y = x.
+    Proof.
+      by crush.
+    Qed.
+
+    Lemma Contains_singleton x y : Contains y (Node x Nil Nil) → y = x.
+    Proof.
+      by crush.
+    Qed.
+
+    Hint Rewrite In_singleton Contains_singleton : core.
+
+    Lemma balance_left_In_complete x v l r : In x (Node v l r) → In x (balance_left v l r).
+    Proof.
+      functional induction (balance_left v l r); simplify; solve [lia | tauto].
+    Qed.
+
+    Lemma balance_right_In_complete x v l r : In x (Node v l r) → In x (balance_right v l r).
+    Proof.
+      functional induction (balance_right v l r); simplify; solve [lia | tauto].
+    Qed.
+
+    Lemma balance_left_In_correct x v l r : In x (balance_left v l r) → In x (Node v l r).
+    Proof.
+      functional induction (balance_left v l r); simplify; solve [lia | tauto].
+    Qed.
+
+    Lemma balance_right_In_correct x v l r : In x (balance_right v l r) → In x (Node v l r).
+    Proof.
+      functional induction (balance_right v l r); simplify; solve [lia | tauto].
+    Qed.
+
+    Lemma balance_left_In_iff x v l r : In x (balance_left v l r) ↔ In x (Node v l r).
+    Proof.
+      split; by eauto using balance_left_In_correct, balance_left_In_complete.
+    Qed.
+
+    Lemma balance_right_In_iff x v l r : In x (balance_right v l r) ↔ In x (Node v l r).
+    Proof.
+      split; by eauto using balance_right_In_correct, balance_right_In_complete.
+    Qed.
+
+    Hint Extern 1 (In _ (balance_left _ _ _)) => apply balance_left_In_complete : core.
+    Hint Extern 1 (In _ (balance_right _ _ _)) => apply balance_right_In_complete : core.
+    Hint Rewrite balance_left_In_iff balance_right_In_iff : core.
+
     Lemma balance_left_preserves_All P v l r : All P (Node v l r) → All P (balance_left v l r).
     Proof.
       move=> Pt.
@@ -1000,6 +1275,26 @@ Module AVL (OT : UsualOrderedType').
       rewrite /balance_right.
       split_ifs; destruct r; try repeat (split_ifs || constructor || unrotate); crush; done.
     Qed.
+
+    Lemma balance_left_All_iff P v l r :
+      All P (balance_left v l r) ↔ All P (Node v l r).
+    Proof.
+      split; eauto using balance_left_preserves_All.
+      rewrite !All_iff_forall.
+      setoid_rewrite balance_left_In_iff.
+      tauto.
+    Qed.
+
+    Lemma balance_right_All_iff P v l r :
+      All P (balance_right v l r) ↔ All P (Node v l r).
+    Proof.
+      split; eauto using balance_right_preserves_All.
+      rewrite !All_iff_forall.
+      setoid_rewrite balance_right_In_iff.
+      tauto.
+    Qed.
+
+    Hint Rewrite balance_left_All_iff balance_right_All_iff : core.
 
     Lemma insert_preserves_All P x t : All P t → P x → All P (insert x t).
     Proof.
@@ -1025,183 +1320,45 @@ Module AVL (OT : UsualOrderedType').
 
     Hint Resolve
       insert_preserves_Ordered' insert_preserves_Ordered : core.
-
-    Lemma In_singleton x y : In y (Node x Nil Nil) → y = x.
-    Proof.
-      by crush.
-    Qed.
-
-    Lemma Contains_singleton x y : Contains y (Node x Nil Nil) → y = x.
-    Proof.
-      by crush.
-    Qed.
-
-    Hint Rewrite In_singleton Contains_singleton : core.
-
-    Lemma rotate_left_In_complete x v l r : In x (Node v l r) → In x (rotate_left v l r).
-    Proof.
-      move => H_In.
-      destruct r; simpl; try done.
-      by repeat match goal with
-      | [ H : In _ (Node _ _ _) |- _ ] => destruct H; subst; eauto
-      | [ H : _ ∨ _ |- _] => destruct H; subst; eauto
-      end.
-    Qed.
-
-    Lemma rotate_right_In_complete x v l r : In x (Node v l r) → In x (rotate_right v l r).
-    Proof.
-      move => H_In.
-      destruct l; simpl; try done.
-      by repeat match goal with
-      | [ H : In _ (Node _ _ _) |- _ ] => destruct H; subst; eauto
-      | [ H : _ ∨ _ |- _] => destruct H; subst; eauto
-      end.
-    Qed.
-
-    Lemma rotate_left_In_correct x v l r : In x (rotate_left v l r) → In x (Node v l r).
-    Proof.
-      destruct r; simpl; tauto.
-    Qed.
-
-    Lemma rotate_right_In_correct x v l r : In x (rotate_right v l r) → In x (Node v l r).
-    Proof.
-      destruct l; simpl; tauto.
-    Qed.
-
-    Lemma rotate_left_In_iff x v l r : In x (rotate_left v l r) <-> In x (Node v l r).
-    Proof.
-      split; by eauto using rotate_left_In_correct, rotate_left_In_complete.
-    Qed.
-
-    Lemma rotate_right_In_iff x v l r : In x (rotate_right v l r) <-> In x (Node v l r).
-      split; by eauto using rotate_right_In_correct, rotate_right_In_complete.
-    Qed.
-
-    Hint Extern 1 (In _ (rotate_left _ _ _)) => eapply rotate_left_In_complete : core.
-    Hint Extern 1 (In _ (rotate_right _ _ _)) => eapply rotate_right_In_complete : core.
-    Hint Rewrite rotate_left_In_iff rotate_right_In_iff : core.
-
-    Lemma rotate_left_In_tac1 x v lv ll lr r : In x (Node v (Node lv ll lr) r) → In x (Node v (rotate_left lv ll lr) r).
-    Proof.
-      move => H.
-      destruct H as [H | [ H | H ]]; subst.
-      all: try by (rewrite /In; propositional).
-      right; left; by rewrite rotate_left_In_iff.
-    Qed.
-
-    Lemma rotate_left_In_tac2 x v l rv rl rr : In x (Node v l (Node rv rl rr)) → In x (Node v l (rotate_left rv rl rr)).
-    Proof.
-      move => H.
-      destruct H as [H | [H | H]]; subst; try by (rewrite /In; propositional).
-      right; right; by rewrite rotate_left_In_iff.
-    Qed.
-
-    Lemma rotate_right_In_tac1 x v lv ll lr r : In x (Node v (Node lv ll lr) r) → In x (Node v (rotate_right lv ll lr) r).
-    Proof.
-      move => H.
-      destruct H as [H | [ H | H ]]; subst.
-      all: try by (rewrite /In; propositional).
-      right; left; by rewrite rotate_right_In_iff.
-    Qed.
-
-    Lemma rotate_right_In_tac2 x v l rv rl rr : In x (Node v l (Node rv rl rr)) → In x (Node v l (rotate_right rv rl rr)).
-    Proof.
-      move => H.
-      destruct H as [H | [H | H]]; subst; try by (rewrite /In; propositional).
-      right; right; by rewrite rotate_right_In_iff.
-    Qed.
-
-    (* this is awful, we should really be using proof search instead *)
-    Ltac solve_In :=
-      match goal with
-      | [ H : In _ (Node _ _ _) |- _ ] => destruct H; simplify; subst; eauto
-      | [ H : _ ∨ _ |- _] => destruct H; subst; eauto
-      | [ H : In _ (rotate_left _ _ _) |- _ ] => rewrite rotate_left_In_iff in H
-      | [ H : In _ (rotate_right _ _ _) |- _ ] => rewrite rotate_right_In_iff in H
-      | [ |- In _ (rotate_left _ _ _) ] => rewrite rotate_left_In_iff
-      | [ |- In _ (rotate_right _ _ _) ] => rewrite rotate_right_In_iff
-      | [ |- In ?x (Node ?x _ _) ] => rewrite /In; propositional
-      | [ _ : In ?x ?t |- In ?x (Node _ ?t _) ] => rewrite /In; propositional
-      | [ _ : In ?x ?t |- In ?x (Node _ _ ?t) ] => rewrite /In; propositional
-      | [ |- In _ (Node _ (rotate_left _ _ _) _) ] => apply rotate_left_In_tac1
-      | [ |- In _ (Node _ _ (rotate_left _ _ _)) ] => apply rotate_left_In_tac2
-      | [ |- In _ (Node _ (rotate_right _ _ _) _) ] => apply rotate_right_In_tac1
-      | [ |- In _ (Node _ _ (rotate_right _ _ _)) ] => apply rotate_right_In_tac2
-      end.
-
-    Lemma balance_left_In_complete x v l r : In x (Node v l r) → In x (balance_left v l r).
-    Proof.
-      functional induction (balance_left v l r); simplify; repeat solve_In.
-    Qed.
-
-    Lemma balance_right_In_complete x v l r : In x (Node v l r) → In x (balance_right v l r).
-    Proof.
-      functional induction (balance_right v l r); simplify; repeat solve_In.
-    Qed.
-
-    Lemma balance_left_In_correct x v l r : In x (balance_left v l r) → In x (Node v l r).
-    Proof.
-      functional induction (balance_left v l r); simplify; tauto || (repeat solve_In).
-    Qed.
-
-    Lemma balance_right_In_correct x v l r : In x (balance_right v l r) → In x (Node v l r).
-    Proof.
-      functional induction (balance_right v l r); simplify; tauto || (repeat solve_In).
-    Qed.
-
-    Lemma balance_left_In_iff x v l r : In x (balance_left v l r) <-> In x (Node v l r).
-    Proof.
-      split; by eauto using balance_left_In_correct, balance_left_In_complete.
-    Qed.
-
-    Lemma balance_right_In_iff x v l r : In x (balance_right v l r) <-> In x (Node v l r).
-    Proof.
-      split; by eauto using balance_right_In_correct, balance_right_In_complete.
-    Qed.
-
-    Hint Extern 1 (In _ (balance_left _ _ _)) => apply balance_left_In_complete : core.
-    Hint Extern 1 (In _ (balance_right _ _ _)) => apply balance_right_In_complete : core.
-    Hint Rewrite balance_left_In_iff balance_right_In_iff : core.
-
     (* INSERT IS CORRECT WRT TO IN *)
     Theorem insert_In_complete1 x y t : In x t → In x (insert y t).
     Proof.
       move => hyp.
-      functional induction (insert y t); simplify; try by eauto; repeat solve_In.
+      functional induction (insert y t); simplify; tauto.
     Qed.
 
     Theorem insert_In_complete2 x t : In x (insert x t).
     Proof.
-      functional induction (insert x t); simplify; by eauto.
+      functional induction (insert x t); simplify; tauto.
     Qed.
 
     Theorem insert_In_correct x y t : In x (insert y t) → x = y ∨ In x t.
     Proof.
-      functional induction (insert y t); simplify; eauto; repeat solve_In.
-    - apply IHt0 in H; by repeat solve_In.
-    - apply IHt0 in H; by repeat solve_In.
+      move => H.
+      functional induction (insert y t); simplify; eauto; try tauto.
+      destruct H as [|[|]]; subst; tauto.
     Qed.
 
     Lemma rotate_left_preserves_size v l r : size (rotate_left v l r) = size (Node v l r).
     Proof.
-      functional induction (rotate_left v l r); simplify; by try lia.
+      functional induction (rotate_left v l r); simplify; lia.
     Qed.
 
     Lemma rotate_right_preserves_size v l r : size (rotate_right v l r) = size (Node v l r).
     Proof.
-      functional induction (rotate_right v l r); simplify; by try lia.
+      functional induction (rotate_right v l r); simplify; lia.
     Qed.
 
     Hint Rewrite rotate_left_preserves_size rotate_right_preserves_size : core.
 
     Lemma balance_left_preserves_size v l r : size (balance_left v l r) = size (Node v l r).
     Proof.
-      functional induction (balance_left v l r); simplify; by try lia.
+      functional induction (balance_left v l r); simplify; lia.
     Qed.
 
     Lemma balance_right_preserves_size v l r : size (balance_right v l r) = size (Node v l r).
     Proof.
-      functional induction (balance_right v l r); simplify; by try lia.
+      functional induction (balance_right v l r); simplify; lia.
     Qed.
 
     Hint Rewrite rotate_left_preserves_size rotate_right_preserves_size : core.
@@ -1324,6 +1481,8 @@ Module AVL (OT : UsualOrderedType').
       move => Hbal.
       functional induction (balance_right v l r); simplify => //; invert Hbal; eauto 2; by lia'.
     Qed.
+
+    Hint Resolve balance_left_preserves_Balanced balance_right_preserves_Balanced : core.
 
     Lemma balance_left_Balanced_same v l r : Balanced (Node v l r) → balance_left v l r = Node v l r.
     Proof.
@@ -1623,8 +1782,10 @@ Module AVL (OT : UsualOrderedType').
       have := insert_preserves_Balanced0 x t_bal; tauto.
     Qed.
 
+    Hint Resolve insert_preserves_Balanced insert_height_lower_bound : core.
+
     (* insert is idempotent if the tree was balanced *)
-    Theorem insert_idempotent x t : Balanced t → Contains x t → insert x t = t.
+    Theorem insert_do_nothing x t : Balanced t → Contains x t → insert x t = t.
     Proof.
       functional induction (insert x t); move => t_bal x_in; eauto.
       - by invert x_in.
@@ -1642,10 +1803,10 @@ Module AVL (OT : UsualOrderedType').
         by apply balance_left_Balanced_same.
     Qed.
 
-    Theorem insert_idempotent' x t : Balanced t → Ordered t → insert x (insert x t) = insert x t.
+    Theorem insert_idempotent x t : Balanced t → Ordered t → insert x (insert x t) = insert x t.
     Proof.
       move => t_bal t_ord.
-      apply insert_idempotent.
+      apply insert_do_nothing.
       - exact: insert_preserves_Balanced.
       - apply Ordered_In_Contains.
         + exact: insert_preserves_Ordered.
@@ -1747,17 +1908,28 @@ Module AVL (OT : UsualOrderedType').
       functional induction (find_max t); split; simplify; eauto.
     Qed.
 
+    Hint Rewrite find_max_None_iff : core.
+
+    Hint Extern 1 =>
+      match goal with
+      | [ H : Node _ _ _ = Node _ _ _ |- _] => invert H
+      end : core.
+
     Lemma find_max_descendents v l r :
       r ≠ Nil →
       find_max (Node v l r) = find_max r.
     Proof.
       move heq : (Node v l r) => t.
       functional induction (find_max t); move => r_nonnil; simplify; eauto.
-      - exfalso.
-        apply r_nonnil.
-        rewrite (Node_inj_right heq).
-        by rewrite find_max_None_iff in e0.
-      - by rewrite (Node_inj_right heq).
+      exfalso.
+      apply r_nonnil.
+      by eauto.
+    Qed.
+
+    Lemma find_max_right_Nil v l x :
+      find_max (Node v l Nil) = Some x → v = x.
+    Proof.
+      by crush.
     Qed.
 
     Lemma find_max_Some_In x t :
@@ -1777,7 +1949,7 @@ Module AVL (OT : UsualOrderedType').
       find_max t = Some x →
       All (fun v => v = x ∨ v < x) t.
     Proof.
-      rewrite Ordered_iff_Ordered'.
+      (* rewrite Ordered_iff_Ordered'. *)
       revert x.
       induction t as [|v l IHl r IHr]; [unfold All; eauto|].
       move => x t_ord max_def.
@@ -1787,20 +1959,19 @@ Module AVL (OT : UsualOrderedType').
         repeat split.
         + by left.
         + invert max_def.
-          invert t_ord.
-          apply: All_imp _ _ H3.
-          tauto.
-      - invert t_ord.
+          simpl'.
+          apply All_imp with (p := fun v => v < x); eauto.
+      -
+        invert t_ord.
         have h : find_max (Node v0 r1 r2) = Some x by
           rewrite -max_def; symmetry; apply find_max_descendents, node_neq_nil.
         have x_in_r : In x (Node v0 r1 r2) := find_max_Some_In _ h.
-        have v_lt_x := In_All _ _ _ x_in_r H4.
-        split; [eauto|].
+        have v_lt_x := In_All _ _ _ x_in_r ltac:(simpl'; eauto).
+        split; eauto 2.
         split.
-        + apply: All_imp _ _ H2; by eauto.
-        + apply IHr; by eauto.
+        + apply All_imp with (p := fun z => z < v); simpl'; eauto.
+        + apply IHr; simpl'; eauto.
     Qed.
-
 
     Lemma prune_max_preserves_All P t :
       All P t → All P (prune_max t).
@@ -1810,19 +1981,19 @@ Module AVL (OT : UsualOrderedType').
       by apply t_ord, prune_max_subset.
     Qed.
 
+    Hint Resolve prune_max_preserves_All : core.
+
     Lemma prune_max_preserves_Ordered t :
       Ordered t → Ordered (prune_max t).
     Proof.
       move => t_ord.
-      functional induction (prune_max t); eauto.
-      - by destruct t_ord as [[_ l_ord] _].
-      - apply balance_left_preserves_Ordered.
-        destruct t_ord as [[l_all l_ord] [r_all r_ord]].
-        have {}IHt0 := IHt0 r_ord.
-        split; eauto.
-        split; eauto.
-        by apply prune_max_preserves_All.
+      functional induction (prune_max t); eauto; autorewrite with core in *.
+      destruct t_ord as [[l_all l_ord] [r_all r_ord]].
+      have {}IHt0 := IHt0 r_ord.
+      repeat constructor; simpl'; eauto.
     Qed.
+
+    Hint Resolve prune_max_preserves_Ordered : core.
 
     Lemma prune_max_extracts x t :
       Ordered t →
@@ -1880,6 +2051,8 @@ Module AVL (OT : UsualOrderedType').
         simplify; lia.
     Qed.
 
+    Hint Rewrite prune_max_size : core.
+
     Lemma prune_max_height_upper_bound t :
       height (prune_max t) ≤ height t.
     Proof.
@@ -1895,6 +2068,21 @@ Module AVL (OT : UsualOrderedType').
       move => is_nil.
       functional induction (prune_max t); [eauto| |]; invert heq; by eauto.
     Qed.
+
+    Lemma prune_max_eq_Nil_left v l r :
+      prune_max (Node v l r) = Nil → l = Nil.
+    Proof.
+      move => h.
+      have := prune_max_eq_Nil _ _ _ h; tauto.
+    Qed.
+
+    Lemma prune_max_eq_Nil_right v l r :
+      prune_max (Node v l r) = Nil → r = Nil.
+    Proof.
+      move => h; have := prune_max_eq_Nil _ _ _ h; tauto.
+    Qed.
+
+    Hint Rewrite prune_max_eq_Nil_left prune_max_eq_Nil_right : core.
 
     Lemma prune_max_exists t :
       prune_max t ≠ Nil → ∃ v l r, prune_max t = (Node v l r).
@@ -1969,17 +2157,15 @@ Module AVL (OT : UsualOrderedType').
       functional induction (shrink_max t'); by eauto.
     Qed.
 
-
     Lemma shrink_max_descendents_fst v l r :
       r ≠ Nil →
       fst (shrink_max (Node v l r)) = fst (shrink_max r).
     Proof.
       move heq : (Node v l r) => t'.
       functional induction (shrink_max t'); move => r_nonnil; simplify; eauto.
-      - by rewrite (Node_inj_right heq).
-      - rewrite (shrink_max_eq_None _ e0) in heq.
-        exfalso; apply r_nonnil.
-        eapply Node_inj_right; eassumption.
+      invert heq.
+      exfalso; apply r_nonnil.
+      by apply shrink_max_eq_None.
     Qed.
 
     Lemma shrink_max_descendents_snd v l r :
@@ -1989,12 +2175,10 @@ Module AVL (OT : UsualOrderedType').
       move heq : (Node v l r) => t'.
       move => r_nonnil.
       functional induction (shrink_max t'); simplify; eauto.
-      - symmetry in heq; invert heq.
-        reflexivity.
-      - symmetry in heq; invert heq.
-        exfalso.
-        apply r_nonnil.
-        by apply shrink_max_eq_None.
+      symmetry in heq; invert heq.
+      exfalso.
+      apply r_nonnil.
+      by apply shrink_max_eq_None.
     Qed.
 
     Lemma shrink_max_Some_In t x t' :
@@ -2025,13 +2209,11 @@ Module AVL (OT : UsualOrderedType').
 
     Lemma shrink_max_preserves_Ordered' t : Ordered' t → Ordered' (snd (shrink_max t)).
     Proof.
+      move => t_ord.
       functional induction (shrink_max t); simplify; eauto.
-      -
-        apply balance_left_preserves_Ordered'.
-        invert H.
-        constructor; eauto.
-        by apply shrink_max_preserves_All.
-      - by invert H.
+      invert t_ord.
+      constructor; eauto.
+      by apply shrink_max_preserves_All.
     Qed.
 
     Lemma shrink_max_preserves_Ordered t : Ordered t → Ordered (snd (shrink_max t)).
@@ -2136,9 +2318,8 @@ Module AVL (OT : UsualOrderedType').
       Balanced (Node v l r) → height (Node v l r) ≤ 1 + height (merge' l r).
     Proof.
       move => t_bal.
-      functional induction (merge' l r); simplify; try lia.
-      - rewrite find_max_None_iff in e; subst.
-        by lia'.
+      functional induction (merge' l r); lia'.
+      - subst; lia'.
       - apply le_n_S.
         have l_bal : Balanced l by bal_invert.
         have l'_height_upper := prune_max_height_upper_bound l.
@@ -2154,6 +2335,215 @@ Module AVL (OT : UsualOrderedType').
     Proof.
       rewrite merge_eq_merge'.
       by apply merge'_preserves_Balanced.
+    Qed.
+
+    Lemma merge_preserves_Ordered v l r :
+      Ordered (Node v l r) → Ordered (merge l r).
+    Proof.
+      move => t_ord.
+      rewrite merge_eq_merge'.
+      functional induction (merge' l r); eauto 2.
+      apply balance_right_preserves_Ordered.
+      repeat split; eauto 3 using prune_max_preserves_Ordered.
+      - have x_is_max := find_max_is_max l ltac:(eauto 2) e.
+        have x_not_in := prune_max_extracts l ltac:(eauto 2) e.
+        Search Contains In.
+        rewrite -Ordered_In_iff_Contains in x_not_in; [eauto 3 using prune_max_preserves_Ordered|].
+        rewrite !All_iff_forall in x_is_max |- *.
+        move => lx lx_in.
+        have {}x_is_max := x_is_max _ ltac:(eauto 2 using prune_max_subset).
+        destruct x_is_max as [heq|]; [destruct heq|]; tauto.
+      -
+        have x_lt : x < v.
+        { have x_in_l : In x l by eauto using find_max_Some_In.
+          apply: In_All _ _ _ x_in_l ltac:(eauto 2).
+        }
+        apply All_imp with (p := fun rx => v < rx); eauto.
+    Qed.
+
+    Lemma merge_preserves_Ordered' v l r :
+      Ordered' (Node v l r) → Ordered' (merge l r).
+    Proof.
+      rewrite -!Ordered_iff_Ordered'.
+      exact: merge_preserves_Ordered.
+    Qed.
+
+    (* TODO: MOVE *)
+    Hint Extern 1 =>
+      match goal with
+      | [ H : In _ Nil |- _ ] => exfalso; by invert H
+      | [ H : Contains _ Nil |- _ ] => exfalso; by invert H
+      end : core.
+
+    (* TODO: MOVE *)
+    Hint Extern 1 =>
+      match goal with
+      | [ H : _ = Nil |- _ ] => subst
+      end : core.
+
+    (* TODO: MOVE *)
+    Lemma Some_eq_iff {X : Type} (x y : X) :
+      Some x = Some y ↔ x = y.
+    Proof.
+      split; intros; subst; eauto.
+    Qed.
+
+    (* ???? *)
+    Hint Rewrite (@Some_eq_iff A) : core.
+
+
+    Lemma merge_In_complete_left x l r :
+      In x l → In x (merge l r).
+    Proof.
+      move => x_in_l.
+      rewrite merge_eq_merge'.
+      functional induction (merge' l r); simplify; eauto 2.
+      suff : x0 = x ∨ In x (prune_max l) by tauto.
+      functional induction (In x l); eauto 2.
+      destruct r0 as [|rv rl rr]; [simplify;subst;tauto|].
+      rewrite prune_max_descendents; [eauto 2|].
+      rewrite balance_left_In_iff.
+      destruct x_in_l as [| [x_in_l | x_in_r']]; subst.
+      - right; by crush.
+      - rewrite <- In'_iff_In in *; right; by eauto 2.
+      - rewrite find_max_descendents in e; [done|].
+        clear IHP.
+        have {}IHP0 := IHP0 x_in_r' e.
+        rewrite <- In'_iff_In in *.
+        destruct IHP0; by eauto 3.
+    Qed.
+
+    Lemma merge_In_complete_right x l r :
+      In x r → In x (merge l r).
+    Proof.
+      move => x_in_r.
+      rewrite merge_eq_merge'.
+      functional induction (merge' l r); simplify; eauto 3.
+    Qed.
+
+    Ltac repeat_destruct H :=
+      repeat destruct H as [H|H].
+
+    Lemma merge_In_correct x l r :
+      In x (merge l r) → In x l ∨ In x r.
+    Proof.
+      rewrite merge_eq_merge'.
+      move => x_in_t.
+      functional induction (merge' l r); simplify; eauto 3.
+      repeat_destruct x_in_t; subst.
+      - left; by apply find_max_Some_In.
+      - left; by apply prune_max_subset.
+      - by right.
+    Qed.
+
+    Ltac add_lemmas ls :=
+      match ls with
+      | (?xs, ?x) => pose proof x; add_lemmas xs
+      | ?x => pose proof x
+      end.
+
+    Lemma merge_In_iff x l r :
+      In x (merge l r) ↔ In x l ∨ In x r.
+    Proof.
+      split; eauto using merge_In_correct.
+      destruct 1; eauto using merge_In_complete_left, merge_In_complete_right.
+    Qed.
+
+    Lemma merge_preserves_All P l r :
+      All P l → All P r → All P (merge l r).
+    Proof.
+      rewrite !All_iff_forall.
+      setoid_rewrite merge_In_iff.
+      move => all_l all_r x [|]; eauto 2.
+    Qed.
+
+    Lemma merge_All_iff P l r :
+      All P (merge l r) ↔ (All P l ∧ All P r).
+    Proof.
+      rewrite !All_iff_forall; setoid_rewrite merge_In_iff.
+      by crush.
+    Qed.
+
+    Hint Resolve
+      merge_preserves_All
+      merge_preserves_Ordered
+      merge_preserves_Ordered'
+      merge_preserves_Balanced
+      merge_In_complete_left
+      merge_In_complete_right
+      merge_In_correct
+      : core.
+    Hint Rewrite merge_In_iff merge_All_iff : core.
+
+    Lemma delete_preserves_All P x t :
+      All P t → All P (delete x t).
+    Proof.
+      functional induction (delete x t); eauto 3; simplify; tauto.
+    Qed.
+
+    Hint Resolve delete_preserves_All : core.
+
+    Theorem delete_preserves_Ordered x t :
+      Ordered t → Ordered (delete x t).
+    Proof.
+      rewrite !Ordered_iff_Ordered'.
+      move => t_ord.
+      functional induction (delete x t); simpl'; eauto.
+    Qed.
+
+    Hint Resolve delete_preserves_Ordered : core.
+
+    Theorem delete_subset x y t :
+      In x (delete y t) → In x t.
+    Proof.
+      move => x_in.
+      functional induction (delete y t); simplify; tauto.
+    Qed.
+
+    Lemma delete_subset' x y t :
+      In' x (delete y t) → In' x t.
+    Proof.
+      rewrite !In'_iff_In; eauto using delete_subset.
+    Qed.
+
+    Hint Resolve delete_subset delete_subset' : core.
+
+    Theorem delete_In_correct x y t :
+      Ordered t → In x (delete y t) → x ≠ y.
+    Proof.
+      move => t_ord x_in.
+      (* rewrite Ordered_In_iff_Contains in x_in; eauto. *)
+      functional induction (delete y t); simpl'; eauto 2.
+      - subst.
+        destruct x_in as [x_in|x_in]; [suff : x < y | suff : y < x]; try order.
+        + by apply (In_All (fun x => x < y) _ _ x_in).
+        + by apply (In_All (fun x => y < x) _ _ x_in).
+      - repeat_destruct x_in; eauto.
+        suff : x < v by order.
+        by apply (In_All (fun x => x < v) _ _ x_in).
+      - repeat_destruct x_in; eauto.
+        suff : v < x by order.
+        by apply (In_All (fun x => v < x) _ _ x_in).
+    Qed.
+
+    Theorem delete_In_correct' x t :
+      Ordered t → ¬ In x (delete x t).
+    Proof.
+      move => t_ord bad.
+      suff : x ≠ x by done.
+      apply: delete_In_correct; eassumption.
+    Qed.
+
+    Hint Resolve delete_In_correct delete_In_correct' : core.
+
+    Theorem In_delete x y t :
+      In x t → x = y ∨ In x (delete y t).
+    Proof.
+      move => x_in.
+      destruct (eq_dec x y) as [|hne]; eauto 2.
+      right.
+      functional induction (delete y t); simpl'; eauto 2; try tauto.
+      repeat_destruct x_in; subst; try tauto.
     Qed.
 
     Lemma delete_height_upper_bound x t :
@@ -2215,6 +2605,67 @@ Module AVL (OT : UsualOrderedType').
     Proof.
       by apply delete_preserves_Balanced0.
     Qed.
+
+    Hint Resolve delete_preserves_Balanced delete_height_lower_bound : core.
+
+    (* delete is idempotent if it is balanced *)
+    Theorem delete_do_nothing x t :
+      Balanced t → ¬ Contains x t → delete x t = t.
+    Proof.
+      move => t_bal x_not_in.
+      functional induction (delete x t); simpl'; eauto 3.
+      - tauto.
+      - rewrite_match_compare.
+        rewrite IHt0; eauto.
+        by apply balance_left_Balanced_same.
+      - rewrite_match_compare.
+        rewrite IHt0; eauto.
+        by apply balance_right_Balanced_same.
+    Qed.
+
+    Theorem delete_idempotent x t :
+      Ordered t → Balanced t → delete x (delete x t) = delete x t.
+      move => t_ord t_bal.
+      rewrite delete_do_nothing; eauto 3.
+      rewrite -Ordered_In_iff_Contains; eauto.
+    Qed.
+
+    (* recapitulation:
+       we have now proven:
+       `Contains`:
+       - if `Contains x t` is true, then `In x t` is true
+       - if `t` is a BST, then `Contains x t` is true iff `In x t` is true
+
+       `insert`:
+       - AVL balanced trees remain balanced after `insert`
+         (`insert_preserves_Balanced`)
+       - BSTs remain BSTs after `insert`
+         (`insert_preserves_Ordered`)
+       - any element already in `t` will still be in `insert x t`
+         (`insert_In_complete1`)
+       - `x` will always be in `insert x t`
+         (`insert_In_complete2`)
+       - if `x` is in `insert y t`, then `x = y` or `x` is in `t`.
+         (`insert_In_correct`)
+       - if `t` is AVL balanced and `x` is `Contain`ed in `t`, then `insert x t` does nothing
+         (`insert_do_nothing`)
+       - if `t` is an AVL balanced BST then `insert` is idempotent
+         (`insert_idempotent`)
+
+       `delete`:
+       - AVL balanced trees remain balanced after `delete`
+         (`delete_preserves_Balanced`)
+       - BSTs remain BSTs after `delete`
+         (`delete_preserves_Ordered`)
+       - any element in `delete x t` will be in `t`
+         (`delete_subset`)
+       - if `t` is a BST, then if `x` is in `delete y t`, we must have `x ≠ y`.
+         (`delete_In_correct`)
+       - if `t` is AVL balanced and `¬ Contains x t`, then `delete x t` does nothing
+         (`delete_do_nothing`)
+       - if `t` is an AVL balanced BST then `delete` is idempotent
+         (`delete_idempotent`)
+     *)
 
   (* End Facts. *)
 End AVL.
