@@ -2,7 +2,7 @@ Require Import ssreflect Utf8 CpdtTactics Util FunInd FrapWithoutSets.
 Require Import Arith Orders OrdersTac OrdersFacts.
 Require Import AVLHeightFacts.
 
-Module AVLFactsFull (OT : UsualOrderedType').
+Module AVLResults (OT : UsualOrderedType').
   Include AVLHeightFacts OT.
 
   (* an AVL tree is a BST which is AVL-balanced *)
@@ -225,4 +225,4 @@ Module AVLFactsFull (OT : UsualOrderedType').
     apply height_upperbound; by eauto.
   Qed.
 
-End AVLFactsFull.
+End AVLResults.
