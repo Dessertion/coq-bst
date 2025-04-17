@@ -93,9 +93,6 @@ Module AVLHeightFacts (OT : UsualOrderedType').
     by auto using perfect_tree_height, perfect_tree_balanced.
   Qed.
 
-  Search nat lt ex.
-  Search "well".
-
   Definition is_tree_of_height_size h s : tree → Prop :=
     fun t => Balanced t ∧ height t = h ∧ size t = s.
   Hint Unfold is_tree_of_height_size : core.
@@ -421,8 +418,6 @@ Module AVLHeightFacts (OT : UsualOrderedType').
     (h1 ≤ h2) → (min_size_of_height nonempty h1 ≤ min_size_of_height nonempty h2).
   Proof.
     move => Hle.
-    Search "le" "lt" "eq" nat.
-    About Nat.le_lteq.
     rewrite Nat.le_lteq in Hle.
     destruct Hle as [Hlt|]; [|by subst].
     apply Nat.lt_le_incl.
