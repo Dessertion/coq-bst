@@ -224,3 +224,5 @@ Module AVLFactsFull (OT : UsualOrderedType').
     move => avl.
     apply height_upperbound; by eauto.
   Qed.
+
+End AVLFactsFull.
