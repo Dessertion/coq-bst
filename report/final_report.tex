@@ -1,0 +1,1420 @@
+\documentclass[acmsmall, authorversion, nonacm, overload]{acmart}
+\usepackage{fontspec}
+\setmonofont{JuliaMono}[
+Scale=MatchLowercase,
+Extension=.ttf,
+UprightFont=*-Regular,
+BoldFont=*-Bold,
+ItalicFont=*-RegularItalic,
+BoldItalicFont=*-BoldItalic,
+]
+\usepackage{minted}
+\usepackage{underscore}
+\usepackage{enumitem}
+
+\usepackage[skip=1ex, belowskip=2ex]{subcaption}
+\captionsetup[subfigure]{labelformat=simple}
+\renewcommand\thesubfigure{(\alph{subfigure})}
+
+\usepackage{mdframed}
+
+\usepackage{tikz}
+\usetikzlibrary{graphs,graphdrawing,arrows.meta}
+\usegdlibrary{trees}
+
+\definecolor{bg}{rgb}{0.95,0.95,0.95}
+\definecolor{response}{rgb}{0.8,0.84,1}
+\definecolor{goal}{rgb}{0.8,1,1}
+% \surroundwithmdframed{minted}
+
+
+% \usepackage{unicode-math}
+
+\DeclareRobustCommand{\bigO}{%
+  \text{\usefont{OMS}{cmsy}{m}{n}O}%
+}
+
+\begin{document}
+\title{CS 747 Final Project --- Formalizing AVL Trees in Rocq}
+\author{Richard Zhang}
+\email{rx5zhang@uwaterloo.ca}
+\affiliation{%
+  \institution{University of Waterloo}
+  % \city{Waterloo}
+  % \state{Ontario}
+  \country{Canada}
+}
+
+\begin{abstract}
+  In this project, I implemented AVL trees in Rocq (encoded directly as Gallina programs)
+  and proceeded to verify many key properties of AVL trees, including
+  proofs of correctness for insertion, deletion, BST search,
+  and a proof of logarithmic height for AVL-balanced trees.
+\end{abstract}
+
+\maketitle
+
+\section{Introduction}
+
+\subsection{The Original Vision}
+My original aim with this project was to ``formalize various self-balancing binary search trees
+and prove key properties relating to their correctness and balancing properties''.
+I specifically singled out three self-balancing binary search trees (BBSTs for short) of interest:
+Red-Black trees, AVL trees, and so-called ``size-balanced'' trees.
+I also listed out a couple of key properties that I wished to prove:
+\begin{itemize}
+\item Correctness of insertion, deletion, search, and order-statistics.
+\item BST invariance of tree-modifying operations (namely insertion and deletion); ie.\
+  binary search trees remain binary search trees after said operations.
+\item Balance invariance of tree-modifying operations --- eg.\ AVL trees remain AVL balanced after insertion.
+\item Logarithmic depth of BBSTs.
+\end{itemize}
+Many of the finer points of implementation were intentionally left vague or unanswered in my initial proposal
+(such as the choice of Proof Assistant, whether to shallowly or deeply embed, etc.) in the hopes that
+the successes and setbacks I experienced over the course of implementation would provide for
+a far more informed decision compared to one made at the outset.
+
+\subsection{Final Results}
+In the end, I only followed through with formalizing 1 of the 3 singled-out BBSTs: that being AVL trees.
+I conducted the formalization through the Rocq Proof Assistant, directly encoding
+AVL trees and its operations as Gallina programs.
+
+I implemented insertion (\texttt{insert}), deletion (\texttt{delete}), and BST search (\texttt{Contains})
+(leaving out order-statistics operations),
+and proved all of the relevant properties I initially set out as goals ---
+all without any use of \texttt{Admitted}.
+I also proved that AVL-balanced trees have logarithmic height.
+All of the key final results are contained in the file \texttt{AVLResults.v}.
+
+Here is a taste of some of the key results, chosen somewhat arbitrarily:
+\begin{itemize}
+\item AVL trees remain AVL trees after insertion:
+  \begin{minted}[resetmargins=true]{coq}
+  Theorem AVL_insert x t : AVL t → AVL (insert x t).
+  \end{minted}
+\item AVL trees remain AVL trees after deletion:
+  \begin{minted}[resetmargins=true]{coq}
+  Theorem AVL_delete x t : AVL t → AVL (delete x t).
+  \end{minted}
+\item AVL trees have logarithmic height:
+  \begin{minted}[resetmargins=true]{coq}
+  Theorem AVL_height_upperbound t : AVL t → height t ≤ 2 * Nat.log2 (size t) + 1.
+  \end{minted}
+\item \texttt{insert} is idempotent for AVL trees:
+  \begin{minted}[resetmargins=true]{coq}
+  Theorem AVL_insert_idempotent x t : AVL t → insert x (insert x t) = insert x t.
+  \end{minted}
+\end{itemize}
+See the Appendix, or refer to the source files to view all of the key results (and definitions).
+
+\section{Design Decisions}
+
+\subsection{Choice of Proof Assistant}
+I quickly settled on Rocq as our Proof Assistant of choice.
+This decision rested solely on one factor: the ease with which one could cobble together
+quick-and-dirty tactics and automation.
+
+Despite the many, \emph{many} quality-of-life improvements Lean would have offered over Rocq
+(such as dot-notation, a unified approach to typeclasses, a robust standard library,
+proper namespacing, etc.), it fell short in one crucial area:
+it was far more difficult to write custom tactics in Lean as compared to Rocq --- and therefore far more
+difficult to realize ``quick-and-dirty'' automation.
+
+As a concrete example, there is no exact equivalent to Rocq's \texttt{match goal with \dots} construct,
+much less something like \texttt{match goal with | context[\dots] => _ end}.
+This means that something like my \texttt{rewrite_match_compare} tactic (which I wrote up very quickly to
+abstract away a common pattern that appeared) would have been a major pain to write in Lean
+(see Fig.\ \ref{fig:rewrite_match_compare}).
+
+\begin{figure}[h!]
+\begin{minted}{coq}
+  Ltac rewrite_match_compare :=
+    repeat match goal with
+    | [ |- context[match compare ?x ?x with | _ => _ end] ] =>
+        rewrite compare_refl
+    | [ H : ?x < ?y |- context[match compare ?x ?y with | _ => _ end] ] =>
+        rewrite (proj2 (compare_lt_iff x y) H)
+    | [ H : ?y < ?x |- context[match compare ?x ?y with | _ => _ end] ] =>
+        rewrite (proj2 (compare_gt_iff x y) H)
+    | [ H : ?x < ?y, H2 : context[match compare ?x ?y with | _ => _ end] |- _] =>
+        rewrite (proj2 (compare_lt_iff x y) H) in H2
+    | [ H : ?y < ?x, H2 : context[match compare ?x ?y with | _ => _ end] |- _] =>
+        rewrite (proj2 (compare_gt_iff x y) H) in H2
+    end.
+\end{minted}
+\caption{My \texttt{rewrite_match_compare} tactic, which looks for all occurrences of
+  \texttt{match compare x y with \dots} (in both the goal and all hypotheses)
+  and tries to simplify it with known assumptions regarding \texttt{x} and \texttt{y} already present in the context.}%
+\label{fig:rewrite_match_compare}
+\end{figure}
+\subsection{Restriction to AVL Trees}
+My original scope turned out to be too ambitious --- making progress on verifying just \emph{one}
+kind of BBST was already taking a large amount of time.
+Thus, I narrowed my goal down to verifying just one kind of tree, and left more up as stretch goals.
+I also chose to verify AVL trees specifically out of the three initial choices,
+since full-fledged formalizations of AVL trees were far more uncommon compared to those of Red-Black trees
+while still being more concretely do-able compared to size-balanced trees (which, despite its name, is
+quite different from \emph{weight}-balanced trees).
+
+Indeed, I was unable to find any full formalizations of AVL trees aside from
+a very old Rocq formalization (\verb|FSetFullAVL| and \verb|MSetFullAVL|)
+that used to be in the Rocq Standard Library, but seems to be missing nowadays.
+\footnote{
+There are dead hyperlinks still referring to these implementations in the Rocq Standard Library;
+the only way I was able to access these was through the \texttt{rocq-archive} repository on Github.
+}
+
+\subsection{Choice of Encoding and Definitions}
+I decided to shallowly embed AVL trees in Gallina since:
+\begin{enumerate}[label=(\alph*)]
+\item It was the easiest option for encoding --- the translation between
+  commonly seen code for AVL trees and the Rocq encoding would be immediate.
+\item It was much easier to reason with --- you can directly use Rocq's inductive types and recursive functions
+  to encode information about these trees and directly compute values.
+\item It allowed me to immediately get at the problem at hand (proving properties about AVL trees)
+  and avoid an intermediate step of having to define syntax and semantics \emph{just to state} the problems.
+\end{enumerate}
+While the use of a library like Iris could help alleviate some of the pains described in (c),
+it would only add to the list of things I needed to familiarize myself with \emph{on top of}
+the immediate problems I wished to solve.
+
+\subsubsection{The Influence of Problem Priority on Definitions}
+My desire to get at the core of the problem also manifests itself in my definitions; for instance,
+my binary tree definition does not contain a field for height information:
+\begin{figure}[h!]
+\begin{minted}{coq}
+Inductive tree : Type :=
+| Nil  : tree
+| Node : ∀ (v : A) (l : tree) (r : tree), tree.
+\end{minted}
+  \caption{Definition of binary tree used throughout the formalization.}%
+  \label{fig:tree_def}
+\end{figure}
+
+This means that there is no need to juggle around height information,
+and no need to verify that the height value always corresponds with the actual tree height.
+However, this comes with the obvious trade-off that my implementation is not performant --- every call to
+\texttt{height} is $\bigO(h)$ (where $h$ is the height of the tree)
+rather than the $\bigO(1)$ expected in any serious use-case of AVL trees.
+This was a trade-off I deemed reasonable, as I believed that showing you could properly juggle this height information
+was a superficial task compared to the harder tasks of eg.\ proving that AVL balance is preserved
+by insertion and deletion.
+
+\subsubsection{Transparency of Definition}
+My wish for the translation between the Rocq code and common code to be readily transparent
+also manifests itself in my decision to split the tree balance operations into separate
+rotation and balance procedures, as is commonly seen in imperative versions of AVL trees;
+compare my Rocq and C++ implementations of \texttt{rotate_left} and \texttt{balance_left}:
+\begin{figure}[h!]
+  \begin{minipage}{0.5\linewidth}
+    \centering
+    \begin{minted}[fontsize=\footnotesize]{coq}
+Definition rotate_left v l r : tree :=
+  match r with
+  | Node rv rl rr => Node rv (Node v l rl) rr
+  | Nil => Node v l r
+  end.
+
+Definition balance_left (v : A) (l r : tree) : tree :=
+  if (1 + height r) <? (height l) then
+    match l with
+    | Nil => assert_false v l r
+    | Node lv ll lr as l =>
+        if (height lr <=? height ll)%nat then
+          rotate_right v l r
+        else
+          rotate_right v (rotate_left lv ll lr) r
+    end
+  else
+    Node v l r.
+
+    \end{minted}
+  \end{minipage}
+  ~\qquad\qquad~
+  \begin{minipage}{0.5\linewidth}
+    \centering
+    \begin{minted}[fontsize=\footnotesize]{cpp}
+void rotate_left(Node*& t) {
+  Node* r = t->r;
+  if (!r) return;
+  t->r = r->l;
+  r->l = t;
+  update(t), update(r);
+  std::swap(t, r);
+}
+
+void bal_left(Node*& t) {
+  if (!t) return;
+  if (1 + height(t->r) >= height(t->l)) return;
+  if (height(t->l->r) <= height(t->l->l))
+    rotate_right(t);
+  else
+    rotate_left(t->l), rotate_right(t);
+}
+    \end{minted}
+  \end{minipage}
+  \caption{Implementations of \texttt{rotate_left} and \texttt{balance_left} in Rocq and C++ respectively.}
+\end{figure}
+
+Thus, even though the Rocq and C++ versions of \texttt{rotate_left} (and thus also \texttt{rotate_right})
+look fairly different (with the C++ using destructive reassignments),
+the \texttt{balance_left} operations for both languages remain remarkably similar
+as a result of abstracting out the rotations!
+This makes it easier to write correct C++ code (or indeed, of any language of your choosing)
+based on the proven-to-be-correct Rocq code.
+
+\subsubsection{Fixpoint vs.\ Inductive Predicates}
+Finally, one last point I wish to draw attention to regarding definitions is
+the dual usage of both \texttt{Fixpoint} predicates and
+\texttt{Inductive} predicates --- for many of my predicates on trees,
+I have two versions: a computable \texttt{Fixpoint} version, and a non-computing \texttt{Inductive} version,
+bound together with a lemma that ensures equivalence of the two definitions.
+For example, I have two predicates for testing element membership in a tree, \texttt{In} and \texttt{In'},
+together with a lemma \texttt{In'_iff_In}:
+\begin{figure}[htb!]
+  \centering
+  \begin{minipage}{0.45\textwidth}
+    \centering
+  \begin{minted}[fontsize=\footnotesize]{coq}
+Fixpoint In (x : A) (t : tree) : Prop :=
+  match t with
+  | Nil => False
+  | Node v l r =>
+      v = x ∨ In x l ∨ In x r
+  end.
+  \end{minted}
+  \end{minipage}%
+  \begin{minipage}{0.55\textwidth}
+  \flushleft
+  \begin{minted}[fontsize=\footnotesize]{coq}
+Inductive In'  (x : A) : tree → Prop :=
+| In'_node      : ∀ l r, In' x (Node x l r)
+| In'_left      : ∀ y l r, In' x l → In' x (Node y l r)
+| In'_right     : ∀ y l r, In' x r → In' x (Node y l r).
+  \end{minted}
+  \end{minipage}%
+  \centering
+  \vspace{0.5em}
+  \caption{Definitions for \texttt{In} and \texttt{In'} respectively.}
+\end{figure}%
+% \vskip -2em%
+\begin{figure}[htb!]
+  \centering
+  \begin{minipage}{0.5\textwidth}
+  \begin{minted}{coq}
+Lemma In'_iff_In x t : In' x t ↔ In x t.
+  \end{minted}
+  \end{minipage}
+  \caption{Coherence lemma connecting \texttt{In} with \texttt{In'}.}
+\end{figure}%
+
+\newpage
+Arguably the biggest reason for why I did this was due to simple ignorance ---
+I wished for an easy way to do induction on this predicate, without realizing that \texttt{functional induction}
+existed and could fill this role.
+Indeed, after I re-discovered the existence of \texttt{functional induction},
+I was able to greatly simplify many of proofs (and in the process also greatly speed them up).
+
+However, it also turned out that it was often the case that automation behaved better
+with inductive predicates vs.\ with recursive predicates.
+We'll explore a concrete example of this later, during our discussion on Tactics.
+
+\section{Proof Process Insights}
+
+In retrospect, with \emph{good and correct} definitions, the proofs of
+most lemmas and theorems were not too tough --- the flow of smaller lemmas
+into larger lemmas into complete theorems was fairly natural feeling.
+\emph{However}, it should be noted that
+the words ``good and correct definitions'' are doing a lot of heavy lifting in that sentence.
+In this section, we'll examine some of the pains I experienced due to a lack of ``good and correct definitions'',
+and briefly discuss my proof of logarithmic height for AVL trees.
+
+\subsection{The Pains of Clunky Definitions}
+
+One of the definitions that I regretted the most later into the development
+was my definition of the AVL balance invariant.
+I chose to define it like so:
+\begin{minted}{coq}
+Inductive Balanced : tree → Prop :=
+(* a leaf node is Balanced *)
+| Balanced_nil : Balanced Nil
+(* two children of equal height is Balanced *)
+| Balanced_equal :
+  ∀ l r, Balanced l → Balanced r → height l = height r → ∀ v, Balanced (Node v l r)
+(* if height l = height r + 1, then the resulting thing is Balanced *)
+| Balanced_left_heavy :
+  ∀ l r, Balanced l → Balanced r → height l = 1 + height r → ∀ v, Balanced (Node v l r)
+(* symmetric. *)
+| Balanced_right_heavy :
+  ∀ l r, Balanced l → Balanced r → 1 + height l = height r → ∀ v, Balanced (Node v l r).
+\end{minted}
+Contrast this with the definition used in the Standard Library's \verb|FSetFullAVL|:
+\begin{minted}{coq}
+Inductive avl : tree -> Prop :=
+  | RBLeaf : avl Leaf
+  | RBNode : forall x l r h, avl l -> avl r ->
+      -(2) <= height l - height r <= 2 ->
+      h = max (height l) (height r) + 1 ->
+      avl (Node l x r h).
+\end{minted}
+Putting aside the fact that the \verb|FSetFullAVL| uses a very non-standard definition of AVL trees
+\footnote{They require the balance factor to be within \pm 2, rather than the far more common \pm 1;
+  in fact, this is the first time I've ever seen $\pm 2$ used. Nevertheless, the fact that it compiles
+  gives confidence that it still yields a self-balancing binary search tree. Another win for proof formalization!},
+there is still a clear difference between the two definitions ---
+my definition makes explicit all possible cases for the AVL invariant right in the definition,
+whereas \verb|FSetFullAVL| groups it all together behind the (linear) constraint that
+$-2 \le \mathrm{height}\ l - \mathrm{height}\ r \le 2$.
+
+In theory, my definition still has a place in a sort of pedagogical way:
+induction on \verb|Balanced| directly inducts on all possible cases.
+However, in practice, a lot of work (especially case-work to rule out impossible cases)
+is being done by tactics like \texttt{\textcolor{red}{lia}}.
+And \texttt{\textcolor{red}{lia}} \emph{excels} at dealing with
+information like $-2 \le \mathrm{height}\ l - \mathrm{height}\ r \le 2$ ---
+both as a hypothesis and as a goal to be eliminated.
+
+\vspace{1em}
+\noindent Another factor that plays into why my definition is poor is
+my definition of \verb|height| --- though it is not immediately evident from the definition of \verb|Balanced|
+alone.
+\begin{minted}{coq}
+Fixpoint height (t : tree) : nat :=
+  match t with
+  | Nil => 0
+  | Node _ l r => 1 + Nat.max (height l) (height r)
+  end.
+\end{minted}
+The type signature of my \verb|height| function is \verb|height : tree → nat|.
+While innocuous, the fact that it returns a \verb|nat| and not an integer
+means that even simple things like \verb|height l - height r|
+don't behave how they look like they should behave
+\footnote{Subtraction of \texttt{nat}s is truncated by default.},
+thus leading to rather convoluted statements like,
+\begin{minted}{coq}
+Lemma balance_lemma v l r :
+  Balanced l → Balanced r →
+  (height r <= height l <= 1 + height r) ∨
+  (height l <= height r <= 1 + height l) →
+  Balanced (Node v l r).
+\end{minted}
+Rather than the more obvious,
+\begin{minted}{coq}
+Lemma balance_lemma v l r :
+  Balanced l → Balanced r → (-(1) <= height l - height r <= 1) → Balanced (Node v l r)
+\end{minted}
+(As a side note, this \verb|balance_lemma| was how I eventually bridged the gap between
+my definition and the \verb|FSetFullAVL| definition of the AVL invariant.)
+
+\vspace{1em}
+\noindent To summarize:
+\begin{itemize}
+\item If it's possible to subsume inductive cases into a single linear inequality,
+  it's often worth it as it enables powerful tactics like \texttt{\textcolor{red}{lia}}
+  to do the case-work for you.
+\item It is often worth it to use integer-valued functions, even when \verb|nat|-valued functions suffice,
+  as it allows tactics like \texttt{\textcolor{red}{lia}} and \texttt{\textcolor{red}{ring}}
+  to perform a wider range of operations, assumptions, and simplifications
+  (plus, it often leads to more concise formulations of the same information).
+\end{itemize}
+
+\subsection{The Pains of Incorrect Definitions}
+For several days, I was stuck trying to show that
+inserting into an AVL-balanced tree preserved
+the AVL-balance invariant.
+
+I initially started out trying to directly prove this stated goal:
+\begin{minted}{coq}
+Theorem insert_preserves_Balanced x t : Balanced t → Balanced (insert x t).
+\end{minted}
+But it quickly became apparent that this was insufficient.
+I then tried augmenting my induction hypothesis like so:
+\begin{minted}{coq}
+Lemma insert_preserves_Balanced0 x t :
+  Balanced t → Balanced (insert x t) ∧ height t ≤ height (insert x t)
+\end{minted}
+But it was \emph{still} not enough.
+In fact, I was unable to even show that the following fact was true:
+\begin{minted}{coq}
+Lemma hmmm v l r :
+  Balanced l → Balanced r → 2 + height l = height r →
+  Balanced (balance_right v l r).
+\end{minted}
+If you are familiar with the proofs for AVL trees,
+this might be ringing a few alarm bells --- this \emph{should} be true, and it \emph{should} be provable.
+However, I was sadly not too experienced with AVL trees --- besides the fact that they were self-balancing
+binary search trees with a balancing criteria related to their height,
+I knew little else about them.
+In fact, I had never even coded one prior to this project!
+\footnote{I've always personally used treaps and splay trees as my BBSTs of choice!}
+
+\vspace{1em}
+\noindent In the end, I managed to prove this theorem with a very technical choice of induction hypothesis:
+\begin{minted}{coq}
+Lemma insert_preserves_Balanced0 x t :
+  Balanced t →
+  Balanced (insert x t) ∧
+    height t ≤ height (insert x t) ∧
+    (t ≠ Nil →
+      1 + height t = height (insert x t) →
+      height (left_child (insert x t)) ≠ height (right_child (insert x t))).
+\end{minted}
+The essential idea behind the last condition is that
+insertion only increases the height of (at most) one subtree ---
+it cannot increase the height of both subtrees simultaneously.
+Thus, at any point during the insertion, we will only ever need to
+fix \emph{one} broken AVL invariant, not \emph{two}.
+
+\vspace{1em}
+\noindent Fantastic!
+Let's move on to showing the same thing, but for deletion then --- or so I'd hoped.
+It turns out, no matter what, I could not prove that deletion preserved the AVL balance invariant.
+In fact, I was able to construct \emph{an explicit counterexample} that could not be re-balanced.
+
+Why would this possibly be the case!? Was the entire body of literature on AVL trees \emph{wrong}?
+Of course not.
+Rather, my own definitions were.
+Take a look at this \emph{correct} definition of \verb|balance_left|,
+my rebalancing function which rebalances a possibly heavy left child:
+\begin{minted}{coq}
+Definition balance_left (v : A) (l r : tree) : tree :=
+  if (1 + height r) <? (height l) then
+    match l with
+    | Nil => Node v l r
+    | Node lv ll lr as l =>
+        if (height lr <=? height ll)%nat then
+          rotate_right v l r
+        else
+          rotate_right v (rotate_left lv ll lr) r
+    end
+  else
+    Node v l r.
+\end{minted}
+And now look at this very slightly different definition, the definition I had been working at this earlier
+point in time:
+\begin{minted}{coq}
+Definition balance_left (v : A) (l r : tree) : tree :=
+  if (1 + height r) <? (height l) then
+    match l with
+    | Nil => Node v l r
+    | Node lv ll lr as l =>
+        if height lr <? height ll then
+          rotate_right v l r
+        else
+          rotate_right v (rotate_left lv ll lr) r
+    end
+  else
+    Node v l r.
+\end{minted}
+The difference is \emph{one character}:
+rather than the correct check of \mintinline{coq}{height lr <=? height ll},
+I instead had \mintinline{coq}{height lr <? height ll}.
+That's it.
+That single character (well, together with its symmetrical counterpart in \verb|balance_right|)
+was why my tree failed to rebalance deletions.
+
+Indeed, consider the deletion showcased in Fig.\ \ref{fig:deletion_fig},
+where the right-most element is deleted from an AVL-balanced tree.
+\begin{figure}[!ht]
+  \centering
+  \begin{subfigure}{0.5\textwidth}
+    \centering
+  \begin{tikzpicture}[>=Stealth]
+    \graph[binary tree layout]{
+      k -- {
+        f -- {
+          c -- {
+            b -- {a},
+            d -- {,e}
+          },
+          h -- {
+            g,
+            i -- {,j}
+          }
+        },
+        m -- {
+          l,
+          n -- {,o}
+        }
+      }
+    };
+  \end{tikzpicture}
+  \caption{The original tree%
+  \label{fig:before_deletion}}
+  \end{subfigure}%
+  % \qquad\tikz[baseline=-5\baselineskip]\draw[thick,->] (0,0) -- ++ (1,0);
+  \begin{subfigure}{0.5\textwidth}
+    \centering
+  \begin{tikzpicture}[>=Stealth]
+    \graph[binary tree layout]{
+      k -- {
+        f -- {
+          c -- {
+            b -- {a},
+            d -- {,e}
+          },
+          h -- {
+            g,
+            i -- {,j}
+          }
+        },
+        m -- {
+          l,
+          n
+        }
+      }
+    };
+  \end{tikzpicture}
+  \caption{After deleting $o$%
+  \label{fig:after_deletion}}
+  \end{subfigure}
+  \caption{Deleting the right-most element, $o$, from an AVL-balanced tree.%
+  \label{fig:deletion_fig}}
+\end{figure}
+
+After the deletion of $h$, the tree looks like it does in Fig.\ \ref{fig:after_deletion}.
+Here, we note that the tree is left-heavy; the left-child, $c$, has a height of $3$ whereas the right-child, $g$,
+has a height of $1$ --- thus the AVL invariant has been broken and needs to be restored;
+specifically, \verb|balance_left| is called at the root.
+
+\begin{figure}[!ht]
+  \centering
+  \begin{subfigure}{0.5\textwidth}
+    \centering
+  \begin{tikzpicture}[>=Stealth]
+    \graph[binary tree layout]{
+      f -- {
+        c -- {
+          b -- {a},
+          d -- {,e}
+        },
+        k -- {
+          h -- {
+            {g},
+            i -- {,j}
+          },
+          m -- {l, n}
+        }
+      }
+    };
+  \end{tikzpicture}
+  \caption{Behaviour of the correct \texttt{balance_left}%
+  \label{fig:bal_left_correct}}
+  \end{subfigure}%
+  \begin{subfigure}{0.5\textwidth}
+    \centering
+  \begin{tikzpicture}[>=Stealth]
+    \graph[binary tree layout]{
+      h -- {
+        f -- {
+          c -- {
+            b -- {a},
+            d -- {,e}
+          },
+          g
+        },
+        k -- {
+          i -- {, j},
+          m -- {l,n}
+        }
+      }
+    };
+  \end{tikzpicture}
+  \caption{Behaviour of the incorrect \texttt{balance_left}%
+  \label{fig:bal_left_incorrect}}
+  \end{subfigure}
+  \caption{Behaviour comparison between the correct and incorrect \texttt{balance_left} implementations.
+  \label{fig:bal_left_comparison}}
+\end{figure}
+
+Compare now the effects of the correct \verb|balance_left| and the incorrect \verb|balance_left|,
+as shown in Fig.\ \ref{fig:bal_left_comparison}.
+The correct \verb|balance_left| does indeed produce an AVL-balanced tree
+(see Fig.\ \ref{fig:bal_left_correct}),
+but the incorrect \verb|balance_left| fails to produce an AVL-balanced tree,
+as the tree rooted at $f$ has a balance factor of $-2$ (see Fig.\ \ref{fig:bal_left_incorrect}).
+
+\indent
+With all that said, the interesting takeaway here
+for me personally is two-fold:
+\begin{itemize}
+\item It is \emph{incredibly} easy to write an incorrect AVL tree that looks superficially correct.
+\item It is very cool that the ``incorrect'' AVL tree still preserves AVL balance on insertions,
+  despite failing on deletions.
+  Though, this makes sense --- we were able to prove the insertion theorem
+  thanks to the fact that insertion only ever breaks one invariant at a time,
+  however deletion possibly allows for two invariants to be simultaneously broken.
+\end{itemize}
+The proof that the ``incorrect'' AVL tree still preserves AVL balance on insertions
+is documented in the file \verb|AVL_incorrect.v|.
+
+\newpage
+\subsection{Proof of Logarithmic Height}
+
+I tackled the proof of logarithmic height
+for AVL trees by following the proof sketch outlined in
+https://people.csail.mit.edu/alinush/6.006-spring-2014/avl-height-proof.pdf
+
+The key points in the proof are as follows:
+\begin{itemize}
+\item Define $N(h)$ to be the minimum number of nodes in an AVL tree of height $h$.\\
+  (\verb|min_size_of_height| in my proof.)
+\item Make the observation that
+  an AVL tree with minimum size must have subtrees of differing heights
+  (for otherwise, we could remove at least one node and still have the same height).\\
+  (\verb|balanced_uneven| in my proof.)
+\item Make the observation that an AVL tree of minimum size
+  must have children which are AVL trees of minimum size.\\
+  (\verb|child_of_min_size_is_min_size_l|, \verb|child_of_min_size_is_min_size_r|.)
+\item Conclude that $N(h) = 1 + N(h - 1) + N(h - 2)$
+  and that $N(0) = 0$, $N(1) = 1$.\\
+  (\verb|min_size_eqn|, \verb|min_size_0|, \verb|min_size_1|)
+\item Conclude that $N$ is a strictly increasing function.\\
+  (\verb|min_size_strict_mono|)
+\item Conclude that $2^{h/2} \le N(h)$.\\
+  (\verb|min_size_even|, \verb|min_size_odd|)
+\item Take logarithms on both sides and find that $h/2 \le \log_2 N(h)$
+  and so $h \le 2\log_2 N(h) + 1$.\\
+  (\verb|min_size_log|)
+\item Conclude that,
+  for a given AVL tree of size $n$ and height $h$,
+  since $N(h)$ is always the minimum size of an AVL tree of height $h$,
+  therefore $N(h) \le n$, therefore
+  $h \le 2\log_2 N(h) + 1 \le 2\log_2 n + 1$,
+  thus all AVL trees have logarithmic height.\\
+  (\verb|height_upperbound0|, \verb|height_upperbound|)
+\end{itemize}
+
+The most interesting aspect of my proof
+is the way I handled $N(h)$ --- since $N(0) = 0$, $N(1) = 1$, and $N(h) = 1 + N(h - 1) + N(h - 2)$,
+you could define $N(h)$ independently of the fact that it represents the minimum size of an AVL-balanced tree
+of height $h$!
+Indeed, this is the approach taken by the proof writers of \verb|FSetFullAVL|.
+
+However, I instead opted to define $N(h)$ very literally, by following this line of reasoning:
+\begin{itemize}
+\item Every perfect binary tree is AVL-balanced,
+  and it's easy to construct a perfect binary tree for any given height $h$. \\
+  (\verb|perfect_tree|, \verb|perfect_tree_height|, \verb|perfect_tree_balanced|)
+\item Thus, for every height $h$, there exists a size $s$ such that
+  [there exists an AVL-balanced tree of size $s$]. \\
+  (\verb|exists_tree_of_height|, \verb|exists_size_of_height|, \verb|exists_min_size_of_height|)
+\item By the Well-Ordering Principle,
+  there must exist a least-such $s$ for every height $h$ ---
+  this $s$ must be exactly $N(h)$.
+  (\verb|min_size_of_height|)
+\end{itemize}
+Unfortunately, since I was looking at an outdated version of the Rocq standard library
+\footnote{The webpage defaults to v8.9, rather than the much more recent v8.20 I developed my formalization with.}
+which did not provide a proof of minimality for its version of the Well-Ordering Principle,
+I had to code my own.
+Fortunately, I was able to copy the proofs that the Lean Proof Assistant uses for its rendition of WOP
+called \verb|Nat.find| --- this is why my WOP function is called \verb|nat_find|.
+
+Also, very candidly, now that I'm re-examining my code for \verb|exists_min_size_of_height|,
+I'm not too sure why I have a redundant a clause for minimality,
+considering that WOP already guarantees minimality.
+But this is likely a consequence of developing 90\% of the proof for logarithmic height over the course of
+a single all-nighter (the night before the midway check-in).
+And hey, if it works, it works --- and we can always mark it as a point of future work.
+
+\section{Tactic Takeaways}
+Tactics, especially custom tactics and proof automation, played an essential role
+in the formalization process.
+Without the very, \emph{very} extensive use of
+programmable proof search and computer-assisted case bash,
+I do not think that I would have been able to achieve what I have ---
+they allowed me to focus on writing down statements of lemmas, rather than proofs of lemmas,
+so I could focus on the forest rather than the trees.
+
+In my experience, there were two overarching themes relating to tactic usage and refinement
+which popped up again and again:
+\begin{itemize}
+\item Whenever possible, abstract out useful lemmas and automate their proofs.
+  (Just like DRY in software engineering!)
+\item Big hammers solve big problems, but come at the cost of lots of computation time.
+  It's almost always possible to find smaller hammers which can do the same thing in much less time.
+\end{itemize}
+
+At one point, I was relying so heavily on so many unoptimized ``big hammer''-type tactics
+my compilation time reached 200 seconds.
+Every time I needed to make a change at the top of my file (such as a change in definitions or a refactor),
+I would have to wait an entire \emph{three minutes} to continue proving things at the bottom.
+Spending just a few minutes to optimize my tactics thus ended up saving me quite a lot of time
+\footnote{I was able optimize it down from 200 seconds to 100 seconds, and later down to just 70 seconds.}
+--- time I could then spend more productively doing other things.
+
+Thus, there was always a constant tension between
+the time spent creating and optimizing tactics and the time spent actually proving theorems
+(and computing with tactics).
+
+\subsection{Hints}
+Wherever possible, \verb|Hint|!
+Whether that be \verb|Hint Resolve|, \verb|Hint Rewrite|, \verb|Hint Extern|,
+\verb|Hint Constructor|,
+or even \verb|Hint Unfold|.
+
+Hints were \emph{by far} the aspect of proof automation that had the lowest cost and highest reward ---
+something that became more and more blindingly clear as time went on.
+
+There really were only a few things that had to be kept in mind with regards to Hints:
+\begin{itemize}
+\item Be careful that \verb|Hint Rewrite| doesn't rewrite away from more useful proof states.
+\item Make sure \verb|Hint Rewrite| never constitutes a rewrite-loop.
+\item If \mintinline{coq}{auto}/\mintinline{coq}{eauto}/\verb|crush|/[any other proof-search tactic]
+  ever results in a proof state that \emph{feels} trivial to resolve/to advance,
+  chances are good that proper \verb|Hint|ing can completely elide such goals.
+\item \verb|Hint|s do not persist through \verb|Section|s --- I had to learn this the hard way.
+\item Always remember to Hint!
+  (Although slightly glib, it turns out it's very easy to forget to \verb|Hint|,
+  even despite the blindingly obvious upsides.)
+\end{itemize}
+
+\subsection{On \texttt{crush}}
+The \verb|crush| tactic from \emph{Certified Programming with Dependent Types} (CPDT)
+was one of, if not \emph{the} biggest hammers in my toolbox.
+As such, it embodied both the extreme positives
+(could prove very complex goals with a single tactic call)
+and negatives (immense computation time) of ``big hammer'' tactics into sharp relief.
+Thus, it was the perfect tool for prototyping --- as long as you remembered to
+actually return and optimize the proof.
+
+\subsubsection{An example.}
+This was the original proof developed using \verb|crush|:
+\begin{minted}{coq}
+Lemma rotate_right_preserves_Ordered v l r :
+  Ordered (Node v l r) → Ordered (rotate_right v l r).
+Proof.
+  rewrite !Ordered_iff_Ordered' /rotate_right.
+  intros; destruct l; invert_ordered'; try by constructor.
+  constructor; crush.
+  apply (All_imp (fun x => v < x)); by crush.
+Qed.
+\end{minted}
+Thanks to \verb|crush|, it's a very short proof.
+However, it's also a very slow proof.
+Just the line \mintinline{coq}{constructor; crush} took over 3 seconds to run!
+\begin{minted}[bgcolor=bg]{coq}
+time (constructor; crush).
+\end{minted}
+\vskip -0.5em
+\begin{minted}[bgcolor=goal]{text}
+Tactic call ran for 3.159 secs (3.152u,0.006s) (success)
+\end{minted}
+Now, here is the updated proof:
+\begin{minted}{coq}
+Lemma rotate_right_preserves_Ordered v l r :
+  Ordered (Node v l r) → Ordered (rotate_right v l r).
+Proof.
+  rewrite !Ordered_iff_Ordered' /rotate_right.
+  intros; destruct l; invert_ordered'; try by constructor.
+  constructor; simpl'; eauto 2.
+  apply (All_imp (fun x => v < x)); by eauto 2.
+Qed.
+\end{minted}
+It is slightly more complicated; calls to \verb|crush| here have been replaced by
+either \mintinline{coq}{simpl'; eauto 2} or just \mintinline{coq}{eauto 2} --- replacements that took a bit
+of trial and error to find.
+
+However, the upshot of doing this trial and error to replace all calls to \verb|crush| is that
+it is \emph{significantly} faster.
+The line \mintinline{coq}{constructor; simpl'; eauto 2} leaves
+the proof in the exact same state that \mintinline{coq}{constructor; crush} previously did.
+But, compare the time this takes to run with the earlier time:
+\begin{minted}[bgcolor=bg]{coq}
+time (constructor; simpl'; eauto 2).
+\end{minted}
+\vskip -0.5em
+\begin{minted}[bgcolor=goal]{text}
+Tactic call ran for 0.273 secs (0.273u,0.s) (success)
+\end{minted}
+So, in short:
+using \verb|crush| greatly speeds up prototyping.
+But if you forget to go back and optimize the proofs to not rely on \verb|crush|,
+you'll be spending a lot of time twiddling your thumbs as it computes.
+
+\subsection{Functional Induction}
+Speaking very candidly, at the start of the project
+I had mildly forgotten that functional induction was a feature available in Rocq.
+
+It turns out functional induction is kind of useful.
+And by kind of useful, I mean \emph{really, really useful}.
+For one thing, it made it very obvious what I needed to induct on in every proof.
+For another, it made a lot of the case-work needed to simplify the function redundant, thereby saving a lot of time.
+
+\subsubsection{An example}
+This was the original proof, where we manually unfolded the definition of \verb|balance_right|
+using the tactic \verb|split_ifs| and doing case-work on \verb|r| via \verb|destruct r|:
+\begin{minted}{coq}
+Lemma balance_right_preserves_Balanced v l r :
+  Balanced (Node v l r) → Balanced (balance_right v l r).
+Proof.
+  move=>Hbal.
+  rewrite /balance_right.
+  split_ifs.
+  - destruct r.
+    + by crush.
+    + split_ifs; invert Hbal; by crush.
+  - assumption.
+Qed.
+\end{minted}
+Of note, the line \mintinline{coq}{split_ifs; invert Hbal; by crush} took over 3 seconds to run by itself.
+\begin{minted}[bgcolor=bg]{coq}
+time (split_ifs; invert Hbal; by crush).
+\end{minted}
+\vskip -0.5em
+\begin{minted}[bgcolor=goal]{text}
+Tactic call ran for 3.211 secs (3.197u,0.013s) (success)
+\end{minted}
+
+
+Now, compare this to the new proof using \verb|functional induction|:
+\begin{minted}{coq}
+Lemma balance_right_preserves_Balanced v l r :
+  Balanced (Node v l r) → Balanced (balance_right v l r).
+Proof.
+  move => Hbal.
+  functional induction (balance_right v l r); simplify; eauto; invert Hbal; by crush.
+Qed.
+\end{minted}
+The second line --- the bulk of the proof --- takes only a fraction of the time to run,
+despite still calling this same snippet of \verb|invert Hbal; by crush|!
+\begin{minted}[bgcolor=bg]{coq}
+time (functional induction (balance_right v l r);
+      simplify; eauto; invert Hbal; by crush).
+\end{minted}
+\vskip -0.5em
+\begin{minted}[bgcolor=goal]{text}
+Tactic call ran for 0.316 secs (0.312u,0.003s) (success)
+\end{minted}
+
+
+\subsection{Custom Tactics}
+Rocq makes it very easy to write quick-and-dirty tactics to abstract away common patterns --- and so I did!
+In this section I just want to showcase a few of the tactics I wrote that proved to be the most useful.
+
+A common theme that shows up here is that the \mintinline{coq}{match goal with} construct
+Rocq provides is the core workhorse of all the most useful tactics.
+
+\subsubsection{\texttt{bal_invert}}
+\begin{minted}{coq}
+Ltac bal_invert :=
+  match goal with
+  | [ H : Balanced (Node _ _ _) |- _]  => invert H
+  end.
+\end{minted}
+This is an incredibly simple tactic, to the point that explaining what it does is probably an affront to intelligence.
+But the reason why it's a very useful tactic is slightly more subtle:
+by running \verb|bal_invert| instead of say, \verb|invert H5|, I'm able to avoid
+explicitly naming the hypothesis I wish to invert.
+This serves double duty:
+\begin{enumerate}
+\item It makes proofs more robust, since automatic variable naming is very fragile and subject to change.
+\item It enables me to incorporate this action into proof automation ---
+  other tactics can now perform the action of inverting a \verb|Balanced| hypothesis
+  without me needing to explicitly supply a name.
+\end{enumerate}
+Naturally, there's nothing special about inverting \verb|Balanced| specifically
+(apart from the fact that this action shows up very frequently in my proofs) ---
+rather, it demonstrates a principle that is applicable to many similar situations.
+
+\subsubsection{False Hypotheses and \texttt{Hint Extern}}
+At some point, we prove this simple lemma:
+\begin{minted}{coq}
+Lemma insert_not_Nil x t : insert x t ≠ Nil.
+\end{minted}
+However, it turns out that adding \verb|Hint Resolve insert_not_Nil|
+seems to do very little ---
+we still often end up with situations where we have a hypothesis of the form \mintinline{coq}{insert x t = Nil}
+after running \mintinline{coq}{eauto} or the likes.
+
+Rather, adding this custom tactic to \verb|Hint Extern| solves this issue:
+\begin{minted}{coq}
+Hint Extern 1 =>
+  match goal with
+  | [ H : insert _ _ = Nil |- _ ] => exfalso; exact: insert_not_Nil _ _ H
+  end : core.
+\end{minted}
+In general, it proved to be very fruitful to \verb|Hint Extern| away commonly seen false hypotheses.
+
+\subsubsection{\texttt{bash_heights}}
+\begin{minted}[fontsize=\footnotesize]{coq}
+Ltac bash_heights :=
+  repeat (simplify; match goal with
+  | [ H : height ?t = 0 |- _ ] =>
+      let h := fresh in
+      have h := (height_eq_zero_nil _ H);
+      clear H;
+      subst
+  | [ H : 0 = height ?t |- _ ] =>
+      symmetry in H;
+      let h := fresh in
+      have h := (height_eq_zero_nil _ H);
+      clear H;
+      subst
+  | [ H : (_ < 1)%nat |- _ ] =>
+      rewrite Nat.lt_1_r in H; subst
+  | [ H : _ ≤ 0 |- _] =>
+      rewrite Nat.le_0_r in H; subst
+  | [ H : (S _ < S _)%nat |- _ ] => rewrite -Nat.succ_lt_mono in H
+  | [ H : S _ = S _ |- _ ] => apply Nat.succ_inj in H
+  | [ H : S _ ≤ S _ |- _ ] => apply le_S_n in H
+  | [ H : height ?t = 1 |- _ ] => destruct t; linear_arithmetic'
+  | [ H : 1 = height ?t |- _ ] => destruct t; linear_arithmetic'
+  | [ H : height ?t ≤ 1 |- _ ] => destruct t; linear_arithmetic'
+  | [ H : context[Nat.max _ _] |- _ ] => linear_arithmetic'
+  | [ H : context[Nat.min _ _] |- _ ] => linear_arithmetic'
+  end; clear_useless; lia'); try by lia'.
+\end{minted}
+This monster of a tactic is one of my proudest creations.
+It enabled me to brute-force determine
+the exact heights of trees with heights $\le 1$ by doing case work on all possible heights
+and subsequently using \texttt{\textcolor{red}{lia}} to eliminate all impossible cases.
+It's safe to say that it simplified many proofs, a \emph{lot}.
+(Trees of height $\le 1$ frequently appeared as a result of doing case-work on the children
+of a tree).
+
+\subsection{Fixpoint vs.\ Inductive Predicates}
+
+As a concrete example, during the proof this Lemma:
+\begin{minted}{coq}
+Lemma merge_In_complete_left x l r :
+  In x l → In x (merge l r).
+\end{minted}
+We arrive at this proof state:
+\begin{minted}[bgcolor=goal]{coq}
+1 goal (ID 10088)
+
+  x : A
+  r : tree
+  v : A
+  l : tree
+  rv : A
+  rl, rr : tree
+  x_in_r' : In x (Node rv rl rr)
+  x0 : A
+  e : find_max (Node rv rl rr) = Some x0
+  IHP0 : x0 = x ∨ In x (prune_max (Node rv rl rr))
+  ============================
+  x0 = x ∨ In x (Node v l (prune_max (Node rv rl rr)))
+\end{minted}
+If we replace all the \verb|In|s with their Inductive counterpart, \verb|In'|, \verb|eauto|
+is able to find the proof blazingly fast (in fact, just \verb|eauto 3| suffices):
+\begin{minted}[bgcolor=bg]{coq}
+time (rewrite <- In'_iff_In in *; destruct IHP0; by eauto).
+\end{minted}
+\vskip -0.5em
+\begin{minted}[bgcolor=goal]{text}
+Tactic call ran for 0.021 secs (0.021u,0.s) (success)
+
+No more goals.
+\end{minted}
+On the other hand, if we directly try attacking the goal at hand with just \verb|eauto|
+(and some help from \texttt{Hint Unfold In}), we still get a result, but it is \emph{far} slower:
+\begin{minted}[bgcolor=bg]{coq}
+time (destruct IHP0; by eauto).
+\end{minted}
+\vskip -0.5em
+\begin{minted}[bgcolor=goal]{text}
+Tactic call ran for 0.181 secs (0.181u,0.s) (success)
+
+No more goals.
+\end{minted}
+Indeed, we see that \verb|eauto 5| is the smallest depth at which \verb|eauto| succeeds ---
+this is contrasted with the earlier success at only \verb|eauto 3|.
+We can manually give it some help by adding a \verb|simpl| call before \verb|eauto|,
+which cuts the search depth requirement from \verb|eauto 5| to \verb|eauto 4|:
+\begin{minted}[bgcolor=bg]{coq}
+time (destruct IHP0; simpl; by eauto 4).
+\end{minted}
+\vskip -0.5em
+\begin{minted}[bgcolor=goal]{text}
+Tactic call ran for 0.063 secs (0.063u,0.s) (success)
+
+No more goals.
+\end{minted}
+But this is \emph{still} slower than what we had earlier, by upwards of a factor of 2!.
+
+\subsection{\texttt{ltac:(eauto)} me a proof term!}
+
+Near the end of my time working on the project, I stumbled across a neat trick.
+But before we get to this trick, a bit of background.
+
+In Lean, tactics have first-class integration with terms:
+in any place where I would expect a term, I could instead write \mintinline{lean}{by [tactic]}
+to supply the term using \verb|[tactic]|.
+
+It turns out, I can do the same thing in Rocq!
+For instance, suppose I had a lemma,
+\begin{figure}[h!]
+  \centering
+  \begin{minipage}{0.5\textwidth}
+    \begin{minted}{coq}
+        H : ∀ x y, x < y → P
+    \end{minted}
+  \end{minipage}
+  \end{figure}
+
+and I wanted to specialize it in the scenario where $x = 0$ and $y = 1$.
+Then, instead of doing something like,\footnote{Putting $h$ inside the curly braces clears it after use.}
+\begin{minted}{coq}
+have h : 0 < 1 by lia.
+have {h}H := H _ _ h.
+\end{minted}
+I could instead chop it down to just,
+\begin{minted}{coq}
+have {}H := H 0 1 ltac:(lia).
+\end{minted}
+In this scenario, \texttt{\textcolor{red}{lia}} was the choice of tactic to supply the term,
+but you're certainly not limited to just \texttt{\textcolor{red}{lia}} ---
+in fact, with proper hinting you're probably going to end up using \mintinline{coq}{eauto}
+to supply this term most of the time!
+
+\section{Final Reflection and Future Work}
+Although I didn't end up completing the work set out in my original, ambitious scope,
+and I didn't even end up completing my stretch goals,
+I am very satisfied at the work that I \emph{have} accomplished.
+
+During my brief perusal of pre-existing formalizations of AVL trees,
+it turned out that many people have tried to take on the same task,
+but all of the ones I could find (with the exception of the archived Rocq standard library formalization)
+were lacking complete proofs of this or that key property ---
+they usually failed to prove that deletion preserves AVL balance and logarithmic height.
+
+Thus, it seems to me that I have accomplished a non-trivial task, and I'm pretty happy with that.
+
+As for future work, here is but a shortlist of possible tasks:
+\begin{itemize}
+\item Refactor things to be less ugly, and to enable my proofs of
+  general binary tree operations like tree-rotations to be re-used elsewhere.
+\item Incorporate height information directly into the tree
+  to allow for true $\bigO(1)$ rebalancing.
+\item Change from using non-performant \verb|nat|s to
+  the performant binary integers.
+\item Formalize definitions and proofs for order-statistics operations and
+  bulk set operations such as set union and set difference.
+\item Formalize AVL trees in the setting of imperative code
+  via deep embedding.
+\item Formalize other BBSTs.
+\end{itemize}
+
+\appendix
+
+\section{Key Definitions}
+\phantom{AAAA}
+
+\begin{figure}[h!]
+\begin{minted}[fontsize=\footnotesize]{coq}
+Inductive tree : Type :=
+| Nil  : tree
+| Node : ∀ (v : A) (l : tree) (r : tree), tree.
+\end{minted}
+\caption*{The definition of binary tree used throughout this formalization.}
+\end{figure}
+
+\begin{figure}[h!]
+  \begin{subfigure}{0.5\textwidth}
+    \centering
+\begin{minted}[fontsize=\footnotesize]{coq}
+Fixpoint height (t : tree) : nat :=
+  match t with
+  | Nil => 0
+  | Node _ l r => 1 + Nat.max (height l) (height r)
+  end.
+\end{minted}
+  \caption*{Tree height.}
+  \end{subfigure}%
+  \begin{subfigure}{0.5\textwidth}
+  \begin{minted}[fontsize=\footnotesize]{coq}
+Fixpoint size (t : tree) : nat :=
+  match t with
+  | Nil => 0
+  | Node _ l r => 1 + (size l) + (size r)
+  end.
+\end{minted}
+  \caption*{Tree size.}
+  \end{subfigure}
+\end{figure}
+
+\begin{figure}[h!]
+  \begin{subfigure}{0.5\textwidth}
+    \centering
+\begin{minted}[fontsize=\footnotesize]{coq}
+Fixpoint In (x : A) (t : tree) : Prop :=
+  match t with
+  | Nil => False
+  | Node v l r =>
+      v = x ∨ In x l ∨ In x r
+  end.
+\end{minted}
+  \caption*{Set-membership in a binary tree.}
+  \end{subfigure}%
+  \begin{subfigure}{0.5\textwidth}
+  \begin{minted}[fontsize=\footnotesize]{coq}
+Fixpoint Contains x t : Prop :=
+  match t with
+  | Nil => False
+  | Node v l r =>
+      match (v ?= x) with
+      | Eq => True
+      | Gt => Contains x l
+      | Lt => Contains x r
+      end
+  end.
+\end{minted}
+  \caption*{BST search. (Equivalent to set-membership for BSTs.)}
+  \end{subfigure}
+\end{figure}
+
+\begin{figure}[h!]
+  \begin{subfigure}{0.5\textwidth}
+    \centering
+\begin{minted}[fontsize=\footnotesize]{coq}
+Fixpoint Any (P : A → Prop) (t : tree) : Prop :=
+  match t with
+  | Nil => False
+  | Node v l r =>
+      P v ∨ Any P l ∨ Any P r
+  end.
+\end{minted}
+  \end{subfigure}%
+  \begin{subfigure}{0.5\textwidth}
+  \begin{minted}[fontsize=\footnotesize]{coq}
+Fixpoint All (P : A → Prop) (t : tree) : Prop :=
+  match t with
+  | Nil => True
+  | Node v l r =>
+      P v ∧ All P l ∧ All P r
+  end.
+\end{minted}
+  \end{subfigure}
+  \caption*{Functions to check whether a predicate $P$ holds for any/all values in a tree.}
+\end{figure}
+
+\begin{figure}[h!]
+\begin{minted}[fontsize=\footnotesize]{coq}
+Definition rotate_left v l r : tree :=
+  match r with
+  | Node rv rl rr => Node rv (Node v l rl) rr
+  | Nil => Node v l r
+  end.
+\end{minted}
+  \caption*{Left-rotation; this rotates the tree \texttt{Node v l r} towards its left child $l$.
+    (\texttt{rotate_right} is symmetric.)}
+\end{figure}
+
+\begin{figure}[h!]
+\begin{minted}[fontsize=\footnotesize]{coq}
+Definition balance_left (v : A) (l r : tree) : tree :=
+  if (1 + height r) <? (height l) then
+    match l with
+    (* this is never true in a well-formed AVL tree *)
+    | Nil => Node v l r
+    (* rather, we will always be in this case *)
+    | Node lv ll lr as l =>
+        if (height lr <=? height ll)%nat then
+          (* left-left, one rotation *)
+          rotate_right v l r
+        else
+          (* left-right, two rotations *)
+          rotate_right v (rotate_left lv ll lr) r
+    end
+  else
+    Node v l r.
+\end{minted}
+  \caption*{This function rebalances the tree \texttt{Node v l r} whose left child $l$ is suspected
+    to have a higher height than its right child $r$.
+  }
+\end{figure}
+
+\begin{figure}[h!]
+\begin{minted}[fontsize=\footnotesize]{coq}
+Fixpoint insert x t :=
+  match t with
+  | Nil => Node x Nil Nil
+  | Node v l r =>
+      match (v ?= x) with
+      | Eq => Node v l r
+      | Lt => balance_right v l (insert x r)
+      | Gt => balance_left  v (insert x l) r
+      end
+  end.
+\end{minted}
+\caption*{Standard BST insertion.}
+\end{figure}
+
+\begin{figure}[h!]
+\begin{minted}[fontsize=\footnotesize]{coq}
+(* shrink_max removes and returns the maximum (right-most) element of a tree *)
+Fixpoint shrink_max (t : tree) : option A * tree :=
+  match t with
+  | Nil => (None, Nil)
+  | Node v l r =>
+      match fst (shrink_max r) with
+      | None => (Some v, l)
+      | Some x => (Some x, balance_left v l (snd (shrink_max r)))
+      end
+  end.
+
+(* merge l r deletes the root, t = (Node _ l r).
+* it accomplishes this by swapping the root node's value with the max element of its left subtree,
+* then deleting the max element instead.
+*)
+Definition merge (l r : tree) : tree :=
+  match shrink_max l with
+  | (None, _) => r
+  | (Some x, l') => balance_right x l' r
+  end.
+
+Fixpoint delete x t :=
+  match t with
+  | Nil => Nil
+  | Node v l r =>
+      match (v ?= x) with
+      | Eq => merge l r
+      | Lt => balance_left  v l (delete x r)
+      | Gt => balance_right v (delete x l) r
+      end
+  end.
+\end{minted}
+  \caption*{Standard BST deletion, done by swapping the root value with the right-most child
+    of its left subtree.}
+\end{figure}
+
+\begin{figure}[h!]
+\begin{minted}[fontsize=\footnotesize]{coq}
+Fixpoint Ordered (t : tree) : Prop :=
+  match t with
+  | Nil => True
+  | Node v l r =>
+      (All (fun x => x < v) l ∧ Ordered l) ∧ (All (fun x => v < x) r ∧ Ordered r)
+  end.
+\end{minted}
+  \caption*{\texttt{Ordered t} asserts that $t$ is a binary search tree (with no duplicates).
+    (So its inorder traversal orders values from least to greatest)
+  }
+\end{figure}
+
+\begin{figure}[h!]
+\begin{minted}[fontsize=\footnotesize]{coq}
+Inductive Balanced : tree → Prop :=
+(* a leaf node is Balanced *)
+| Balanced_nil : Balanced Nil
+(* two children of equal height is Balanced *)
+| Balanced_equal :
+  ∀ l r, Balanced l → Balanced r → height l = height r → ∀ v, Balanced (Node v l r)
+(* if height l = height r + 1, then the resulting thing is Balanced *)
+| Balanced_left_heavy :
+  ∀ l r, Balanced l → Balanced r → height l = 1 + height r → ∀ v, Balanced (Node v l r)
+(* symmetric. *)
+| Balanced_right_heavy :
+  ∀ l r, Balanced l → Balanced r → 1 + height l = height r → ∀ v, Balanced (Node v l r).
+\end{minted}
+  \caption*{AVL-balance invariant predicate;
+    \texttt{Balanced t} asserts that the absolute difference
+    of the heights of the children of $t$ is $\le 1$.}
+\end{figure}
+
+\begin{figure}[h!]
+\begin{minted}[fontsize=\footnotesize]{coq}
+Inductive AVL t : Prop :=
+| AVL_intro : Ordered t → Balanced t → AVL t.
+\end{minted}
+\caption*{Definition of AVL trees --- AVL trees are binary search trees which are AVL-balanced.}
+\end{figure}
+
+\clearpage
+\section{Key Results}
+
+Note that all these results are in \verb|AVLResults.v|.
+
+\vspace{1em}
+\noindent BST Search behaves exactly like set-membership in AVL trees, so checking set membership is $\bigO(h)$, where
+$h$ is the height of the tree:
+\begin{minted}{coq}
+Theorem AVL_In_iff_Contains t :
+  AVL t → (∀ x, In x t ↔ Contains x t).
+\end{minted}
+
+\noindent An AVL tree remains an AVL tree after insertion:
+\begin{minted}{coq}
+Theorem AVL_insert x t :
+  AVL t → AVL (insert x t).
+\end{minted}
+
+\noindent Insertion preserves all prior elements:
+\begin{minted}{coq}
+Theorem In_insert_of_In x y t :
+  In x t → In x (insert y t).
+\end{minted}
+
+\noindent The inserted element is guaranteed to be in the new tree:
+\begin{minted}{coq}
+Theorem In_insert x t :
+  In x (insert x t).
+\end{minted}
+
+\noindent The only elements in \verb|insert y t| are $y$ and the elements in $t$:
+\begin{minted}{coq}
+Theorem eq_or_In_of_In_insert x y t :
+  In x (insert y t) → x = y ∨ In x t.
+\end{minted}
+
+\noindent If an element is already present in an AVL tree, then the tree is unchanged after inserting that element:
+\begin{minted}{coq}
+Theorem AVL_insert_eq_of_In x t :
+  AVL t → In x t → insert x t = t.
+\end{minted}
+
+\noindent AVL trees are idempotent under insert:
+\begin{minted}{coq}
+Theorem AVL_insert_idempotent x t :
+  AVL t → insert x (insert x t) = insert x t.
+\end{minted}
+
+\noindent An AVL tree remains an AVL tree after deletion:
+\begin{minted}{coq}
+Theorem AVL_delete x t :
+  AVL t → AVL (delete x t).
+\end{minted}
+
+\noindent The elements of an AVL tree following a deletion forms a subset of the original tree:
+\begin{minted}{coq}
+Theorem AVL_In_of_In_delete x y t :
+  AVL t → In x (delete y t) → In x t ∧ x ≠ y.
+\end{minted}
+
+\noindent The deleted element is not in the new tree.
+\begin{minted}{coq}
+Theorem AVL_not_In_delete x t :
+  AVL t → ¬ In x (delete x t).
+\end{minted}
+
+
+\noindent If $x$ was already in $t$, and $x$ is not equal to the deleted element, then $x$ is in the new tree:
+\begin{minted}{coq}
+Theorem AVL_In_delete_of_In_of_neq x y t :
+  AVL t → In x t → x ≠ y → In x (delete y t).
+\end{minted}
+
+\noindent If $x$ was not present in $t$, then deleting $x$ from $t$ does nothing:
+\begin{minted}{coq}
+Theorem AVL_delete_eq_of_not_In x t :
+  AVL t → ¬ In x t → delete x t = t.
+\end{minted}
+
+\noindent AVL trees are idempotent under deletion:
+\begin{minted}{coq}
+Theorem AVL_delete_idempotent x t :
+  AVL t → delete x (delete x t) = delete x t.
+\end{minted}
+
+\noindent AVL trees have logarithmic height, that is, they have a height of $\bigO(\log_2 n)$,
+where $n$ is the number of nodes in the tree:
+\begin{minted}{coq}
+Theorem AVL_height_upperbound t :
+  AVL t → height t ≤ 2 * Nat.log2 (size t) + 1.
+\end{minted}
+
+
+\end{document}
