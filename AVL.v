@@ -476,17 +476,6 @@ Module AVL (OT : UsualOrderedType').
   Hint Rewrite Allb_iff_All Anyb_iff_Any Any_iff_exists' : core.
   (* Hint Rewrite All_iff_forall' Any_iff_exists' Allb_iff_All Anyb_iff_Any : core. *)
 
-    (* taking a page out of the stdlib's book *)
-    Definition assert_false v l r := Node v l r.
-    Opaque assert_false.
-
-    Ltac kill_stupid :=
-      try match goal with
-      | [ |- context[assert_false _ _ _] ] => exfalso; simplify; lia
-      | [ H : context[assert_false _ _ _] |- _] => exfalso; simplify; lia
-      end.
-    Hint Extern 1 => kill_stupid : core.
-
     (* rotate root towards left *)
     Definition rotate_left v l r : tree :=
       match r with
@@ -506,7 +495,7 @@ Module AVL (OT : UsualOrderedType').
       if (1 + height r) <? (height l) then
         match l with
         (* this is never true in a well-formed AVL tree *)
-        | Nil => assert_false v l r
+        | Nil => Node v l r
         (* rather, we will always be in this case *)
         | Node lv ll lr as l =>
             if (height lr <=? height ll)%nat then
@@ -523,7 +512,7 @@ Module AVL (OT : UsualOrderedType').
     Definition balance_right (v : A) (l r : tree) : tree :=
       if 1 + height l <? height r then
         match r with
-        | Nil => assert_false v l r
+        | Nil => Node v l r
         | Node rv rl rr as r =>
             if (height rl <=? height rr)%nat then
               (* right-right, one rotation *)
@@ -653,14 +642,14 @@ Module AVL (OT : UsualOrderedType').
     repeat match goal with
     | [ H : Ordered' (Node _ _ _) |- _ ] => invert H
     end.
-    (* TODO: MOVE UP *)
-    Lemma Ordered_unique_val v l r :
-      Ordered (Node v l r) → ¬ In v l ∧ ¬ In v r.
-    Proof.
-      intros [[all_l l_ord] [all_r r_ord]].
-      rewrite !All_iff_forall in all_l all_r.
-      split; move => bad; (suff : v < v by order); by eauto.
-    Qed.
+
+  Lemma Ordered_unique_val v l r :
+    Ordered (Node v l r) → ¬ In v l ∧ ¬ In v r.
+  Proof.
+    intros [[all_l l_ord] [all_r r_ord]].
+    rewrite !All_iff_forall in all_l all_r.
+    split; move => bad; (suff : v < v by order); by eauto.
+  Qed.
 
   Lemma Ordered_unique_In_left x v l r :
     Ordered (Node v l r) → In x l → x ≠ v ∧ ¬ In x r.
@@ -981,15 +970,6 @@ Module AVL (OT : UsualOrderedType').
       rotate_left_Ordered'_iff
       rotate_right_Ordered_iff
       rotate_right_Ordered'_iff : core.
-
-    (* Tactic Notation "split_ifs" := let h := fresh in split_ifs h. *)
-      (* repeat match goal with *)
-      (* | [ |- context[if ?b then _ else _ ] ] => *)
-      (*     let i := fresh "Heq" in *)
-      (*     let e := fresh in *)
-      (*     move i : b => e; *)
-      (*     destruct e *)
-      (* end. *)
 
     Lemma rotate_left_preserves_All P v l r : (All P (Node v l r)) → All P (rotate_left v l r).
     Proof.
@@ -2397,12 +2377,6 @@ Module AVL (OT : UsualOrderedType').
       - left; by apply prune_max_subset.
       - by right.
     Qed.
-
-    Ltac add_lemmas ls :=
-      match ls with
-      | (?xs, ?x) => pose proof x; add_lemmas xs
-      | ?x => pose proof x
-      end.
 
     Lemma merge_In_iff x l r :
       In x (merge l r) ↔ In x l ∨ In x r.
