@@ -12,3 +12,15 @@ tmp/
 *.glob
 *.aux
 *.cache
+
+# latex things
+*.auctex-auto
+*.bbl
+*.blg
+*.fdb_latexmk
+*.fls
+*.out
+*_minted-*
+
+# test files
+test.v
