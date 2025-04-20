@@ -55,12 +55,11 @@ BoldItalicFont=*-BoldItalic,
 \maketitle
 
 \section{Introduction}
-
 \subsection{The Original Vision}
 My original aim with this project was to ``formalize various self-balancing binary search trees
 and prove key properties relating to their correctness and balancing properties''.
 I specifically singled out three self-balancing binary search trees (BBSTs for short) of interest:
-Red-Black trees, AVL trees, and so-called ``size-balanced'' trees.
+Red-Black trees, AVL trees, and so-called ``size-balanced'' trees \cite{SBT}.
 I also listed out a couple of key properties that I wished to prove:
 \begin{itemize}
 \item Correctness of insertion, deletion, search, and order-statistics.
@@ -152,17 +151,25 @@ My original scope turned out to be too ambitious --- making progress on verifyin
 kind of BBST was already taking a large amount of time.
 Thus, I narrowed my goal down to verifying just one kind of tree, and left more up as stretch goals.
 I also chose to verify AVL trees specifically out of the three initial choices,
-since full-fledged formalizations of AVL trees were far more uncommon compared to those of Red-Black trees
+since full-fledged formalizations of AVL trees\footnote{
+  By which I mean, many of the formalizations seem to be incomplete --- eg.\ \cite{AVL-Lean} and \cite{AVL-Coq-fail}.
+} seemed to be more uncommon compared to those of Red-Black trees
 while still being more concretely do-able compared to size-balanced trees (which, despite its name, is
 quite different from \emph{weight}-balanced trees).
 
-Indeed, I was unable to find any full formalizations of AVL trees aside from
+Indeed, by the time of the midway progress update,
+I was unable to find any full formalizations of AVL trees aside from
 a very old Rocq formalization (\verb|FSetFullAVL| and \verb|MSetFullAVL|)
-that used to be in the Rocq Standard Library, but seems to be missing nowadays.
+that used to be in the Rocq Standard Library, but seems to be missing nowadays (\cite{AVL-coq}, \cite{rocq-archive}).
 \footnote{
 There are dead hyperlinks still referring to these implementations in the Rocq Standard Library;
-the only way I was able to access these was through the \texttt{rocq-archive} repository on Github.
+the only way I was able to access these was through the \texttt{rocq-archive/fsets} repository on Github.
+Footnote for the footnote: it seems that the file \texttt{FSetFullAVL} has been subsumed by
+by the file \texttt{FMapFullAVL} in the Rocq standard library, but there doesn't seem to be an equivalent
+to \texttt{MSetFullAVL}.
 }
+Currently, as I'm writing up this final report, I've found one more
+Rocq formalization done in Rocq using SSReflect --- see \cite{AVL-ssreflect}.
 
 \subsection{Choice of Encoding and Definitions}
 I decided to shallowly embed AVL trees in Gallina since:
@@ -174,7 +181,7 @@ I decided to shallowly embed AVL trees in Gallina since:
 \item It allowed me to immediately get at the problem at hand (proving properties about AVL trees)
   and avoid an intermediate step of having to define syntax and semantics \emph{just to state} the problems.
 \end{enumerate}
-While the use of a library like Iris could help alleviate some of the pains described in (c),
+While the use of a framework like Iris could help alleviate some of the pains described in (c),
 it would only add to the list of things I needed to familiarize myself with \emph{on top of}
 the immediate problems I wished to solve.
 
@@ -648,12 +655,11 @@ for me personally is two-fold:
 The proof that the ``incorrect'' AVL tree still preserves AVL balance on insertions
 is documented in the file \verb|AVL_incorrect.v|.
 
-\newpage
 \subsection{Proof of Logarithmic Height}
 
-I tackled the proof of logarithmic height
-for AVL trees by following the proof sketch outlined in
-https://people.csail.mit.edu/alinush/6.006-spring-2014/avl-height-proof.pdf
+I tackled the proof of logarithmic height for AVL trees by following the proof sketch
+outlined in
+{\cite{AVL-height-proof}}.
 
 The key points in the proof are as follows:
 \begin{itemize}
@@ -1077,9 +1083,7 @@ I am very satisfied at the work that I \emph{have} accomplished.
 
 During my brief perusal of pre-existing formalizations of AVL trees,
 it turned out that many people have tried to take on the same task,
-but all of the ones I could find (with the exception of the archived Rocq standard library formalization)
-were lacking complete proofs of this or that key property ---
-they usually failed to prove that deletion preserves AVL balance and logarithmic height.
+but several of them were lacking complete proofs of this or that key property (eg.\ \cite{AVL-Lean} and \cite{AVL-Coq-fail}) --- they usually failed to prove that deletion preserves AVL balance and logarithmic height.
 
 Thus, it seems to me that I have accomplished a non-trivial task, and I'm pretty happy with that.
 
@@ -1097,6 +1101,9 @@ As for future work, here is but a shortlist of possible tasks:
   via deep embedding.
 \item Formalize other BBSTs.
 \end{itemize}
+
+\bibliographystyle{ACM-Reference-Format}
+\bibliography{final_report}
 
 \appendix
 
